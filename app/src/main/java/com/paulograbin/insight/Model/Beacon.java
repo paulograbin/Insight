@@ -13,9 +13,6 @@ public class Beacon {
     int major;
     int minor;
     int channel;
-
-
-
     String location;
     double latitude;
     double longitude;
