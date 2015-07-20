@@ -6,10 +6,15 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.provider.BaseColumns;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.paulograbin.insight.Model.Beacon;
+import com.paulograbin.insight.Model.Message;
+import com.paulograbin.insight.Util.Util;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -40,6 +45,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Beacon b = new Beacon();
 
         b.setId(id);
+        b.setUUID("5D8DE2E5-2C6D-4F3D-8651-DD66B7E4BD3E");
         b.setCreatedDate(Calendar.getInstance().toString());
         b.setCreatedTime(Calendar.getInstance().toString());
         b.setLatitude(39.99);
@@ -54,6 +60,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void addBeacon(Beacon beacon) {
         ContentValues cv = new ContentValues();
         cv.put(TableBeacon._ID, beacon.getId());
+        cv.put(TableBeacon.COLUMN_UUID, beacon.getUUID());
         cv.put(TableBeacon.COLUMN_LOCATION, beacon.getLocation());
         cv.put(TableBeacon.COLUMN_LATITUDE, beacon.getLatitude());
         cv.put(TableBeacon.COLUMN_LONGITUDE, beacon.getLongitude());
@@ -76,22 +83,64 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<Beacon> beacons = new ArrayList<Beacon>();
 
         String query = "SELECT * FROM " + TableBeacon.TABLE_NAME + ";";
-
         Cursor cursor = mDB.rawQuery(query, null);
 
         if(cursor.moveToFirst()) {
             do {
-                Beacon b = new Beacon();
-                b.setId(cursor.getLong(0));
-
-                beacons.add(b);
+                beacons.add(getBeaconFromCursor(cursor));
             } while (cursor.moveToNext());
         }
 
         Log.i(LOG_TAG, beacons.toString());
         return beacons;
     }
-//
+
+    public List<Message> getAllMessages() {
+        List<Message> messages = new ArrayList<>();
+
+        String query = "SELECT * FROM " + TableMessage.TABLE_NAME;
+        Cursor cursor = getReadableDatabase().rawQuery(query, null);
+
+        if(cursor.moveToFirst()) {
+            do {
+                Message m = new Message();
+
+                m.setId(cursor.getLong(0));
+                m.setText(cursor.getString(1));
+
+                messages.add(m);
+            } while (cursor.moveToNext());
+        }
+
+        Log.i(LOG_TAG, messages.toString());
+        return messages;
+    }
+
+    public Beacon getBeaconFromCursor(Cursor c) {
+        if (c == null) {
+            return null;
+        }
+
+        Beacon b = new Beacon();
+        int i = 0;
+
+        b.setId(c.getLong(i++));
+        b.setUUID(c.getString(i++));
+//        b.setName(c.getString(i++));
+//        b.setNetworktype(c.getInt(i++));
+//        b.setMajor(c.getInt(i++));
+//        b.setMinor(c.getInt(i++));
+//        b.setChannel(c.getInt(i++));
+//        b.setLocation(c.getString(i++));
+//        b.setLatitude(c.getDouble(i++));
+//        b.setLongitude(c.getDouble(i++));
+//        b.setMessage(c.getString(i++));
+//        b.setCreatedDate(c.getString(i++));
+//        b.setCreatedTime(c.getString(i++));
+
+        return b;
+    }
+
     // Getting beacons Count
     public int getBeaconsCount() {
         String countQuery = "SELECT * FROM beacon";
@@ -105,16 +154,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Log.i(LOG_TAG, "Table beacons tem " + count + " registros");
         return count;
     }
-
-//    // Updating single beacon
-//    public int updateBeacon(Beacon beacon) {
-//
-//    }
-//
-//    // Deleting single beacon
-//    public void deleteBeacon(Beacon beacon) {
-//
-//    }
 
     // Deleting every beacon
     public void dropTableBeacon() {
@@ -144,5 +183,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TableMessage.TABLE_NAME);
 
         onCreate(db);
+    }
+
+    public static void copiaDB(Context context) {
+
+        File source = new File(context.getFilesDir().getParent() + "/databases/" + DatabaseHelper.DATABASE_NAME);
+        File destination = new File("/storage/extSdCard/" + DatabaseHelper.DATABASE_NAME);
+
+        try {
+            Util.copiaArquivos(source, destination);
+        }
+        catch (Exception e) {
+            Toast.makeText(context, "ops" + e.getClass().toString(), Toast.LENGTH_LONG).show();
+            Log.e("Spiga", e.getLocalizedMessage());
+        }
     }
 }

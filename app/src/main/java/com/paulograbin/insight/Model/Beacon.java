@@ -1,13 +1,13 @@
 package com.paulograbin.insight.Model;
 
+
 /**
  * Created by paulograbin on 01/07/15.
  */
 public class Beacon {
 
     long id;
-
-    String UUID;
+    String uuid;
     String name;
     int networktype;
     int major;
@@ -22,20 +22,28 @@ public class Beacon {
 
     public Beacon() { }
 
-    public Beacon(long id, String location, double latitude, double longitude, String message) {
+    public Beacon(long id, String uuid, String name, int networktype, int major, int minor, int channel, String location, double latitude, double longitude, String message, String createdDate, String createdTime) {
         this.id = id;
+        this.uuid = uuid;
+        this.name = name;
+        this.networktype = networktype;
+        this.major = major;
+        this.minor = minor;
+        this.channel = channel;
         this.location = location;
         this.latitude = latitude;
         this.longitude = longitude;
         this.message = message;
+        this.createdDate = createdDate;
+        this.createdTime = createdTime;
     }
 
     public String getUUID() {
-        return UUID;
+        return uuid;
     }
 
-    public void setUUID(String UUID) {
-        this.UUID = UUID;
+    public void setUUID(String uuid) {
+        this.uuid = uuid;
     }
 
     public int getMajor() {
@@ -111,6 +119,30 @@ public class Beacon {
 
     public void setCreatedTime(String createdTime) {
         this.createdTime = createdTime;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getNetworktype() {
+        return networktype;
+    }
+
+    public void setNetworktype(int networktype) {
+        this.networktype = networktype;
+    }
+
+    public int getChannel() {
+        return channel;
+    }
+
+    public void setChannel(int channel) {
+        this.channel = channel;
     }
 
     @Override
