@@ -1,47 +1,81 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivityFragment">
+    tools:context=".MainActivityFragment">
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Turn on Bluetooth"
         android:id="@+id/btnBluetooth"
-        android:layout_centerHorizontal="true" />
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="Turn on Bluetooth" />
 
     <Button
+        android:id="@+id/btnShowNearBeacons"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Show beacons"
-        android:id="@+id/btnShowBeacons"
-        android:layout_below="@+id/btnBluetooth"
-        android:layout_centerHorizontal="true" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Show messages"
-        android:id="@+id/btnShowMessages"
-        android:layout_below="@+id/btnShowBeacons"
-        android:layout_centerHorizontal="true" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Start"
-        android:id="@+id/btnStart"
         android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:text="Show NEAR beacons" />
+
+    <Button
+        android:id="@+id/btnShowMessages"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnShowBeacons"
+        android:layout_centerHorizontal="true"
+        android:text="Show messages" />
+
+    <Button
+        android:id="@+id/btnPlaces"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/btnShowMessages"
+        android:text="Show Places" />
+
+    <Button
+        android:id="@+id/btnShowBeacons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/btnBluetooth"
+        android:text="Show beacons" />
+
+    <Button
+        android:id="@+id/btnSpeak"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/txtBluetooth"
+        android:layout_alignEnd="@+id/btnPlaces"
+        android:layout_marginBottom="55dp"
+        android:layout_marginEnd="45dp"
+        android:text="New Button" />
+
+    <TextView
+        android:id="@+id/txtBLE"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/btnShowNearBeacons"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:id="@+id/txtBluetooth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/txtBLE"
         android:layout_alignParentStart="true" />
 
     <Button
-        android:layout_width="wrap_content"
+        android:id="@+id/btnShowPlaceBeacons"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Stop"
-        android:id="@+id/btnStop"
-        android:layout_alignTop="@+id/btnStart"
-        android:layout_alignParentEnd="true" />
+        android:layout_below="@+id/btnPlaces"
+        android:layout_centerHorizontal="true"
+        android:text="Show PlaceBeacons" />
 
 </RelativeLayout>

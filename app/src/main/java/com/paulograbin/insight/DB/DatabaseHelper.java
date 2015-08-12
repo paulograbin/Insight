@@ -1,201 +1,149 @@
 package com.paulograbin.insight.DB;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.provider.BaseColumns;
 import android.util.Log;
-import android.widget.Toast;
 
+import com.paulograbin.insight.DB.Provider.BeaconProvider;
+import com.paulograbin.insight.DB.Provider.MessageProvider;
+import com.paulograbin.insight.DB.Provider.PlaceBeaconProvider;
+import com.paulograbin.insight.DB.Provider.PlaceProvider;
+import com.paulograbin.insight.DB.Table.TableBeacon;
+import com.paulograbin.insight.DB.Table.TableMessage;
+import com.paulograbin.insight.DB.Table.TablePlace;
+import com.paulograbin.insight.DB.Table.TablePlaceBeacon;
 import com.paulograbin.insight.Model.Beacon;
 import com.paulograbin.insight.Model.Message;
+import com.paulograbin.insight.Model.Place;
+import com.paulograbin.insight.Model.PlaceBeacon;
 import com.paulograbin.insight.Util.Util;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.List;
-import java.util.Random;
 
 /**
  * Created by paulograbin on 30/06/15.
  */
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    private final String LOG_TAG = "Spiga";
-
-    static final int DATABASE_VERSION = 1;
+    static final int DATABASE_VERSION = 10;
     static final String DATABASE_NAME = "insight.db";
+    private static DatabaseHelper mDatabaseHelper;
+    private static Context context;
+    private final String TAG = "Spiga";
 
-    SQLiteDatabase mDB;
-
-    public DatabaseHelper(Context context) {
+    private DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        mDB = getWritableDatabase();
+        DatabaseHelper.context = context;
     }
 
+    public static DatabaseHelper getInstance(Context context) {
+        if (mDatabaseHelper == null)
+            mDatabaseHelper = new DatabaseHelper(context);
 
-    public void addDummyBeacon() {
-        Random r = new Random();
-        Long id = Math.abs(r.nextLong());
-
-        Beacon b = new Beacon();
-
-        b.setId(id);
-        b.setUUID("5D8DE2E5-2C6D-4F3D-8651-DD66B7E4BD3E");
-        b.setCreatedDate(Calendar.getInstance().toString());
-        b.setCreatedTime(Calendar.getInstance().toString());
-        b.setLatitude(39.99);
-        b.setLongitude(30.00);
-        b.setLocation("Teste de location");
-        b.setMessage("Teste de message");
-
-        addBeacon(b);
+        return mDatabaseHelper;
     }
 
-    // Adding new beacon
-    public void addBeacon(Beacon beacon) {
-        ContentValues cv = new ContentValues();
-        cv.put(TableBeacon._ID, beacon.getId());
-        cv.put(TableBeacon.COLUMN_UUID, beacon.getUUID());
-        cv.put(TableBeacon.COLUMN_LOCATION, beacon.getLocation());
-        cv.put(TableBeacon.COLUMN_LATITUDE, beacon.getLatitude());
-        cv.put(TableBeacon.COLUMN_LONGITUDE, beacon.getLongitude());
-        cv.put(TableBeacon.COLUMN_CREATED_DATE, beacon.getCreatedDate());
-        cv.put(TableBeacon.COLUMN_CREATED_TIME, beacon.getCreatedTime());
-        cv.put(TableBeacon.COLUMN_MESSAGE, beacon.getMessage());
+    public static void insertStandardRecords() {
+        /*
+         * Mensagens padrão
+         */
+        Message m1 = new Message("Você chegou ao seu destino.");
+        Message m2 = new Message("Você está em ");
 
-        mDB.insert(TableBeacon.TABLE_NAME, null, cv);
+        MessageProvider mp = new MessageProvider(context);
+        m1.setId(mp.insert(m1));
+        m2.setId(mp.insert(m2));
 
-        Log.i(LOG_TAG, "Beacon inserido!");
+        /*
+         * Places
+         */
+        Place p1 = new Place("Ponto Inicial");
+        Place p2 = new Place("Ponto Final");
+
+        PlaceProvider pp = new PlaceProvider(context);
+        p1.setId(pp.insert(p1));
+        p2.setId(pp.insert(p2));
+
+        /*
+         * Beacon
+         */
+        Beacon b1 = new Beacon();
+        b1.setUUID("5D8DE2E5-2C6D-4F3D-8651-DD66B7E4BD3E");
+        b1.setNetworktype(12);
+        b1.setMajor(12);
+        b1.setMajor(1);
+        b1.setChannel(13);
+        b1.setLatitude(39.99);
+        b1.setLongitude(30.00);
+        b1.setLocation("Teste de location");
+        b1.setMessage("Teste de message");
+
+        SimpleDateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat formatTime = new SimpleDateFormat("HH:mm:ss");
+
+        b1.setCreatedDate(formatDate.format(Calendar.getInstance().getTime()));
+        b1.setCreatedTime(formatTime.format(Calendar.getInstance().getTime()));
+
+        BeaconProvider bp = new BeaconProvider(context);
+        b1.setId(bp.insert(b1));
+
+        /*
+         * PlaceBeacon
+         */
+        PlaceBeacon pb1 = new PlaceBeacon(p1.getId(), b1.getId());
+        PlaceBeaconProvider pbp = new PlaceBeaconProvider(context);
+        pb1.setId(pbp.insert(pb1));
     }
 
-//    // Getting single beacon
-//    public Beacon getBeacon(int id) {
-//
-//    }
-//
-    // Getting All Beacon
-    public List<Beacon> getAllBeacons() {
-        List<Beacon> beacons = new ArrayList<Beacon>();
+    public static void copiaDB(Context context) {
 
-        String query = "SELECT * FROM " + TableBeacon.TABLE_NAME + ";";
-        Cursor cursor = mDB.rawQuery(query, null);
+        File source = new File(context.getFilesDir().getParent() + "/databases/" + DatabaseHelper.DATABASE_NAME);
+        File destination = new File("/" + DatabaseHelper.DATABASE_NAME);
 
-        if(cursor.moveToFirst()) {
-            do {
-                beacons.add(getBeaconFromCursor(cursor));
-            } while (cursor.moveToNext());
+        try {
+            Util.copiaArquivos(source, destination);
+        } catch (Exception e) {
+//            Toast.makeText(context, "ops" + e.getClass().toString(), Toast.LENGTH_LONG).show();
+            Log.e("Spiga", e.getLocalizedMessage());
         }
-
-        Log.i(LOG_TAG, beacons.toString());
-        return beacons;
     }
-
-    public List<Message> getAllMessages() {
-        List<Message> messages = new ArrayList<>();
-
-        String query = "SELECT * FROM " + TableMessage.TABLE_NAME;
-        Cursor cursor = getReadableDatabase().rawQuery(query, null);
-
-        if(cursor.moveToFirst()) {
-            do {
-                Message m = new Message();
-
-                m.setId(cursor.getLong(0));
-                m.setText(cursor.getString(1));
-
-                messages.add(m);
-            } while (cursor.moveToNext());
-        }
-
-        Log.i(LOG_TAG, messages.toString());
-        return messages;
-    }
-
-    public Beacon getBeaconFromCursor(Cursor c) {
-        if (c == null) {
-            return null;
-        }
-
-        Beacon b = new Beacon();
-        int i = 0;
-
-        b.setId(c.getLong(i++));
-        b.setUUID(c.getString(i++));
-//        b.setName(c.getString(i++));
-//        b.setNetworktype(c.getInt(i++));
-//        b.setMajor(c.getInt(i++));
-//        b.setMinor(c.getInt(i++));
-//        b.setChannel(c.getInt(i++));
-//        b.setLocation(c.getString(i++));
-//        b.setLatitude(c.getDouble(i++));
-//        b.setLongitude(c.getDouble(i++));
-//        b.setMessage(c.getString(i++));
-//        b.setCreatedDate(c.getString(i++));
-//        b.setCreatedTime(c.getString(i++));
-
-        return b;
-    }
-
-    // Getting beacons Count
-    public int getBeaconsCount() {
-        String countQuery = "SELECT * FROM beacon";
-
-        Cursor cursor = mDB.rawQuery(countQuery, null);
-
-        int count = cursor.getCount();
-
-        cursor.close();
-
-        Log.i(LOG_TAG, "Table beacons tem " + count + " registros");
-        return count;
-    }
-
-    // Deleting every beacon
-    public void dropTableBeacon() {
-        String dropTableQuery = "DELETE FROM beacon";
-
-        mDB.execSQL(dropTableQuery);
-
-        Log.i(LOG_TAG, "Matou todos");
-    }
-    
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        Log.i(LOG_TAG, "Criando banco...");
+        Log.i(TAG, "Criando tabelas...");
 
         try {
-            db.execSQL(TableBeacon.TABLE_CREATE_COMMAND);
-            db.execSQL(TableMessage.TABLE_CREATE_COMMAND);
+            createTables(db);
         } catch (SQLException e) {
-            Log.e(LOG_TAG, e.getMessage());
+            Log.e(TAG, e.getMessage());
         }
+    }
+
+    public void createTables(SQLiteDatabase db) {
+        Log.i(TAG, TableBeacon.TABLE_CREATE_COMMAND);
+        db.execSQL(TableBeacon.TABLE_CREATE_COMMAND);
+
+        Log.i(TAG, TableMessage.TABLE_CREATE_COMMAND);
+        db.execSQL(TableMessage.TABLE_CREATE_COMMAND);
+
+        Log.i(TAG, TablePlace.TABLE_CREATE_COMMAND);
+        db.execSQL(TablePlace.TABLE_CREATE_COMMAND);
+
+        Log.i(TAG, TablePlaceBeacon.TABLE_CREATE_COMMAND);
+        db.execSQL(TablePlaceBeacon.TABLE_CREATE_COMMAND);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TableBeacon.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + TableMessage.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + TablePlace.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + TablePlaceBeacon.TABLE_NAME);
 
         onCreate(db);
-    }
-
-    public static void copiaDB(Context context) {
-
-        File source = new File(context.getFilesDir().getParent() + "/databases/" + DatabaseHelper.DATABASE_NAME);
-        File destination = new File("/storage/extSdCard/" + DatabaseHelper.DATABASE_NAME);
-
-        try {
-            Util.copiaArquivos(source, destination);
-        }
-        catch (Exception e) {
-            Toast.makeText(context, "ops" + e.getClass().toString(), Toast.LENGTH_LONG).show();
-            Log.e("Spiga", e.getLocalizedMessage());
-        }
     }
 }

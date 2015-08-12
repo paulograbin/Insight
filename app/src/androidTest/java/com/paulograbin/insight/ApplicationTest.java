@@ -9,5 +9,21 @@ import android.test.ApplicationTestCase;
 public class ApplicationTest extends ApplicationTestCase<Application> {
     public ApplicationTest() {
         super(Application.class);
+
     }
+
+    public static void main(String args[]) {
+//        TestBeaconProvider t = new TestBeaconProvider();
+//        TestResult tr = t.run();
+
+//        TestMessageProvider tmp = new TestMessageProvider();
+//        TestResult trp = tmp.run();
+
+//        if(tr.wasSuccessful()) {
+//            Log.i("SpigaTest", "Test successful");
+//        } else {
+//            Log.i("SpigaTest", "Test NOT successful");
+//        }
+    }
+
 }

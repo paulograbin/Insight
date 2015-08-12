@@ -4,64 +4,25 @@ package com.paulograbin.insight.Model;
 /**
  * Created by paulograbin on 01/07/15.
  */
-public class Beacon {
+public class Beacon implements ModelInterface {
 
-    long id;
-    String uuid;
-    String name;
-    int networktype;
-    int major;
-    int minor;
-    int channel;
-    String location;
-    double latitude;
-    double longitude;
-    String message;
-    String createdDate;
-    String createdTime;
+    private long id;
+    private String uuid;
+    private String name;
+    private int networktype;
+    private int major;
+    private int minor;
+    private int channel;
+    private String location;
+    private double latitude;
+    private double longitude;
+    private String message;
+    private String createdDate;
+    private String createdTime;
 
     public Beacon() { }
 
-    public Beacon(long id, String uuid, String name, int networktype, int major, int minor, int channel, String location, double latitude, double longitude, String message, String createdDate, String createdTime) {
-        this.id = id;
-        this.uuid = uuid;
-        this.name = name;
-        this.networktype = networktype;
-        this.major = major;
-        this.minor = minor;
-        this.channel = channel;
-        this.location = location;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.message = message;
-        this.createdDate = createdDate;
-        this.createdTime = createdTime;
-    }
-
-    public String getUUID() {
-        return uuid;
-    }
-
-    public void setUUID(String uuid) {
-        this.uuid = uuid;
-    }
-
-    public int getMajor() {
-        return major;
-    }
-
-    public void setMajor(int major) {
-        this.major = major;
-    }
-
-    public int getMinor() {
-        return minor;
-    }
-
-    public void setMinor(int minor) {
-        this.minor = minor;
-    }
-
+    @Override
     public long getId() {
         return id;
     }
@@ -70,55 +31,12 @@ public class Beacon {
         this.id = id;
     }
 
-    public double getLatitude() {
-        return latitude;
+    public String getUUID() {
+        return uuid;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public Beacon setLatitude(double latitude) {
-        this.latitude = latitude;
-        return this;
-    }
-
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public Beacon setLongitude(double longitude) {
-        this.longitude = longitude;
-        return this;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public Beacon setMessage(String message) {
-        this.message = message;
-        return this;
-    }
-
-    public String getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(String createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public String getCreatedTime() {
-        return createdTime;
-    }
-
-    public void setCreatedTime(String createdTime) {
-        this.createdTime = createdTime;
+    public void setUUID(String uuid) {
+        this.uuid = uuid;
     }
 
     public String getName() {
@@ -137,6 +55,22 @@ public class Beacon {
         this.networktype = networktype;
     }
 
+    public int getMajor() {
+        return major;
+    }
+
+    public void setMajor(int major) {
+        this.major = major;
+    }
+
+    public int getMinor() {
+        return minor;
+    }
+
+    public void setMinor(int minor) {
+        this.minor = minor;
+    }
+
     public int getChannel() {
         return channel;
     }
@@ -145,8 +79,56 @@ public class Beacon {
         this.channel = channel;
     }
 
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public String getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(String createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public String getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(String createdTime) {
+        this.createdTime = createdTime;
+    }
+
     @Override
     public String toString() {
-        return "Beacon id: " + id;
+        return uuid;
     }
 }
