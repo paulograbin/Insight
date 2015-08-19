@@ -3,10 +3,11 @@ package com.paulograbin.insight.Model;
 /**
  * Created by paulograbin on 15/07/15.
  */
-public class Message implements ModelInterface {
+public class Message implements ModelInterface<Message> {
 
     long id;
     String text;
+
 
     public Message() {
 
@@ -19,6 +20,17 @@ public class Message implements ModelInterface {
     public Message(long id, String text) {
         this.id = id;
         this.text = text;
+    }
+
+
+    @Override
+    public boolean isEqualTo(Message object) {
+        if (object instanceof Message) {
+            if (this.text.equalsIgnoreCase(object.getText()))
+                return true;
+        }
+
+        return false;
     }
 
     @Override

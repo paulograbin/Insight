@@ -4,7 +4,7 @@ package com.paulograbin.insight.Model;
 /**
  * Created by paulograbin on 01/07/15.
  */
-public class Beacon implements ModelInterface {
+public class Beacon implements ModelInterface<Beacon> {
 
     private long id;
     private String uuid;
@@ -20,7 +20,21 @@ public class Beacon implements ModelInterface {
     private String createdDate;
     private String createdTime;
 
+
     public Beacon() { }
+
+
+    @Override
+    public boolean isEqualTo(Beacon object) {
+        if (object instanceof Beacon) {
+            if (this.uuid.equalsIgnoreCase(object.getUUID()) &&
+                    this.major == object.getMajor() &&
+                    this.minor == object.getMinor())
+                return true;
+        }
+
+        return false;
+    }
 
     @Override
     public long getId() {

@@ -8,14 +8,17 @@ import android.util.Log;
 
 import com.paulograbin.insight.DB.Provider.BeaconProvider;
 import com.paulograbin.insight.DB.Provider.MessageProvider;
+import com.paulograbin.insight.DB.Provider.PathProvider;
 import com.paulograbin.insight.DB.Provider.PlaceBeaconProvider;
 import com.paulograbin.insight.DB.Provider.PlaceProvider;
 import com.paulograbin.insight.DB.Table.TableBeacon;
 import com.paulograbin.insight.DB.Table.TableMessage;
+import com.paulograbin.insight.DB.Table.TablePath;
 import com.paulograbin.insight.DB.Table.TablePlace;
 import com.paulograbin.insight.DB.Table.TablePlaceBeacon;
 import com.paulograbin.insight.Model.Beacon;
 import com.paulograbin.insight.Model.Message;
+import com.paulograbin.insight.Model.Path;
 import com.paulograbin.insight.Model.Place;
 import com.paulograbin.insight.Model.PlaceBeacon;
 import com.paulograbin.insight.Util.Util;
@@ -29,7 +32,7 @@ import java.util.Calendar;
  */
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    static final int DATABASE_VERSION = 10;
+    static final int DATABASE_VERSION = 20;
     static final String DATABASE_NAME = "insight.db";
     private static DatabaseHelper mDatabaseHelper;
     private static Context context;
@@ -61,18 +64,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         /*
          * Places
          */
-        Place p1 = new Place("Ponto Inicial");
-        Place p2 = new Place("Ponto Final");
+        Place p1 = new Place("Ponto Inicial", 1);
+        Place p2 = new Place("Ponto Final", 0);
+        Place p3 = new Place("Caminho entre pontos", 1);
 
         PlaceProvider pp = new PlaceProvider(context);
         p1.setId(pp.insert(p1));
         p2.setId(pp.insert(p2));
+        p3.setId(pp.insert(p3));
 
         /*
          * Beacon
          */
         Beacon b1 = new Beacon();
-        b1.setUUID("5D8DE2E5-2C6D-4F3D-8651-DD66B7E4BD3E");
+        b1.setUUID(BeaconProvider.MY_BEACON_UUID);
         b1.setNetworktype(12);
         b1.setMajor(12);
         b1.setMajor(1);
@@ -91,18 +96,57 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         BeaconProvider bp = new BeaconProvider(context);
         b1.setId(bp.insert(b1));
 
+
+        Beacon b2 = new Beacon();
+        b2.setUUID(BeaconProvider.OTHER_BEACON_UUID);
+        b2.setNetworktype(12);
+        b2.setMajor(12);
+        b2.setMajor(1);
+        b2.setChannel(13);
+        b2.setLatitude(39.99);
+        b2.setLongitude(30.00);
+        b2.setLocation("Teste de location");
+        b2.setMessage("Teste de message");
+
+        b2.setCreatedDate(formatDate.format(Calendar.getInstance().getTime()));
+        b2.setCreatedTime(formatTime.format(Calendar.getInstance().getTime()));
+
+        b2.setId(bp.insert(b2));
+
+        Beacon b3 = new Beacon();
+        b3.setUUID(BeaconProvider.FAROL_BEACON);
+        b3.setMajor(1);
+        b3.setMajor(50);
+
+        b3.setId(bp.insert(b3));
+
         /*
          * PlaceBeacon
          */
-        PlaceBeacon pb1 = new PlaceBeacon(p1.getId(), b1.getId());
+        PlaceBeacon pb1 = new PlaceBeacon(p1.getId(), b1.getId(), b1.getUUID());
         PlaceBeaconProvider pbp = new PlaceBeaconProvider(context);
         pb1.setId(pbp.insert(pb1));
+
+
+        PlaceBeacon pb2 = new PlaceBeacon(p2.getId(), b2.getId(), b2.getUUID());
+        pb2.setId(pbp.insert(pb2));
+
+        PlaceBeacon pb3 = new PlaceBeacon(p3.getId(), b3.getId(), b3.getUUID());
+        pb3.setId(pbp.insert(pb3));
+        /*
+         * Path
+         */
+        Path ph1 = new Path(p1.getId(), p3.getId(), 1);
+        Path ph2 = new Path(p3.getId(), p2.getId(), 1);
+        PathProvider ph = new PathProvider(context);
+        ph1.setId(ph.insert(ph1));
+        ph2.setId(ph.insert(ph2));
     }
 
     public static void copiaDB(Context context) {
 
         File source = new File(context.getFilesDir().getParent() + "/databases/" + DatabaseHelper.DATABASE_NAME);
-        File destination = new File("/" + DatabaseHelper.DATABASE_NAME);
+        File destination = new File(context.getFilesDir() + DatabaseHelper.DATABASE_NAME);
 
         try {
             Util.copiaArquivos(source, destination);
@@ -135,6 +179,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         Log.i(TAG, TablePlaceBeacon.TABLE_CREATE_COMMAND);
         db.execSQL(TablePlaceBeacon.TABLE_CREATE_COMMAND);
+
+        Log.i(TAG, TablePath.TABLE_CREATE_COMMAND);
+        db.execSQL(TablePath.TABLE_CREATE_COMMAND);
     }
 
     @Override
@@ -143,6 +190,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TableMessage.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + TablePlace.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + TablePlaceBeacon.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + TablePath.TABLE_NAME);
 
         onCreate(db);
     }

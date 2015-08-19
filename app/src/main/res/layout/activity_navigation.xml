@@ -6,27 +6,31 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.paulograbin.insight.Activity.Lists.ListMessages">
+    tools:context="com.paulograbin.insight.Activity.Navigation">
 
-    <ListView
-        android:id="@+id/messageList"
+    <TextView
+        android:id="@+id/txtCurrentPlace"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/btnNewMessage" />
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:text="Nenhum beacon detectado..."
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <Button
-        android:id="@+id/btnNewMessage"
+        android:id="@+id/btnChooseDestination"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:text="NOVA" />
+        android:text="Choose Destination" />
 
     <Button
-        android:id="@+id/btnApagarMessage"
+        android:id="@+id/btnAdminPanel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:text="Apagar" />
+        android:layout_alignEnd="@+id/txtCurrentPlace"
+        android:layout_alignTop="@+id/btnChooseDestination"
+        android:text="Admin Panel" />
 </RelativeLayout>

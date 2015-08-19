@@ -243,18 +243,22 @@ public class TestPlaceBeaconProvider extends ApplicationTestCase<Application> {
     }
 
     public void testDeleteAllWithRecords() {
-        int countBeforeAdd = pbp.getCount();
+        long countBeforeAdd = pbp.getCount();
 
         insertDummyPlaceBeacon();
 
-        int countAfterAdd = pbp.getCount();
+        long countAfterAdd = pbp.getCount();
 
         pbp.deleteAll();
 
-        int countDeleted = pbp.getCount();
+        long countDeleted = pbp.getCount();
 
         assertEquals(countDeleted, 0);
         assertNotSame(countDeleted, countAfterAdd);
         assertNotSame(countAfterAdd, countBeforeAdd);
+    }
+
+    public void testGetTableName() throws Exception {
+        assertTrue(pbp.getTableName().equals(TablePlaceBeacon.TABLE_NAME));
     }
 }
