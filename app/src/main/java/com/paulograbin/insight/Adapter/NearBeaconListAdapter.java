@@ -27,7 +27,7 @@ public class NearBeaconListAdapter extends ArrayAdapter<Beacon> {
         ViewHolder holder;
         if (convertView == null) {
             LayoutInflater vi = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = vi.inflate(R.layout.list_beacon_item, null);
+            convertView = vi.inflate(R.layout.list_item_beacon, null);
             holder = new ViewHolder(convertView);
             convertView.setTag(holder);
         } else {

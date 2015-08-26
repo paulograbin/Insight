@@ -17,6 +17,7 @@ public class ListPaths extends ListActivity {
     List<Path> paths;
     PathListAdapter mAdapter;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,7 +28,6 @@ public class ListPaths extends ListActivity {
         paths = new ArrayList<>();
         mAdapter = new PathListAdapter(this, paths);
         listView.setAdapter(mAdapter);
-
 
         setContentView(listView);
         refreshList();

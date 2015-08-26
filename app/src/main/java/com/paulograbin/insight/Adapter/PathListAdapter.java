@@ -27,7 +27,7 @@ public class PathListAdapter extends ArrayAdapter<Path> {
         ViewHolder holder;
         if (convertView == null) {
             LayoutInflater vi = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = vi.inflate(R.layout.list_path_item, null);
+            convertView = vi.inflate(R.layout.list_item_path, null);
             holder = new ViewHolder(convertView);
             convertView.setTag(holder);
         } else {

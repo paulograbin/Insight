@@ -5,7 +5,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".MainActivityFragment">
+    tools:context=".MainActivity">
 
     <Button
         android:id="@+id/btnBluetooth"
@@ -45,20 +45,6 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/btnBluetooth"
         android:text="Show beacons" />
-
-    <TextView
-        android:id="@+id/txtBLE"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/btnShowNearBeacons"
-        android:layout_alignParentStart="true" />
-
-    <TextView
-        android:id="@+id/txtBluetooth"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/txtBLE"
-        android:layout_alignParentStart="true" />
 
     <Button
         android:id="@+id/btnShowPlaceBeacons"

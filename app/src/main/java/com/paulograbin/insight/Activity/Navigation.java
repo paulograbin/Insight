@@ -4,16 +4,17 @@ import android.app.Activity;
 import android.content.Intent;
 import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
+import android.os.RemoteException;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.paulograbin.insight.Bluetooth.BeaconLayout;
+import com.paulograbin.insight.Activity.Lists.ListPlaces;
 import com.paulograbin.insight.DB.Provider.PlaceBeaconProvider;
 import com.paulograbin.insight.DB.Provider.PlaceProvider;
-import com.paulograbin.insight.LocationEngine.RouteFinder;
 import com.paulograbin.insight.Model.Place;
 import com.paulograbin.insight.Model.PlaceBeacon;
 import com.paulograbin.insight.R;
@@ -30,15 +31,18 @@ import java.util.Collection;
 
 public class Navigation extends Activity implements BeaconConsumer {
 
-    //    private static final String UNIQUE_RANGING_ID = "FarolBeaconUniqueId";
     public static final String TAG = "Spiga";
+    private static final String UNIQUE_RANGING_ID = "FarolBeaconUniqueId";
+    PlaceProvider pp = new PlaceProvider(this);
+
     Place currentPlace;
     TextView txtCurrentPlace;
     Button btnAdminPanel;
     Button btnChooseDestiny;
-    String texto;
 
     BeaconManager mBeaconManager;
+
+    int selectedOption = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,11 +50,15 @@ public class Navigation extends Activity implements BeaconConsumer {
         setContentView(R.layout.activity_navigation);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+        pp = new PlaceProvider(getApplicationContext());
+
+//        currentPlace = pp.getByID(1L);
+
         btnAdminPanel = (Button) findViewById(R.id.btnAdminPanel);
         btnAdminPanel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                Intent intent = new Intent(getApplicationContext(), AdminPanelActivity.class);
                 startActivity(intent);
             }
         });
@@ -58,18 +66,53 @@ public class Navigation extends Activity implements BeaconConsumer {
         btnChooseDestiny.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RouteFinder rf = new RouteFinder(getApplicationContext(), currentPlace.getId(), 105l);
-                rf.findWayToPlace();
+                if (currentPlace == null) {
+                    Toast.makeText(getBaseContext(), "Não foi possível determinar o local inicial", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+
+                Intent intent = new Intent(getBaseContext(), ListPlaces.class);
+                intent.putExtra("place", currentPlace);
+                startActivityForResult(intent, selectedOption);
             }
         });
 
         txtCurrentPlace = (TextView) findViewById(R.id.txtCurrentPlace);
-        txtCurrentPlace.setText("Nenhum beacon foi detectado ainda...");
-
+        txtCurrentPlace.setText("Nenhum beacon foi detectado ainda... :(");
 
         mBeaconManager = BeaconManager.getInstanceForApplication(this);
-        mBeaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(BeaconLayout.IBEACON.layout()));
+        mBeaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
         mBeaconManager.bind(this);
+    }
+
+    /**
+     * Called when an activity you launched exits, giving you the requestCode
+     * you started it with, the resultCode it returned, and any additional
+     * data from it.  The <var>resultCode</var> will be
+     * {@link #RESULT_CANCELED} if the activity explicitly returned that,
+     * didn't return any result, or crashed during its operation.
+     * <p/>
+     * <p>You will receive this call immediately before onResume() when your
+     * activity is re-starting.
+     * <p/>
+     * <p>This method is never invoked if your activity sets
+     *
+     * @param requestCode The integer request code originally supplied to
+     *                    startActivityForResult(), allowing you to identify who this
+     *                    result came from.
+     * @param resultCode  The integer result code returned by the child activity
+     *                    through its setResult().
+     * @param data        An Intent, which can return result data to the caller
+     *                    (various data can be attached to Intent "extras").
+     * @see #startActivityForResult
+     * @see #createPendingResult
+     * @see #setResult(int)
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.i(TAG, "SelectedOption: " + selectedOption + "; requestCode: " + requestCode);
     }
 
     @Override
@@ -119,17 +162,14 @@ public class Navigation extends Activity implements BeaconConsumer {
                             PlaceBeacon pb = pbp.getByUUID(b.getId1().toString());
                             Log.i(TAG, pb.toString());
 
-                            PlaceProvider pp = new PlaceProvider(getApplicationContext());
-                            Place currentPlace = pp.getByID(pb.getIdPlace());
+                            currentPlace = pp.getByID(pb.getIdPlace());
 
                             Log.i(TAG, "Você está em " + currentPlace.getName());
-
-                            texto = "Você está em " + currentPlace.getName();
 
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    txtCurrentPlace.setText(texto);
+                                    txtCurrentPlace.setText("Você está em " + currentPlace.getName());
                                 }
                             });
                         } catch (SQLiteException e) {
@@ -140,11 +180,11 @@ public class Navigation extends Activity implements BeaconConsumer {
             }
         });
 
-//        try {
-//            mBeaconManager.startRangingBeaconsInRegion(new Region(UNIQUE_RANGING_ID, null, null, null));
-//        } catch (RemoteException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            mBeaconManager.startRangingBeaconsInRegion(new Region(UNIQUE_RANGING_ID, null, null, null));
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     private void updateCurrentPlaceText(Place p) {

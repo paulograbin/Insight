@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.WindowManager;
 
 import com.paulograbin.insight.Adapter.NearBeaconListAdapter;
-import com.paulograbin.insight.Bluetooth.BeaconLayout;
 import com.paulograbin.insight.R;
 
 import org.altbeacon.beacon.Beacon;
@@ -39,7 +38,7 @@ public class ListNearBeacons extends ListActivity implements BeaconConsumer {
         setListAdapter(mAdapter);
 
         mBeaconManager = BeaconManager.getInstanceForApplication(this);
-        mBeaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(BeaconLayout.IBEACON.layout()));
+        mBeaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
         mBeaconManager.bind(this);
     }
 

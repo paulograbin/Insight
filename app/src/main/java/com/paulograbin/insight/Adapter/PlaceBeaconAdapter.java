@@ -28,7 +28,7 @@ public class PlaceBeaconAdapter extends ArrayAdapter<PlaceBeacon> {
         ViewHolder holder;
         if (convertView == null) {
             LayoutInflater vi = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = vi.inflate(R.layout.list_placebeacon_item, null);
+            convertView = vi.inflate(R.layout.list_item_placebeacon, null);
             holder = new ViewHolder(convertView);
             convertView.setTag(holder);
         } else {
