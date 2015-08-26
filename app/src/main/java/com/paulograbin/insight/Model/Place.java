@@ -1,12 +1,14 @@
 package com.paulograbin.insight.Model;
 
+import java.io.Serializable;
+
 /**
  * Created by paulograbin on 06/08/15.
  */
-public class Place implements ModelInterface<Place> {
+public class Place implements ModelInterface<Place>, Serializable {
 
-    public static final int NO_DESTINATION = 0;
-    public static final int FINAL_DESTINATION = 1;
+    public static final int NO_DESTINATION = 0;     // Place is only a way to another place
+    public static final int FINAL_DESTINATION = 1;  // Place can be choosed as destination by the user
 
     long id;
     String name;
@@ -16,6 +18,13 @@ public class Place implements ModelInterface<Place> {
 
 
     public Place() {
+    }
+
+    public Place(String name, int destination, double latitude, double longitude) {
+        this.name = name;
+        this.destination = destination;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public Place(String name, int destination) {
