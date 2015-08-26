@@ -21,9 +21,7 @@ import com.paulograbin.insight.Model.Message;
 import com.paulograbin.insight.Model.Path;
 import com.paulograbin.insight.Model.Place;
 import com.paulograbin.insight.Model.PlaceBeacon;
-import com.paulograbin.insight.Util.Util;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -32,7 +30,7 @@ import java.util.Calendar;
  */
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    static final int DATABASE_VERSION = 20;
+    static final int DATABASE_VERSION = 21;
     static final String DATABASE_NAME = "insight.db";
     private static DatabaseHelper mDatabaseHelper;
     private static Context context;
@@ -54,30 +52,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         /*
          * Mensagens padrão
          */
-        Message m1 = new Message("Você chegou ao seu destino.");
-        Message m2 = new Message("Você está em ");
+        insertStandardMessages();
 
-        MessageProvider mp = new MessageProvider(context);
-        m1.setId(mp.insert(m1));
-        m2.setId(mp.insert(m2));
 
         /*
          * Places
          */
-        Place p1 = new Place("Ponto Inicial", 1);
-        Place p2 = new Place("Ponto Final", 0);
-        Place p3 = new Place("Caminho entre pontos", 1);
+        Place pInitial = new Place("Ponto Inicial", Place.FINAL_DESTINATION, -29.78440, -51.14400);
+        Place pMid = new Place("Caminho entre pontos", Place.NO_DESTINATION, -29.91305, -51.18932);
+        Place pNowhere = new Place("Nowhere", Place.NO_DESTINATION, -29.99447, -50.78694);
+        Place pEnd = new Place("Ponto Final", Place.FINAL_DESTINATION, -30.03201, -51.21678);
 
         PlaceProvider pp = new PlaceProvider(context);
-        p1.setId(pp.insert(p1));
-        p2.setId(pp.insert(p2));
-        p3.setId(pp.insert(p3));
+        pInitial.setId(pp.insert(pInitial));
+        pMid.setId(pp.insert(pMid));
+        pEnd.setId(pp.insert(pEnd));
+        pNowhere.setId(pp.insert(pNowhere));
+
 
         /*
          * Beacon
          */
         Beacon b1 = new Beacon();
-        b1.setUUID(BeaconProvider.MY_BEACON_UUID);
+        b1.setUUID(BeaconProvider.FAROL_BEACON);
         b1.setNetworktype(12);
         b1.setMajor(12);
         b1.setMajor(1);
@@ -98,7 +95,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
         Beacon b2 = new Beacon();
-        b2.setUUID(BeaconProvider.OTHER_BEACON_UUID);
+        b2.setUUID(BeaconProvider.MY_BEACON_UUID);
         b2.setNetworktype(12);
         b2.setMajor(12);
         b2.setMajor(1);
@@ -114,46 +111,51 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         b2.setId(bp.insert(b2));
 
         Beacon b3 = new Beacon();
-        b3.setUUID(BeaconProvider.FAROL_BEACON);
+        b3.setUUID(BeaconProvider.OTHER_BEACON_UUID);
         b3.setMajor(1);
         b3.setMajor(50);
 
         b3.setId(bp.insert(b3));
 
+
         /*
          * PlaceBeacon
          */
-        PlaceBeacon pb1 = new PlaceBeacon(p1.getId(), b1.getId(), b1.getUUID());
+        PlaceBeacon pb1 = new PlaceBeacon(pInitial.getId(), b1.getId(), b1.getUUID());
         PlaceBeaconProvider pbp = new PlaceBeaconProvider(context);
         pb1.setId(pbp.insert(pb1));
 
 
-        PlaceBeacon pb2 = new PlaceBeacon(p2.getId(), b2.getId(), b2.getUUID());
+        PlaceBeacon pb2 = new PlaceBeacon(pEnd.getId(), b2.getId(), b2.getUUID());
         pb2.setId(pbp.insert(pb2));
 
-        PlaceBeacon pb3 = new PlaceBeacon(p3.getId(), b3.getId(), b3.getUUID());
+        PlaceBeacon pb3 = new PlaceBeacon(pMid.getId(), b3.getId(), b3.getUUID());
         pb3.setId(pbp.insert(pb3));
+
+
         /*
          * Path
          */
-        Path ph1 = new Path(p1.getId(), p3.getId(), 1);
-        Path ph2 = new Path(p3.getId(), p2.getId(), 1);
+        Path ph1 = new Path(pInitial.getId(), pMid.getId(), 1);     // 10   20
+        Path ph3 = new Path(pInitial.getId(), pNowhere.getId(), 1); // 10   30
+        Path ph2 = new Path(pMid.getId(), pEnd.getId(), 1);         // 20   40
+        Path ph4 = new Path(pMid.getId(), pNowhere.getId(), 1);
+
+
         PathProvider ph = new PathProvider(context);
         ph1.setId(ph.insert(ph1));
         ph2.setId(ph.insert(ph2));
+        ph3.setId(ph.insert(ph3));
+        ph4.setId(ph.insert(ph4));
     }
 
-    public static void copiaDB(Context context) {
+    private static void insertStandardMessages() {
+        Message m1 = new Message("Você chegou ao seu destino.");
+        Message m2 = new Message("Você está em ");
 
-        File source = new File(context.getFilesDir().getParent() + "/databases/" + DatabaseHelper.DATABASE_NAME);
-        File destination = new File(context.getFilesDir() + DatabaseHelper.DATABASE_NAME);
-
-        try {
-            Util.copiaArquivos(source, destination);
-        } catch (Exception e) {
-//            Toast.makeText(context, "ops" + e.getClass().toString(), Toast.LENGTH_LONG).show();
-            Log.e("Spiga", e.getLocalizedMessage());
-        }
+        MessageProvider mp = new MessageProvider(context);
+        m1.setId(mp.insert(m1));
+        m2.setId(mp.insert(m2));
     }
 
     @Override
