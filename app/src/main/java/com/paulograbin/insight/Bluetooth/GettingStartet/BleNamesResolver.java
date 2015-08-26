@@ -5,11 +5,11 @@ import android.util.SparseArray;
 import java.util.HashMap;
 
 public class BleNamesResolver {
-    private static HashMap<String, String> mServices = new HashMap<String, String>();
-    private static HashMap<String, String> mCharacteristics = new HashMap<String, String>();
-    private static SparseArray<String> mValueFormats = new SparseArray<String>();
-    private static SparseArray<String> mAppearance = new SparseArray<String>();
-    private static SparseArray<String> mHeartRateSensorLocation = new SparseArray<String>();
+    private static HashMap<String, String> mServices = new HashMap<>();
+    private static HashMap<String, String> mCharacteristics = new HashMap<>();
+    private static SparseArray<String> mValueFormats = new SparseArray<>();
+    private static SparseArray<String> mAppearance = new SparseArray<>();
+    private static SparseArray<String> mHeartRateSensorLocation = new SparseArray<>();
 
     static {
         mServices.put("00001811-0000-1000-8000-00805f9b34fb", "Alert Notification Service");
