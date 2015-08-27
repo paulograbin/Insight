@@ -12,6 +12,7 @@ public class Place implements ModelInterface<Place>, Serializable {
 
     long id;
     String name;
+    String description;
     int destination;
     double latitude;
     double longitude;
@@ -20,21 +21,24 @@ public class Place implements ModelInterface<Place>, Serializable {
     public Place() {
     }
 
-    public Place(String name, int destination, double latitude, double longitude) {
+    public Place(String name, String description, int destination, double latitude, double longitude) {
         this.name = name;
+        this.description = description;
         this.destination = destination;
         this.latitude = latitude;
         this.longitude = longitude;
     }
 
-    public Place(String name, int destination) {
+    public Place(String name, String description, int destination) {
         this.name = name;
+        this.description = description;
         this.destination = destination;
     }
 
-    public Place(long id, String name, int destination, double latitude, double longitude) {
+    public Place(long id, String name, String description, int destination, double latitude, double longitude) {
         this.id = id;
         this.name = name;
+        this.description = description;
         this.destination = destination;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -68,6 +72,14 @@ public class Place implements ModelInterface<Place>, Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public double getLatitude() {

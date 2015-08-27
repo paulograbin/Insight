@@ -30,7 +30,7 @@ import java.util.Calendar;
  */
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    static final int DATABASE_VERSION = 21;
+    static final int DATABASE_VERSION = 22;
     static final String DATABASE_NAME = "insight.db";
     private static DatabaseHelper mDatabaseHelper;
     private static Context context;
@@ -58,10 +58,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         /*
          * Places
          */
-        Place pInitial = new Place("Ponto Inicial", Place.FINAL_DESTINATION, -29.78440, -51.14400);
-        Place pMid = new Place("Caminho entre pontos", Place.NO_DESTINATION, -29.91305, -51.18932);
-        Place pNowhere = new Place("Nowhere", Place.NO_DESTINATION, -29.99447, -50.78694);
-        Place pEnd = new Place("Ponto Final", Place.FINAL_DESTINATION, -30.03201, -51.21678);
+        Place pInitial = new Place("Ponto Inicial", "Um ponto no inicio mapa",Place.FINAL_DESTINATION, -29.78440, -51.14400);
+        Place pMid = new Place("Caminho entre pontos", "Um caminho no meio do mapa", Place.NO_DESTINATION, -29.91305, -51.18932);
+        Place pNowhere = new Place("Nowhere", "Algum lugar perdido", Place.NO_DESTINATION, -29.99447, -50.78694);
+        Place pEnd = new Place("Ponto Final", "Um ponto no fim do mapa", Place.FINAL_DESTINATION, -30.03201, -51.21678);
 
         PlaceProvider pp = new PlaceProvider(context);
         pInitial.setId(pp.insert(pInitial));

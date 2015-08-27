@@ -31,7 +31,8 @@ public class PlaceProvider extends AbstractProvider<Place> {
         Place p = new Place();
 
         p.setName("Buraco no chão 1");
-        p.setDestination(1);
+        p.setDescription("Um simples buraco");
+        p.setDestination(Place.FINAL_DESTINATION);
         p.setLatitude(39);
         p.setLongitude(39);
 
@@ -43,7 +44,9 @@ public class PlaceProvider extends AbstractProvider<Place> {
         printToLog("Obtendo contentValues do place " + place.getName());
 
         ContentValues cv = new ContentValues();
+
         cv.put(TablePlace.COLUMN_NAME, place.getName());
+        cv.put(TablePlace.COLUMN_DESCRIPTION, place.getDescription());
         cv.put(TablePlace.COLUMN_DESTINATION, place.getDestination());
         cv.put(TablePlace.COLUMN_LATITUDE, place.getLatitude());
         cv.put(TablePlace.COLUMN_LONGITUDE, place.getLongitude());
@@ -54,7 +57,7 @@ public class PlaceProvider extends AbstractProvider<Place> {
     public List<Place> getAllDestinationPlaces() {
         printToLog("Obtendo os registros de " + getTableName());
 
-        List<Place> places = new ArrayList<Place>();
+        List<Place> places = new ArrayList<>();
         SQLiteDatabase db = mDatabaseHelper.getReadableDatabase();
 
         String query = "SELECT * FROM " + getTableName() + " WHERE " + TablePlace.COLUMN_DESTINATION + "= 1;";
@@ -72,7 +75,7 @@ public class PlaceProvider extends AbstractProvider<Place> {
     public List<Place> getAllNonDestinationPlaces() {
         printToLog("Obtendo os registros de " + getTableName());
 
-        List<Place> places = new ArrayList<Place>();
+        List<Place> places = new ArrayList<>();
         SQLiteDatabase db = mDatabaseHelper.getReadableDatabase();
 
         String query = "SELECT * FROM " + getTableName() + " WHERE " + TablePlace.COLUMN_DESTINATION + "= 0;";
@@ -98,6 +101,7 @@ public class PlaceProvider extends AbstractProvider<Place> {
 
         p.setId(c.getLong(i++));
         p.setName(c.getString(i++));
+        p.setDescription(c.getString(i++));
         p.setDestination(c.getInt(i++));
         p.setLatitude(c.getDouble(i++));
         p.setLongitude(c.getDouble(i++));
