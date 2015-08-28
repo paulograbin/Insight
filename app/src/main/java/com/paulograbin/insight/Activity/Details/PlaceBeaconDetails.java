@@ -19,11 +19,7 @@ public class PlaceBeaconDetails extends AppCompatActivity {
     Place p;
     Beacon b;
 
-    EditText PlaceBeaconId;
-    EditText PlaceID;
-    EditText PlaceName;
-    EditText BeaconID;
-    EditText BeaconUUID;
+    EditText editPlaceBeaconId, editPlaceID, editPlaceName, editBeaconID, editBeaconUUID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,8 +27,8 @@ public class PlaceBeaconDetails extends AppCompatActivity {
         setContentView(R.layout.details_placebeacon);
 
         Intent intent = this.getIntent();
-        if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
-            long id = intent.getLongExtra(Intent.EXTRA_TEXT, 1);
+        if (intent != null && intent.hasExtra("placeBeaconId")) {
+            long id = intent.getLongExtra("placeBeaconId", 1);
 
             PlaceBeaconProvider pbp = new PlaceBeaconProvider(this);
             pb = pbp.getByID(id);
@@ -44,16 +40,16 @@ public class PlaceBeaconDetails extends AppCompatActivity {
             b = bp.getByID(pb.getIdBeacon());
         }
 
-        PlaceBeaconId = (EditText) findViewById(R.id.textIDPlaceBeacon);
-        PlaceID = (EditText) findViewById(R.id.textIDPlace);
-        PlaceName = (EditText) findViewById(R.id.textPlaceName);
-        BeaconID = (EditText) findViewById(R.id.textBeaconID);
-        BeaconUUID = (EditText) findViewById(R.id.textBeaconUUID);
+        editPlaceBeaconId = (EditText) findViewById(R.id.textIDPlaceBeacon);
+        editPlaceID = (EditText) findViewById(R.id.textIDPlace);
+        editPlaceName = (EditText) findViewById(R.id.textPlaceName);
+        editBeaconID = (EditText) findViewById(R.id.textBeaconID);
+        editBeaconUUID = (EditText) findViewById(R.id.textBeaconUUID);
 
-        PlaceBeaconId.setText("" + pb.getId());
-        PlaceID.setText(p.getId() + "");
-        PlaceName.setText(p.getName());
-        BeaconID.setText(b.getId() + "");
-        BeaconUUID.setText(b.getUUID() + "");
+        editPlaceBeaconId.setText("" + pb.getId());
+        editPlaceID.setText(p.getId() + "");
+        editPlaceName.setText(p.getName());
+        editBeaconID.setText(b.getId() + "");
+        editBeaconUUID.setText(b.getUUID() + "");
     }
 }

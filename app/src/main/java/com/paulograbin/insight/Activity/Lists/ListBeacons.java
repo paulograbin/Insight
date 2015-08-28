@@ -26,7 +26,7 @@ public class ListBeacons extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mArrayAdapter = new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_list_item_1, new ArrayList<String>());
+        mArrayAdapter = new ArrayAdapter<>(getBaseContext(), android.R.layout.simple_list_item_1, new ArrayList<String>());
 
         listView = new ListView(this);
         listView.setAdapter(mArrayAdapter);
@@ -35,17 +35,17 @@ public class ListBeacons extends ActionBarActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(getBaseContext(), mArrayAdapter.getItem(position), Toast.LENGTH_SHORT).show();
-
-                Intent intent = new Intent(getBaseContext(), BeaconDetails.class)
-                        .putExtra(Intent.EXTRA_TEXT, mArrayAdapter.getItem(position));
-                startActivity(intent);
             }
         });
 
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                return false;
+                Intent intent = new Intent(getBaseContext(), BeaconDetails.class)
+                        .putExtra(Intent.EXTRA_TEXT, mArrayAdapter.getItem(position));
+                startActivity(intent);
+
+                return true;
             }
         });
 
