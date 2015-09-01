@@ -1,61 +1,130 @@
 package com.paulograbin.insight.Bluetooth;
 
-import android.app.Service;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothManager;
+import android.app.IntentService;
 import android.content.Intent;
+import android.os.Binder;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
+import android.os.RemoteException;
+import android.util.Log;
+
+import org.altbeacon.beacon.Beacon;
+import org.altbeacon.beacon.BeaconConsumer;
+import org.altbeacon.beacon.BeaconManager;
+import org.altbeacon.beacon.BeaconParser;
+import org.altbeacon.beacon.RangeNotifier;
+import org.altbeacon.beacon.Region;
+
+import java.util.Collection;
 
 /**
  * Created by paulograbin on 01/08/15.
  */
-public class BluetoothService extends Service {
+public class BluetoothService extends IntentService implements BeaconConsumer {
 
-    private BluetoothManager mBluetoothManager;
-    private BluetoothAdapter mBluetoothAdapter;
+    private final IBinder mBinder = new LocalBinder();
+    private BeaconManager mBeaconManager;
+    private Beacon mLastSeenBeacon;
+    private int mBindCount = 0;
+    private boolean debug = true;
 
-//    private void verifyBluetooth() {
-//
-//        try {
-//            if (!BeaconManager.getInstanceForApplication(this).checkAvailability()) {
-//                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//                builder.setTitle("Bluetooth not enabled");
-//                builder.setMessage("Please enable bluetooth in settings and restart this application.");
-//                builder.setPositiveButton(android.R.string.ok, null);
-//                builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-//                    @Override
-//                    public void onDismiss(DialogInterface dialog) {
-//                        finish();
-//                        System.exit(0);
-//                    }
-//                });
-//                builder.show();
-//            }
-//        }
-//        catch (RuntimeException e) {
-//            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//            builder.setTitle("Bluetooth LE not available");
-//            builder.setMessage("Sorry, this device does not support Bluetooth LE.");
-//            builder.setPositiveButton(android.R.string.ok, null);
-//            builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-//
-//                @Override
-//                public void onDismiss(DialogInterface dialog) {
-//                    finish();
-//                    System.exit(0);
-//                }
-//
-//            });
-//            builder.show();
-//
-//        }
-//
-//    }
 
-    @Nullable
+    public BluetoothService() {
+        super("myBluetoothService");
+    }
+
+    public int getBindCount() {
+        return mBindCount;
+    }
+
+    public Beacon getLastSeenBeacon() {
+        return mLastSeenBeacon;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        printToLog("Serviço criado...");
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        printToLog("Serviço started with command");
+
+        mBeaconManager = BeaconManager.getInstanceForApplication(this);
+        mBeaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
+        mBeaconManager.bind(this);
+
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        printToLog("Serviço destruído...");
+
+        mBeaconManager.unbind(this);
+    }
+
+    @Override
+    public void onBeaconServiceConnect() {
+        printToLog("onBeaconServiceConnected");
+
+        mBeaconManager.setRangeNotifier(new RangeNotifier() {
+            @Override
+            public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
+                if (beacons.size() == 1) {
+//                    printToLog(beacons.size() + " beacon encontrado.");
+
+                    Beacon beacon = beacons.iterator().next();
+                    if (!beacon.equals(mLastSeenBeacon)) {
+                        printToLog("Novo beacon detectado, " + beacon.getId1().toString());
+                        mLastSeenBeacon = beacon;
+                    } else {
+//                        printToLog("Mesmo beacon...");
+                    }
+
+
+                } else if (beacons.size() > 1) {
+                    printToLog(beacons.size() + " beacons encontrado.");
+                }
+            }
+        });
+
+        try {
+            mBeaconManager.startRangingBeaconsInRegion(new Region("teste", null, null, null));
+        } catch (RemoteException e) {
+            printToLog(e.getMessage() + e.toString());
+        }
+    }
+
+    @Override
+    protected void onHandleIntent(Intent intent) {
+        printToLog("On handle intent...");
+    }
+
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        printToLog("Bindaram");
+        mBindCount++;
+        return mBinder;
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        printToLog("Desbindaram");
+        mBindCount--;
+        return super.onUnbind(intent);
+    }
+
+    private void printToLog(String msg) {
+        if (debug)
+            Log.i("Spiga", msg);
+    }
+
+    public class LocalBinder extends Binder {
+        public BluetoothService getService() {
+            // Return this instance of LocalService so clients can call public methods
+            return BluetoothService.this;
+        }
     }
 }
