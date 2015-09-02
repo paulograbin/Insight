@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import org.altbeacon.beacon.Beacon;
@@ -15,17 +17,22 @@ import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 
 import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * Created by paulograbin on 01/08/15.
  */
 public class BluetoothService extends IntentService implements BeaconConsumer {
 
+    public static final String FOUND_NEW_BEACON_EVENT = "foundNewBeacon";
+    public static final String BEACON_KEY = "beacon";
+    public static final String LOG_TAG = "bluetoothService";
+
     private final IBinder mBinder = new LocalBinder();
     private BeaconManager mBeaconManager;
     private Beacon mLastSeenBeacon;
-    private int mBindCount = 0;
-    private boolean debug = true;
+    private int mBindCount;
+    private boolean debugServiceExecution = true;
 
 
     public BluetoothService() {
@@ -43,6 +50,7 @@ public class BluetoothService extends IntentService implements BeaconConsumer {
     @Override
     public void onCreate() {
         super.onCreate();
+        mBindCount = 0;
         printToLog("Serviço criado...");
     }
 
@@ -72,21 +80,12 @@ public class BluetoothService extends IntentService implements BeaconConsumer {
         mBeaconManager.setRangeNotifier(new RangeNotifier() {
             @Override
             public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
-                if (beacons.size() == 1) {
-//                    printToLog(beacons.size() + " beacon encontrado.");
+                if (beacons.size() == 0)
+                    return;
 
-                    Beacon beacon = beacons.iterator().next();
-                    if (!beacon.equals(mLastSeenBeacon)) {
-                        printToLog("Novo beacon detectado, " + beacon.getId1().toString());
-                        mLastSeenBeacon = beacon;
-                    } else {
-//                        printToLog("Mesmo beacon...");
-                    }
+                Beacon closerBeacon = getCloserBeacon(beacons);
 
-
-                } else if (beacons.size() > 1) {
-                    printToLog(beacons.size() + " beacons encontrado.");
-                }
+                onCloserBeaconFound(closerBeacon);
             }
         });
 
@@ -97,16 +96,47 @@ public class BluetoothService extends IntentService implements BeaconConsumer {
         }
     }
 
-    @Override
-    protected void onHandleIntent(Intent intent) {
-        printToLog("On handle intent...");
+    @Nullable
+    private Beacon getCloserBeacon(Collection<Beacon> beacons) {
+        printToLog("getCloserBeacon foi chamado com " + beacons.size() + " beacons.");
+
+        if (beacons.size() == 1) {
+            return beacons.iterator().next();
+        }
+
+        Iterator<Beacon> i = beacons.iterator();
+
+        Beacon closerBeacon = i.next();
+        printToLog("Assumindo beacon mais proximo: " + closerBeacon.getId1().toString());
+
+        while (i.hasNext()) {
+            printToLog("Verificando se existe beacon ainda mais proximo...");
+            Beacon auxBeacon = i.next();
+
+            if (closerBeacon.getDistance() > auxBeacon.getDistance()) {
+                closerBeacon = auxBeacon;
+                printToLog("Assumindo novo beacon mais proximo: " + closerBeacon.getId1().toString());
+            }
+        }
+
+        return closerBeacon;
+    }
+
+    private void onCloserBeaconFound(Beacon beacon) {
+        if (!beacon.equals(mLastSeenBeacon)) {
+            printToLog("Ultimo beacon encontrado é " + beacon.getId1().toString());
+            mLastSeenBeacon = beacon;
+
+            printToLog("Enviando broadcast");
+            Intent intent = new Intent(FOUND_NEW_BEACON_EVENT);
+            intent.putExtra(BEACON_KEY, mLastSeenBeacon);
+            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        }
     }
 
     @Override
-    public IBinder onBind(Intent intent) {
-        printToLog("Bindaram");
-        mBindCount++;
-        return mBinder;
+    protected void onHandleIntent(Intent intent) {
+        printToLog("On handle intent...");
     }
 
     @Override
@@ -117,8 +147,15 @@ public class BluetoothService extends IntentService implements BeaconConsumer {
     }
 
     private void printToLog(String msg) {
-        if (debug)
-            Log.i("Spiga", msg);
+        if (debugServiceExecution)
+            Log.i(LOG_TAG, msg);
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        printToLog("Bindaram");
+        mBindCount++;
+        return mBinder;
     }
 
     public class LocalBinder extends Binder {
