@@ -26,5 +26,6 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="no_beacon_detected">Position not determined yet</string>
     <string name="admin_panel">Admin Panel</string>
+    <string name="distance">Distance:</string>
 
 </resources>

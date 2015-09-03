@@ -30,9 +30,9 @@
         android:id="@+id/btnAdminPanel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/txtCurrentPlace"
-        android:layout_alignTop="@+id/btnChooseDestination"
-        android:text="@string/admin_panel" />
+        android:text="@string/admin_panel"
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@+id/btnChooseDestination" />
 
     <ListView
         android:layout_width="wrap_content"
@@ -42,5 +42,13 @@
         android:layout_alignParentStart="true"
         android:layout_above="@+id/btnChooseDestination"
         android:choiceMode="none" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Chamar ajuda"
+        android:id="@+id/btnCallHelp"
+        android:layout_below="@+id/list"
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>
