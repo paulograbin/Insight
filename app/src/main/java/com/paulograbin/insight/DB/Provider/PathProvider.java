@@ -48,6 +48,24 @@ public class PathProvider extends AbstractProvider<Path> {
         return paths;
     }
 
+//    public List<Place> getAllConnectionsOfAPlace(long placeId) {
+//        String query = "Select * " +
+//                "from " + getTableName() +
+//                " where " + TablePath.COLUMN_PLACE + " = " + placeId;
+//
+//        SQLiteDatabase db = mDatabaseHelper.getReadableDatabase();
+//        Cursor c = db.rawQuery(query, null);
+//
+//        Path p;
+//
+//        while (c.moveToNext()) {
+//            p = getFromCursor(c);
+//            paths.add(getFromCursor(c));
+//        }
+//
+//        return paths;
+//    }
+
     public List<Path> getAllPlacesConnectedTo(long placeId) {
         List<Path> paths = new ArrayList<>();
 

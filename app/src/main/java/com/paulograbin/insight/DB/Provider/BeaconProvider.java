@@ -40,7 +40,6 @@ public class BeaconProvider extends AbstractProvider<Beacon> {
         b.setLatitude(39.99);
         b.setLongitude(30.00);
         b.setLocation("Teste de location");
-        b.setMessage("Teste de message");
 
         SimpleDateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat formatTime = new SimpleDateFormat("HH:mm:ss");
@@ -75,7 +74,6 @@ public class BeaconProvider extends AbstractProvider<Beacon> {
         b.setLocation(c.getString(i++));
         b.setLatitude(c.getDouble(i++));
         b.setLongitude(c.getDouble(i++));
-        b.setMessage(c.getString(i++));
         b.setCreatedDate(c.getString(i++));
         b.setCreatedTime(c.getString(i++));
 
@@ -95,7 +93,6 @@ public class BeaconProvider extends AbstractProvider<Beacon> {
         cv.put(TableBeacon.COLUMN_LONGITUDE, beacon.getLongitude());
         cv.put(TableBeacon.COLUMN_CREATED_DATE, beacon.getCreatedDate());
         cv.put(TableBeacon.COLUMN_CREATED_TIME, beacon.getCreatedTime());
-        cv.put(TableBeacon.COLUMN_MESSAGE, beacon.getMessage());
         cv.put(TableBeacon.COLUMN_NAME, beacon.getName());
         cv.put(TableBeacon.COLUMN_NETWORKTYPE, beacon.getNetworktype());
         cv.put(TableBeacon.COLUMN_MAJOR, beacon.getMajor());
@@ -109,7 +106,7 @@ public class BeaconProvider extends AbstractProvider<Beacon> {
 
     public Beacon getByUUID(String uuid) throws SQLiteException {
         printToLog("Buscando beacon a partir do UUID " + uuid);
-        Beacon b = null;
+        Beacon b;
 
         SQLiteDatabase db = mDatabaseHelper.getReadableDatabase();
         Cursor c = db.rawQuery("SELECT * FROM " + TableBeacon.TABLE_NAME + " WHERE " + TableBeacon.COLUMN_UUID + " LIKE \"" + uuid + "\"", null);

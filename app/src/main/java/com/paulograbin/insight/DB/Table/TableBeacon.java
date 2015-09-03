@@ -19,7 +19,6 @@ public abstract class TableBeacon implements BaseColumns, DBUtils {
     public static String COLUMN_LOCATION = "location";
     public static String COLUMN_LATITUDE = "latitude";
     public static String COLUMN_LONGITUDE = "longitude";
-    public static String COLUMN_MESSAGE = "message";
     public static String COLUMN_CREATED_DATE = "createdDate";
     public static String COLUMN_CREATED_TIME = "createdTime";
 
@@ -35,7 +34,6 @@ public abstract class TableBeacon implements BaseColumns, DBUtils {
                     COLUMN_LOCATION + TYPE_TEXT + COMMA_SEPARATOR +
                     COLUMN_LATITUDE + TYPE_DOUBLE + COMMA_SEPARATOR +
                     COLUMN_LONGITUDE + TYPE_DOUBLE + COMMA_SEPARATOR +
-                    COLUMN_MESSAGE + TYPE_TEXT + COMMA_SEPARATOR +
                     COLUMN_CREATED_DATE + TYPE_DATETIME + COMMA_SEPARATOR +
                     COLUMN_CREATED_TIME + TYPE_DATETIME +
                     ")";

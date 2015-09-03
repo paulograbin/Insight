@@ -32,6 +32,7 @@ public class PlaceProvider extends AbstractProvider<Place> {
 
         p.setName("Buraco no chão 1");
         p.setDescription("Um simples buraco");
+        p.setMessage("Teste de mensagem dummy");
         p.setDestination(Place.FINAL_DESTINATION);
         p.setLatitude(39);
         p.setLongitude(39);
@@ -40,16 +41,17 @@ public class PlaceProvider extends AbstractProvider<Place> {
     }
 
     @Override
-    public ContentValues getContentValues(Place place) {
-        printToLog("Obtendo contentValues do place " + place.getName());
+    public ContentValues getContentValues(Place p) {
+        printToLog("Obtendo contentValues do place " + p.getName());
 
         ContentValues cv = new ContentValues();
 
-        cv.put(TablePlace.COLUMN_NAME, place.getName());
-        cv.put(TablePlace.COLUMN_DESCRIPTION, place.getDescription());
-        cv.put(TablePlace.COLUMN_DESTINATION, place.getDestination());
-        cv.put(TablePlace.COLUMN_LATITUDE, place.getLatitude());
-        cv.put(TablePlace.COLUMN_LONGITUDE, place.getLongitude());
+        cv.put(TablePlace.COLUMN_NAME, p.getName());
+        cv.put(TablePlace.COLUMN_DESCRIPTION, p.getDescription());
+        cv.put(TablePlace.COLUMN_MESSAGE, p.getMessage());
+        cv.put(TablePlace.COLUMN_DESTINATION, p.getDestination());
+        cv.put(TablePlace.COLUMN_LATITUDE, p.getLatitude());
+        cv.put(TablePlace.COLUMN_LONGITUDE, p.getLongitude());
 
         return cv;
     }
@@ -102,6 +104,7 @@ public class PlaceProvider extends AbstractProvider<Place> {
         p.setId(c.getLong(i++));
         p.setName(c.getString(i++));
         p.setDescription(c.getString(i++));
+        p.setMessage(c.getString(i++));
         p.setDestination(c.getInt(i++));
         p.setLatitude(c.getDouble(i++));
         p.setLongitude(c.getDouble(i++));

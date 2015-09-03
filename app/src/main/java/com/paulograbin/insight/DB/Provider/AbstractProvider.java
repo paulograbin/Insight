@@ -20,9 +20,8 @@ import java.util.List;
 public abstract class AbstractProvider<M extends ModelInterface> implements ProviderInterface<M> {
 
     DatabaseHelper mDatabaseHelper;
-    private String LOG_TAG = "Spiga";
 
-    public AbstractProvider(Context context) {
+    AbstractProvider(Context context) {
         mDatabaseHelper = DatabaseHelper.getInstance(context);
     }
 
@@ -47,7 +46,7 @@ public abstract class AbstractProvider<M extends ModelInterface> implements Prov
         cursor.close();
         db.close();
 
-        Log.i(LOG_TAG, "Tabela " + getTableName() + " tem " + count + " registros");
+        printToLog("Tabela " + getTableName() + " tem " + count + " registros");
         return count;
     }
 
@@ -61,14 +60,14 @@ public abstract class AbstractProvider<M extends ModelInterface> implements Prov
 
         db.close();
 
-        Log.i(LOG_TAG, "Novo registro inserido em " + getTableName() + ", id " + newID);
+        printToLog("Novo registro inserido em " + getTableName() + ", id " + newID);
         return newID;
     }
 
     @Override
     public M getByID(long id) {
         printToLog("Obtendo registro de " + getTableName() + " através do id " + id);
-        M object = null;
+        M object;
 
         SQLiteDatabase db = mDatabaseHelper.getReadableDatabase();
         Cursor c = db.rawQuery("SELECT * FROM " + getTableName() + " WHERE " + BaseColumns._ID + " = " + id, null);
@@ -89,7 +88,7 @@ public abstract class AbstractProvider<M extends ModelInterface> implements Prov
     public List<M> getAll() {
         printToLog("Obtendo os registros de " + getTableName());
 
-        List<M> beacons = new ArrayList<M>();
+        List<M> beacons = new ArrayList<>();
         SQLiteDatabase db = mDatabaseHelper.getReadableDatabase();
 
         String query = "SELECT * FROM " + getTableName() + ";";
@@ -108,7 +107,7 @@ public abstract class AbstractProvider<M extends ModelInterface> implements Prov
     public int update(M object) {
         printToLog("Atualizando registro em " + getTableName() + ", id: " + object.getId());
 
-        int affectedRows = 0;
+        int affectedRows;
         SQLiteDatabase db = mDatabaseHelper.getWritableDatabase();
         ContentValues cv = getContentValues(object);
 
@@ -149,6 +148,7 @@ public abstract class AbstractProvider<M extends ModelInterface> implements Prov
 
     @Override
     public void printToLog(String msg) {
+        String LOG_TAG = "Database";
         Log.i(LOG_TAG, msg);
     }
 }

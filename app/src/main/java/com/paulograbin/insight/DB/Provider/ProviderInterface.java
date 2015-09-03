@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by paulograbin on 24/07/15.
  */
-interface ProviderInterface<T> {
+public interface ProviderInterface<T> {
 
     T getDummy();
 

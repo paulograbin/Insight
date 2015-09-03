@@ -16,7 +16,6 @@ public class Beacon implements ModelInterface<Beacon> {
     private String location;
     private double latitude;
     private double longitude;
-    private String message;
     private String createdDate;
     private String createdTime;
 
@@ -115,14 +114,6 @@ public class Beacon implements ModelInterface<Beacon> {
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
     }
 
     public String getCreatedDate() {

@@ -61,7 +61,7 @@ public class PlaceBeaconProvider extends AbstractProvider<PlaceBeacon> {
 
     public PlaceBeacon getByUUID(String UUID) {
         printToLog("Buscando PlaceBeacon a partir do UUID " + UUID);
-        PlaceBeacon pb = null;
+        PlaceBeacon pb;
 
         SQLiteDatabase db = mDatabaseHelper.getReadableDatabase();
         Cursor c = db.rawQuery("SELECT * FROM " + TablePlaceBeacon.TABLE_NAME + " WHERE " + TablePlaceBeacon.COLUMN_UUID + " LIKE \"" + UUID + "\"", null);

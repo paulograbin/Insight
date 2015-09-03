@@ -13,6 +13,7 @@ public class Place implements ModelInterface<Place>, Serializable {
     long id;
     String name;
     String description;
+    String message;
     int destination;
     double latitude;
     double longitude;
@@ -21,7 +22,7 @@ public class Place implements ModelInterface<Place>, Serializable {
     public Place() {
     }
 
-    public Place(String name, String description, int destination, double latitude, double longitude) {
+    public Place(String name, String description, String message, int destination, double latitude, double longitude) {
         this.name = name;
         this.description = description;
         this.destination = destination;
@@ -80,6 +81,14 @@ public class Place implements ModelInterface<Place>, Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public double getLatitude() {

@@ -12,6 +12,7 @@ public abstract class TablePlace implements BaseColumns, DBUtils {
     public static String COLUMN_ID = BaseColumns._ID;
     public static String COLUMN_NAME = "name";
     public static String COLUMN_DESCRIPTION = "description";
+    public static String COLUMN_MESSAGE = "message";
     public static String COLUMN_DESTINATION = "destination";
     public static String COLUMN_LATITUDE = "latitude";
     public static String COLUMN_LONGITUDE = "longitude";
@@ -21,6 +22,7 @@ public abstract class TablePlace implements BaseColumns, DBUtils {
                     COLUMN_ID + TYPE_INTEGER + PRIMARY_KEY + AUTOINCREMENT + COMMA_SEPARATOR +
                     COLUMN_NAME + TYPE_TEXT + COMMA_SEPARATOR +
                     COLUMN_DESCRIPTION + TYPE_TEXT + COMMA_SEPARATOR +
+                    COLUMN_MESSAGE + TYPE_TEXT + COMMA_SEPARATOR +
                     COLUMN_DESTINATION + TYPE_TEXT + COMMA_SEPARATOR +
                     COLUMN_LATITUDE + TYPE_TEXT + COMMA_SEPARATOR +
                     COLUMN_LONGITUDE + TYPE_DOUBLE + ")";

@@ -3,7 +3,7 @@ package com.paulograbin.insight.DB.Table;
 /**
  * Created by paulograbin on 11/07/15.
  */
-public interface DBUtils {
+interface DBUtils {
 
     String TYPE_TEXT = " TEXT";
     String TYPE_DOUBLE = " DOUBLE";

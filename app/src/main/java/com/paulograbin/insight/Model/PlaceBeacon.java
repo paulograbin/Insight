@@ -38,7 +38,7 @@ public class PlaceBeacon implements ModelInterface<PlaceBeacon> {
         if (object instanceof PlaceBeacon) {
             if (this.idPlace == object.getIdPlace() &&
                     this.idBeacon == object.getIdBeacon() &&
-                    this.uuid == object.getUuid())
+                    this.uuid.equals(object.getUuid()))
                 return true;
         }
 

@@ -30,7 +30,7 @@ import java.util.Calendar;
  */
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    static final int DATABASE_VERSION = 22;
+    static final int DATABASE_VERSION = 25;
     static final String DATABASE_NAME = "insight.db";
     private static DatabaseHelper mDatabaseHelper;
     private static Context context;
@@ -58,10 +58,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         /*
          * Places
          */
-        Place pInitial = new Place("Ponto Inicial", "Um ponto no inicio mapa",Place.FINAL_DESTINATION, -29.78440, -51.14400);
-        Place pMid = new Place("Caminho entre pontos", "Um caminho no meio do mapa", Place.NO_DESTINATION, -29.91305, -51.18932);
-        Place pNowhere = new Place("Nowhere", "Algum lugar perdido", Place.NO_DESTINATION, -29.99447, -50.78694);
-        Place pEnd = new Place("Ponto Final", "Um ponto no fim do mapa", Place.FINAL_DESTINATION, -30.03201, -51.21678);
+        Place pInitial = new Place("Ponto Inicial", "Um ponto no inicio mapa", "Partiu!", Place.FINAL_DESTINATION, -29.78440, -51.14400);
+        Place pMid = new Place("Caminho entre pontos", "Um caminho no meio do mapa", "", Place.NO_DESTINATION, -29.91305, -51.18932);
+        Place pNowhere = new Place("Nowhere", "Algum lugar perdido", "", Place.NO_DESTINATION, -29.99447, -50.78694);
+        Place pEnd = new Place("Ponto Final", "Um ponto no fim do mapa", "", Place.FINAL_DESTINATION, -30.03201, -51.21678);
 
         PlaceProvider pp = new PlaceProvider(context);
         pInitial.setId(pp.insert(pInitial));
@@ -82,7 +82,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         b1.setLatitude(39.99);
         b1.setLongitude(30.00);
         b1.setLocation("Teste de location");
-        b1.setMessage("Teste de message");
 
         SimpleDateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat formatTime = new SimpleDateFormat("HH:mm:ss");
@@ -103,7 +102,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         b2.setLatitude(39.99);
         b2.setLongitude(30.00);
         b2.setLocation("Teste de location");
-        b2.setMessage("Teste de message");
 
         b2.setCreatedDate(formatDate.format(Calendar.getInstance().getTime()));
         b2.setCreatedTime(formatTime.format(Calendar.getInstance().getTime()));
@@ -126,10 +124,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         pb1.setId(pbp.insert(pb1));
 
 
-        PlaceBeacon pb2 = new PlaceBeacon(pEnd.getId(), b2.getId(), b2.getUUID());
+        PlaceBeacon pb2 = new PlaceBeacon(pEnd.getId(), b3.getId(), b3.getUUID());
         pb2.setId(pbp.insert(pb2));
 
-        PlaceBeacon pb3 = new PlaceBeacon(pMid.getId(), b3.getId(), b3.getUUID());
+        PlaceBeacon pb3 = new PlaceBeacon(pMid.getId(), b2.getId(), b2.getUUID());
         pb3.setId(pbp.insert(pb3));
 
 
