@@ -190,7 +190,7 @@ public class TestPathProvider extends ApplicationTestCase<Application> {
         try {
             Path b = pp.getByID(50);
             Assert.fail("Should've thrown an exception...");
-        } catch (SQLiteException e) {
+        } catch (SQLiteException ignored) {
 
         }
     }

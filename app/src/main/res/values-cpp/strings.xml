@@ -4,7 +4,15 @@
     <string name="title_activity_message_list">Lista de Mensagens</string>
     <string name="title_activity_list_places">Lista de locais</string>
     <string name="title_activity_indoors">Indoors</string>
-    <string name="title_activity_beacons_list">Lista de Beacons</string>
+    <string name="title_activity_beacons_list">Lista de beacons</string>
     <string name="title_activity_beacon_details">Detalhes do Beacon</string>
-    <string name="title_activity_list_beacons">Lista de Beacons</string>
+    <string name="title_activity_list_beacons">Lista de beacons</string>
+    <string name="initial_place_not_identified">Não foi possível determinar o local atual</string>
+    <string name="title_activity_admin_panel"></string>
+    <string name="title_activity_navigation">Navegação</string>
+    <string name="choose_destination">Escolher destino</string>
+    <string name="title_activity_main"></string>
+    <string name="hello_world"></string>
+    <string name="no_beacon_detected">Posição ainda não foi determinada</string>
+    <string name="admin_panel">Painel admin</string>
 </resources>

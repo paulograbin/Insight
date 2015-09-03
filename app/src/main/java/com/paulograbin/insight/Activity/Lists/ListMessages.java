@@ -23,6 +23,7 @@ public class ListMessages extends ActionBarActivity {
     ListView listView;
     ArrayAdapter<String> mArrayAdapter;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

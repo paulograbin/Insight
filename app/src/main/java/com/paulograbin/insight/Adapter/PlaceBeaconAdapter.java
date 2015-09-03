@@ -37,7 +37,7 @@ public class PlaceBeaconAdapter extends ArrayAdapter<PlaceBeacon> {
 
         PlaceBeacon pb = getItem(position);
         PlaceProvider placeProvider = new PlaceProvider(getContext());
-        BeaconProvider beaconProvider = new BeaconProvider(getContext());
+//        BeaconProvider beaconProvider = new BeaconProvider(getContext());
 
         holder.idPlace.setText(pb.getId() + "");
         holder.placeName.setText(placeProvider.getByID(pb.getIdPlace()).getName());

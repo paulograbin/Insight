@@ -1,21 +1,21 @@
 package com.paulograbin.insight.Activity.Lists;
 
-import android.app.ListActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.widget.ListView;
 
-import com.paulograbin.insight.Adapter.PathListAdapter;
-import com.paulograbin.insight.DB.Provider.PathProvider;
-import com.paulograbin.insight.Model.Path;
+import com.paulograbin.insight.Adapter.PlaceAdapter;
+import com.paulograbin.insight.DB.Provider.PlaceProvider;
+import com.paulograbin.insight.Model.Place;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListPaths extends ListActivity {
+public class ListPlacesAll extends ActionBarActivity {
 
     ListView mListView;
-    List<Path> paths;
-    PathListAdapter mAdapter;
+    List<Place> places;
+    PlaceAdapter mAdapter;
 
 
     @Override
@@ -25,8 +25,8 @@ public class ListPaths extends ListActivity {
         mListView = new ListView(this);
         mListView.setId(android.R.id.list);
 
-        paths = new ArrayList<>();
-        mAdapter = new PathListAdapter(this, paths);
+        places = new ArrayList<>();
+        mAdapter = new PlaceAdapter(this, places);
         mListView.setAdapter(mAdapter);
 
         setContentView(mListView);
@@ -36,9 +36,9 @@ public class ListPaths extends ListActivity {
     private void refreshList() {
         mAdapter.clear();
 
-        PathProvider pp = new PathProvider(this);
-        List<Path> paths = pp.getAll();
+        PlaceProvider pp = new PlaceProvider(this);
+        List<Place> places = pp.getAll();
 
-        mAdapter.addAll(paths);
+        mAdapter.addAll(places);
     }
 }

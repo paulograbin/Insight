@@ -19,17 +19,57 @@ public class RouteFinder {
 
     private static final String TAG = "RouteFinder";
 
+    private boolean debugExecution = true;
+
     PlaceProvider mPlaceProvider;
     PathProvider mPathProvider;
 
+    Place sourcePlace;
+    Place targetPlace;
+
     List<Vertex> nodes;
     List<Edge> edges;
-    Graph graph;
+    LinkedList<Vertex> path;
     DijkstraAlgorithm da;
 
-    LinkedList<Vertex> path;
 
-    public RouteFinder(Context context, Place sourcePlace) {
+    public RouteFinder(Context context, Place sourcePlace, Place targetPlace) {
+        this.sourcePlace = sourcePlace;
+        this.targetPlace = targetPlace;
+
+        path = new LinkedList<>();
+
+        getNodesAndEdgesFromPlacesAndPaths(context);
+
+        da = new DijkstraAlgorithm(nodes, edges);
+        da.execute(getVertexFromPlace(sourcePlace));
+
+        path = da.getPath(getVertexFromPlace(targetPlace));
+
+        if(path != null) {
+            for (Vertex vertex : path) {
+                Log.i(TAG, vertex.toString());
+            }
+        } else {
+            printToLog("Caminho não encontrado...");
+        }
+    }
+
+    public LinkedList<Place> getPathToTargetPlace() {
+        LinkedList<Place> convertedPath = new LinkedList<>();
+
+        if(path != null) {
+            for (Vertex v : path) {
+                convertedPath.add(getPlaceFromVertex(v));
+            }
+        } else {
+            return null;
+        }
+
+        return convertedPath;
+    }
+
+    private void getNodesAndEdgesFromPlacesAndPaths(Context context) {
         mPlaceProvider = new PlaceProvider(context);
         mPathProvider = new PathProvider(context);
 
@@ -46,22 +86,7 @@ public class RouteFinder {
         for (Path p : paths) {
             edges.add(getEdgeFromPath(p));
         }
-
-        graph = new Graph(nodes, edges);
-
-        da = new DijkstraAlgorithm(graph);
-        da.execute(getVertexFromPlace(sourcePlace));
-
-        path = da.getPath(nodes.get(2));
-
-        for (Vertex vertex : path) {
-            Log.i(TAG, vertex.toString());
-        }
     }
-
-//    public List<Place> getPath() {
-//        ArrayList<Place> path = new
-//    }
 
     private Edge getEdgeFromPath(Path p) {
         Place sourcePlace = mPlaceProvider.getByID(p.getPlace());
@@ -76,5 +101,16 @@ public class RouteFinder {
 
     private Vertex getVertexFromPlace(Place p) {
         return new Vertex(String.valueOf(p.getId()), p.getName());
+    }
+
+    private Place getPlaceFromVertex(Vertex v) {
+        Place p = mPlaceProvider.getByID(Long.valueOf(v.getId()));
+
+        return p;
+    }
+
+    private void printToLog(String message) {
+        if (debugExecution)
+            Log.i(TAG, message);
     }
 }

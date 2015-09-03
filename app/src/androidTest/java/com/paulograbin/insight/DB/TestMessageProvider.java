@@ -163,7 +163,7 @@ public class TestMessageProvider extends ApplicationTestCase<Application> {
         try {
             Message b = mp.getByID(50);
             Assert.fail("Should've thrown an exception...");
-        } catch (SQLiteException e) {
+        } catch (SQLiteException ignored) {
 
         }
     }

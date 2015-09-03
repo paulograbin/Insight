@@ -21,10 +21,10 @@ public class DijkstraAlgorithm {
     private Map<Vertex, Vertex> predecessors;
     private Map<Vertex, Integer> distance;
 
-    public DijkstraAlgorithm(Graph graph) {
+    public DijkstraAlgorithm(List<Vertex> nodes, List<Edge> edges) {
         // create a copy of the array so that we can operate on this array
-        this.nodes = new ArrayList<>(graph.getVertexes());
-        this.edges = new ArrayList<>(graph.getEdges());
+        this.nodes = nodes;
+        this.edges = edges;
     }
 
     public void execute(Vertex source) {
@@ -53,7 +53,6 @@ public class DijkstraAlgorithm {
                 unSettledNodes.add(target);
             }
         }
-
     }
 
     private int getDistance(Vertex node, Vertex target) {

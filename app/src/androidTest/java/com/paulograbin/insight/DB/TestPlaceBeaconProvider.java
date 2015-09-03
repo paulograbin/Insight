@@ -178,7 +178,7 @@ public class TestPlaceBeaconProvider extends ApplicationTestCase<Application> {
         try {
             PlaceBeacon b = pbp.getByID(50);
             Assert.fail("Should've thrown an exception...");
-        } catch (SQLiteException e) {
+        } catch (SQLiteException ignored) {
 
         }
     }

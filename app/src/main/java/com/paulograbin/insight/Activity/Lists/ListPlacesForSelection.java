@@ -3,27 +3,28 @@ package com.paulograbin.insight.Activity.Lists;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.paulograbin.insight.Adapter.PlaceAdapter;
+import com.paulograbin.insight.Adapter.PlaceSelectionAdapter;
 import com.paulograbin.insight.DB.Provider.PlaceProvider;
 import com.paulograbin.insight.Model.Place;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListPlaces extends ActionBarActivity {
+public class ListPlacesForSelection extends AppCompatActivity {
 
     ListView listView;
     List<Place> places;
-    PlaceAdapter mAdapter;
+    PlaceSelectionAdapter mAdapter;
 
     Place currentPlace;
     Location currentLocation;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,19 +46,19 @@ public class ListPlaces extends ActionBarActivity {
         listView.setId(android.R.id.list);
 
         places = new ArrayList<>();
-        mAdapter = new PlaceAdapter(this, places, currentLocation);
+        mAdapter = new PlaceSelectionAdapter(this, places, currentLocation);
         listView.setAdapter(mAdapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Place chosenPlace = (Place) parent.getItemAtPosition(position);
-                Log.i("Spiga", "Teste... " + chosenPlace.getName() + " - " + chosenPlace.toString());
+                Log.i("Spiga", "Usuário escolheu destino: " + chosenPlace.toString());
 
                 Intent intent = new Intent();
                 intent.putExtra("chosenPlace", chosenPlace);
 
-                setResult((int) chosenPlace.getId(), intent);
+                setResult(RESULT_OK, intent);
                 finish();
             }
         });

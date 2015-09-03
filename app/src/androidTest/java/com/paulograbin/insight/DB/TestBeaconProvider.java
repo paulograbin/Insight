@@ -158,7 +158,7 @@ public class TestBeaconProvider extends ApplicationTestCase<Application> {
         try {
             Beacon b = mBeaconProvider.getByID(50);
             Assert.fail("Should've thrown an exception...");
-        } catch (SQLiteException e) {
+        } catch (SQLiteException ignored) {
 
         }
     }
@@ -180,7 +180,7 @@ public class TestBeaconProvider extends ApplicationTestCase<Application> {
         try {
             Beacon b = mBeaconProvider.getByUUID(uuid);
             Assert.fail("Should've thrown an exception");
-        } catch (SQLiteException e) {
+        } catch (SQLiteException ignored) {
 
         }
     }
@@ -233,7 +233,6 @@ public class TestBeaconProvider extends ApplicationTestCase<Application> {
         b.setLatitude(39.99);
         b.setLongitude(30.00);
         b.setLocation("Teste de location");
-        b.setMessage("Teste de message");
         b.setCreatedDate(formatDate.format(Calendar.getInstance().getTime()));
         b.setCreatedTime(formatTime.format(Calendar.getInstance().getTime()));
 
@@ -245,7 +244,6 @@ public class TestBeaconProvider extends ApplicationTestCase<Application> {
         assertEquals(cv.get(TableBeacon.COLUMN_LONGITUDE), b.getLongitude());
         assertEquals(cv.get(TableBeacon.COLUMN_CREATED_DATE), b.getCreatedDate());
         assertEquals(cv.get(TableBeacon.COLUMN_CREATED_TIME), b.getCreatedTime());
-        assertEquals(cv.get(TableBeacon.COLUMN_MESSAGE), b.getMessage());
         assertEquals(cv.get(TableBeacon.COLUMN_NAME), b.getName());
         assertEquals(cv.get(TableBeacon.COLUMN_NETWORKTYPE), b.getNetworktype());
         assertEquals(cv.get(TableBeacon.COLUMN_MAJOR), b.getMajor());
@@ -278,17 +276,5 @@ public class TestBeaconProvider extends ApplicationTestCase<Application> {
 
     public void testGetTableName() throws Exception {
         assertTrue(mBeaconProvider.getTableName().equals(TableBeacon.TABLE_NAME));
-    }
-
-    public void testGetFromCursor() throws Exception {
-
-    }
-
-    public void testGetByUUID() throws Exception {
-
-    }
-
-    public void testGetDummy() throws Exception {
-
     }
 }

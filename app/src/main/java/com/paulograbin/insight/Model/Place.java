@@ -25,6 +25,7 @@ public class Place implements ModelInterface<Place>, Serializable {
     public Place(String name, String description, String message, int destination, double latitude, double longitude) {
         this.name = name;
         this.description = description;
+        this.message = message;
         this.destination = destination;
         this.latitude = latitude;
         this.longitude = longitude;

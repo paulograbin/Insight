@@ -12,10 +12,9 @@ import android.widget.Button;
 
 import com.paulograbin.insight.Activity.Lists.ListBeacons;
 import com.paulograbin.insight.Activity.Lists.ListMessages;
-import com.paulograbin.insight.Activity.Lists.ListNearBeacons;
 import com.paulograbin.insight.Activity.Lists.ListPaths;
 import com.paulograbin.insight.Activity.Lists.ListPlaceBeacons;
-import com.paulograbin.insight.Activity.Lists.ListPlaces;
+import com.paulograbin.insight.Activity.Lists.ListPlacesAll;
 import com.paulograbin.insight.DB.DatabaseHelper;
 import com.paulograbin.insight.DB.Provider.BeaconProvider;
 import com.paulograbin.insight.DB.Provider.MessageProvider;
@@ -29,32 +28,22 @@ public class AdminPanelActivity extends ActionBarActivity {
     //    TODO: No primeiro uso, pergunta se o usuário quer que o aplicativo monitore sua região e
     //    se auto execute quando chega na área
 
-    String LOG_TAG = "Spiga";
+    private String LOG_TAG = "Spiga";
 
-    Button btnBluetooth;
-    Button btnShowNearBeacons;
-    Button btnShowBeaconList;
-    Button btnShowMessageList;
-    Button btnShowPlaceList;
-    Button btnShowPlaceBeaconList;
-    Button btnPaths;
+    private Button btnBluetooth;
+    private Button btnShowBeaconList;
+    private Button btnShowMessageList;
+    private Button btnShowPlaceList;
+    private Button btnShowPlaceBeaconList;
+    private Button btnPaths;
 
-    BluetoothAdapter mBluetoothAdapter;
+    private BluetoothAdapter mBluetoothAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_panel);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
-//        btnSpeak = (Button) findViewById(R.id.btnSpeak);
-//        btnSpeak.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Speaker s = new Speaker(this.getBaseContext());
-//                s.say("Teste do Paulo");
-//            }
-//        });
 
         btnShowBeaconList = (Button) findViewById(R.id.btnShowBeacons);
         btnShowBeaconList.setOnClickListener(new View.OnClickListener() {
@@ -78,7 +67,7 @@ public class AdminPanelActivity extends ActionBarActivity {
         btnShowPlaceList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), ListPlaces.class);
+                Intent intent = new Intent(getApplicationContext(), ListPlacesAll.class);
                 startActivity(intent);
             }
         });
@@ -88,15 +77,6 @@ public class AdminPanelActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), ListPlaceBeacons.class);
-                startActivity(intent);
-            }
-        });
-
-        btnShowNearBeacons = (Button) findViewById(R.id.btnShowNearBeacons);
-        btnShowNearBeacons.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), ListNearBeacons.class);
                 startActivity(intent);
             }
         });

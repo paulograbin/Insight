@@ -36,29 +36,25 @@ public class TestPlaceProvider extends ApplicationTestCase<Application> {
     }
 
     public long insertDummyPlaceDestination() {
-        long id;
-
         Place p = pp.getDummy();
-        id = pp.insert(p);
+        p.setId(pp.insert(p));
 
-        assertNotNull(id);
-        assertNotSame(id, 0);
+        assertNotNull(p.getId());
+        assertNotSame(p.getId(), 0);
 
-        return id;
+        return p.getId();
     }
 
     public long insertDummyPlaceNonDestination() {
-        long id;
-
         Place p = pp.getDummy();
         p.setDestination(0);
 
-        id = pp.insert(p);
+        p.setId(pp.insert(p));
 
-        assertNotNull(id);
-        assertNotSame(id, 0);
+        assertNotNull(p.getId());
+        assertNotSame(p.getId(), 0);
 
-        return id;
+        return p.getId();
     }
 
     public void testDeleteByPlaceExisting() {
@@ -190,7 +186,7 @@ public class TestPlaceProvider extends ApplicationTestCase<Application> {
         try {
             Place b = pp.getByID(50);
             Assert.fail("Should've thrown an exception...");
-        } catch (SQLiteException e) {
+        } catch (SQLiteException ignored) {
 
         }
     }
