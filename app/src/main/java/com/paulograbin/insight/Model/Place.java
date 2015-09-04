@@ -14,6 +14,7 @@ public class Place implements ModelInterface<Place>, Serializable {
     String name;
     String description;
     String message;
+    int favorite;
     int destination;
     double latitude;
     double longitude;
@@ -22,7 +23,7 @@ public class Place implements ModelInterface<Place>, Serializable {
     public Place() {
     }
 
-    public Place(String name, String description, String message, int destination, double latitude, double longitude) {
+    public Place(String name, String description, String message, int favorite, int destination, double latitude, double longitude) {
         this.name = name;
         this.description = description;
         this.message = message;
@@ -46,11 +47,11 @@ public class Place implements ModelInterface<Place>, Serializable {
         this.longitude = longitude;
     }
 
-
     @Override
     public boolean isEqualTo(Place object) {
         if (object instanceof Place) {
             if (this.name.equalsIgnoreCase(object.getName()) &&
+                    this.favorite == object.getFavorite() &&
                     this.latitude == object.getLatitude() &&
                     this.longitude == object.getLongitude())
                 return true;
@@ -82,6 +83,14 @@ public class Place implements ModelInterface<Place>, Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public int getFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(int favorite) {
+        this.favorite = favorite;
     }
 
     public String getMessage() {
