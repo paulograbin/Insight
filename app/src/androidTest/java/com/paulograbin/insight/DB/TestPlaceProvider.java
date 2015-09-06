@@ -35,6 +35,19 @@ public class TestPlaceProvider extends ApplicationTestCase<Application> {
         assertEquals(pp.getCount(), 0);
     }
 
+    public void testGetAllFavoritePlaces() {
+        Place p1 = pp.getDummy();
+        p1.setFavorite(1);
+
+        Place p2 = pp.getDummy();
+        p1.setFavorite(0);
+
+        p1.setId(pp.insert(p1));
+        p2.setId(pp.insert(p2));
+
+        assertEquals(1, pp.getAllFavoritePlaces().size());
+    }
+
     public long insertDummyPlaceDestination() {
         Place p = pp.getDummy();
         p.setId(pp.insert(p));

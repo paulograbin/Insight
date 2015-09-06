@@ -27,5 +27,6 @@
     <string name="no_beacon_detected">Position not determined yet</string>
     <string name="admin_panel">Admin Panel</string>
     <string name="distance">Distance:</string>
+    <string name="title_activity_list_favorite_places">ListFavoritePlaces</string>
 
 </resources>

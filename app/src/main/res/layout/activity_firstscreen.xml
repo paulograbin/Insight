@@ -31,8 +31,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/admin_panel"
-        android:layout_alignParentBottom="true"
-        android:layout_toEndOf="@+id/btnChooseDestination" />
+        android:layout_above="@+id/btnCallHelp"
+        android:layout_alignEnd="@+id/list"
+        android:layout_alignStart="@+id/btnCallHelp" />
 
     <ListView
         android:layout_width="wrap_content"
@@ -40,15 +41,24 @@
         android:id="@+id/list"
         android:layout_below="@+id/txtCurrentPlace"
         android:layout_alignParentStart="true"
-        android:layout_above="@+id/btnChooseDestination"
-        android:choiceMode="none" />
+        android:choiceMode="none"
+        android:layout_above="@+id/btnAdminPanel" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Chamar ajuda"
         android:id="@+id/btnCallHelp"
-        android:layout_below="@+id/list"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Locais favoritos"
+        android:id="@+id/btnFavorites"
+        android:layout_above="@+id/btnChooseDestination"
+        android:layout_alignEnd="@+id/btnChooseDestination"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>

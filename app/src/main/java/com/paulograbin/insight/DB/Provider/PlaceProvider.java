@@ -33,7 +33,7 @@ public class PlaceProvider extends AbstractProvider<Place> {
         p.setName("Buraco no chão 1");
         p.setDescription("Um simples buraco");
         p.setMessage("Teste de mensagem dummy");
-        p.setFavorite(0);
+        p.setFavorite(Place.NOT_FAVORITE);
         p.setDestination(Place.FINAL_DESTINATION);
         p.setLatitude(39);
         p.setLongitude(39);
@@ -94,12 +94,23 @@ public class PlaceProvider extends AbstractProvider<Place> {
         return places;
     }
 
-    public boolean setPlaceAsFavorite(long id) {
-
-    }
-
     public List<Place> getAllFavoritePlaces() {
-        
+        printToLog("Obtendo todos os locais favoritos");
+
+        List<Place> places = new ArrayList<>();
+        SQLiteDatabase db = mDatabaseHelper.getReadableDatabase();
+
+        String query = "SELECT * FROM " + getTableName() + " WHERE " + TablePlace.COLUMN_FAVORITE + " = 1;";
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                places.add(getFromCursor(cursor));
+            } while (cursor.moveToNext());
+        }
+
+        printToLog(places.toString());
+        return places;
     }
 
     @Override

@@ -98,7 +98,7 @@ public class BluetoothService extends IntentService implements BeaconConsumer {
 
     @Nullable
     private Beacon getCloserBeacon(Collection<Beacon> beacons) {
-        printToLog("getCloserBeacon foi chamado com " + beacons.size() + " beacons.");
+//        printToLog("getCloserBeacon foi chamado com " + beacons.size() + " beacons.");
 
         if (beacons.size() == 1) {
             return beacons.iterator().next();
@@ -123,26 +123,15 @@ public class BluetoothService extends IntentService implements BeaconConsumer {
     }
 
     private void onCloserBeaconFound(Beacon beacon) {
-        if (isNewBeacon(beacon)) {
-            printToLog("Novo beacon encontrado é " + beacon.getId1().toString());
+        if (!beacon.equals(mLastSeenBeacon)) {
+            printToLog("Ultimo beacon encontrado é " + beacon.getId1().toString());
             mLastSeenBeacon = beacon;
 
-            sendBroadcast();
-        } else {
-            printToLog("Mesmo beacon ainda...");
+            printToLog("Enviando broadcast");
+            Intent intent = new Intent(FOUND_NEW_BEACON_EVENT);
+            intent.putExtra(BEACON_KEY, mLastSeenBeacon);
+            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
         }
-    }
-
-    private void sendBroadcast() {
-        printToLog("Enviando broadcast");
-        Intent intent = new Intent(FOUND_NEW_BEACON_EVENT);
-        intent.putExtra(BEACON_KEY, mLastSeenBeacon);
-
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-    }
-
-    private boolean isNewBeacon(Beacon beacon) {
-        return !beacon.equals(mLastSeenBeacon);
     }
 
     @Override

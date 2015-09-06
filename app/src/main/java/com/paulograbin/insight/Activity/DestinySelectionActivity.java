@@ -1,4 +1,4 @@
-package com.paulograbin.insight.Activity.Lists;
+package com.paulograbin.insight.Activity;
 
 import android.content.Intent;
 import android.location.Location;
@@ -16,7 +16,7 @@ import com.paulograbin.insight.Model.Place;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListPlacesForSelection extends AppCompatActivity {
+public class DestinySelectionActivity extends AppCompatActivity {
 
     ListView listView;
     List<Place> places;

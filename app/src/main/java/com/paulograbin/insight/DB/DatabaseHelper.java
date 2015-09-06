@@ -58,10 +58,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         /*
          * Places
          */
-        Place pInitial = new Place("Ponto Inicial", "Um ponto no inicio mapa", "Partiu!", Place.FINAL_DESTINATION, -29.78440, -51.14400);
-        Place pMid = new Place("Caminho entre pontos", "Um caminho no meio do mapa", "", Place.NO_DESTINATION, -29.91305, -51.18932);
-        Place pNowhere = new Place("Nowhere", "Algum lugar perdido", "", Place.NO_DESTINATION, -29.99447, -50.78694);
-        Place pEnd = new Place("Ponto Final", "Um ponto no fim do mapa", "", Place.FINAL_DESTINATION, -30.03201, -51.21678);
+        Place pInitial = new Place("Ponto Inicial", "Um ponto no inicio mapa", "Mensagem de teste!", Place.NOT_FAVORITE, Place.FINAL_DESTINATION, -29.78440, -51.14400);
+        Place pMid = new Place("Caminho entre pontos", "Um caminho no meio do mapa", "", Place.NOT_FAVORITE, Place.NO_DESTINATION, -29.91305, -51.18932);
+        Place pNowhere = new Place("Nowhere", "Algum lugar perdido", "", Place.NOT_FAVORITE, Place.NO_DESTINATION, -29.99447, -50.78694);
+        Place pEnd = new Place("Ponto Final", "Um ponto no fim do mapa", "", Place.FAVORITE, Place.FINAL_DESTINATION, -30.03201, -51.21678);
 
         PlaceProvider pp = new PlaceProvider(context);
         pInitial.setId(pp.insert(pInitial));

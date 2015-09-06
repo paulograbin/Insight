@@ -16,9 +16,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-
-        <service android:name=".Bluetooth.BluetoothService"></service>
-        <service android:name="org.altbeacon.beacon.service.BeaconService"></service>
+        <service android:name=".Bluetooth.BluetoothService" />
+        <service android:name="org.altbeacon.beacon.service.BeaconService" />
 
         <activity
             android:name=".Activity.AdminPanelActivity"
@@ -28,12 +27,11 @@
             android:name=".Activity.Lists.ListMessages"
             android:label="@string/title_activity_message_list" />
         <activity
-            android:name=".Activity.Lists.ListPlacesForSelection"
+            android:name=".Activity.DestinySelectionActivity"
             android:label="@string/title_activity_list_places" />
         <activity
             android:name=".Activity.Lists.ListBeacons"
             android:label="@string/title_activity_list_beacons" />
-
         <activity
             android:name=".Activity.Lists.ListPlaceBeacons"
             android:label="@string/title_activity_list_place_beacons" />
@@ -46,12 +44,17 @@
             android:launchMode="singleTop" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".Activity.Lists.ListPaths"
             android:label="@string/title_activity_list_paths" >
+        </activity>
+        <activity
+            android:name=".Activity.Lists.ListFavoritePlaces"
+            android:label="@string/title_activity_list_favorite_places" >
         </activity>
     </application>
 

@@ -21,7 +21,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.paulograbin.insight.Activity.Lists.ListPlacesForSelection;
+import com.paulograbin.insight.Activity.Lists.ListFavoritePlaces;
 import com.paulograbin.insight.Adapter.PlaceAdapter;
 import com.paulograbin.insight.Adapter.PlaceSelectionAdapter;
 import com.paulograbin.insight.Bluetooth.BluetoothService;
@@ -61,6 +61,8 @@ public class FirstScreenActivity extends AppCompatActivity implements TextToSpee
     TextView txtCurrentPlace;
     Button btnAdminPanel;
     Button btnChooseDestiny;
+    Button btnCallHelp;
+    Button btnFavorites;
 
     int selectedOption = 33;
 
@@ -79,6 +81,14 @@ public class FirstScreenActivity extends AppCompatActivity implements TextToSpee
         txtCurrentPlace = (TextView) findViewById(R.id.txtCurrentPlace);
         txtCurrentPlace.setText("Nenhum beacon foi detectado ainda... :(");
 
+        btnCallHelp = (Button) findViewById(R.id.btnCallHelp);
+        btnCallHelp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                say("Ajuda solicitada, um segurança está a caminho.");
+            }
+        });
+
         btnAdminPanel = (Button) findViewById(R.id.btnAdminPanel);
         btnAdminPanel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,6 +97,23 @@ public class FirstScreenActivity extends AppCompatActivity implements TextToSpee
                 startActivity(intent);
             }
         });
+
+        btnFavorites = (Button) findViewById(R.id.btnFavorites);
+        btnFavorites.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mCurrentPlace == null) {
+                    Toast.makeText(getBaseContext(), R.string.initial_place_not_identified, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                Intent intent = new Intent(getBaseContext(), ListFavoritePlaces.class);
+                intent.putExtra("place", mCurrentPlace);
+                startActivityForResult(intent, selectedOption);
+//                say("Listando possíveis destinos");
+            }
+        });
+
         btnChooseDestiny = (Button) findViewById(R.id.btnChooseDestination);
         btnChooseDestiny.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,12 +123,35 @@ public class FirstScreenActivity extends AppCompatActivity implements TextToSpee
                     return;
                 }
 
-                Intent intent = new Intent(getBaseContext(), ListPlacesForSelection.class);
+                Intent intent = new Intent(getBaseContext(), DestinySelectionActivity.class);
                 intent.putExtra("place", mCurrentPlace);
                 startActivityForResult(intent, selectedOption);
             }
         });
 
+
+//        try {
+//            Log.i("Spiga", "Chamando service");
+//            Intent intent = new Intent(this, BluetoothService.class);
+//            startService(intent);
+//
+//            if(isMyServiceRunning(BluetoothService.class)) {
+//                Log.i("Spiga", "rodando");
+//            } else {
+//                Log.i("Spiga", "não ta rodando");
+//            }
+//
+//            bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+//            LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter(BluetoothService.FOUND_NEW_BEACON_EVENT));
+//        } catch (Exception e) {
+//            Log.i("Spiga", "Deu merda... " + e.getClass());
+//            e.printStackTrace();
+//        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
 
         try {
             Log.i("Spiga", "Chamando service");
@@ -218,8 +268,10 @@ public class FirstScreenActivity extends AppCompatActivity implements TextToSpee
 
     @Override
     public void onInit(int status) {
-        if (status != TextToSpeech.ERROR) {
+        if (status == TextToSpeech.SUCCESS) {
             tts.setLanguage(Locale.getDefault());
+        } else {
+            Toast.makeText(this, "pau no TTS", Toast.LENGTH_SHORT).show();
         }
     }
 }
