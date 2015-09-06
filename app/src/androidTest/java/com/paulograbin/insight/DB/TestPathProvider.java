@@ -2,11 +2,11 @@ package com.paulograbin.insight.DB;
 
 import android.app.Application;
 import android.content.ContentValues;
-import android.database.sqlite.SQLiteException;
 import android.test.ApplicationTestCase;
 
 import com.paulograbin.insight.DB.Provider.PathProvider;
 import com.paulograbin.insight.DB.Table.TablePath;
+import com.paulograbin.insight.Exceptions.RecordNotFoundException;
 import com.paulograbin.insight.Model.Path;
 
 import junit.framework.Assert;
@@ -76,15 +76,19 @@ public class TestPathProvider extends ApplicationTestCase<Application> {
     }
 
     public void testDeleteByPathExisting() {
-        long id = insertDummyPath();
-        assertEquals(pp.getCount(), 1);
+        try {
+            long id = insertDummyPath();
+            assertEquals(pp.getCount(), 1);
 
-        Path p = pp.getByID(id);
+            Path p = pp.getByID(id);
 
-        int affectedRows = pp.delete(p);
+            int affectedRows = pp.delete(p);
 
-        assertEquals(affectedRows, 1);
-        assertEquals(pp.getCount(), 0);
+            assertEquals(affectedRows, 1);
+            assertEquals(pp.getCount(), 0);
+        } catch(RecordNotFoundException e) {
+            Assert.fail();
+        }
     }
 
     public void testDeleteByPathNotExisting() {
@@ -149,19 +153,23 @@ public class TestPathProvider extends ApplicationTestCase<Application> {
     }
 
     public void testUpdateExisting() {
-        Path a = pp.getDummy();
-        a.setId(pp.insert(a));
+        try {
+            Path a = pp.getDummy();
+            a.setId(pp.insert(a));
 
-        Path b = pp.getByID(a.getId());
+            Path b = pp.getByID(a.getId());
 
-        int newWeight = 999;
-        b.setWeight(newWeight);
+            int newWeight = 999;
+            b.setWeight(newWeight);
 
-        pp.update(b);
+            pp.update(b);
 
-        Path c = pp.getByID(a.getId());
-        assertEquals(c.getWeight(), newWeight);
-        assertEquals(c.getId(), a.getId());
+            Path c = pp.getByID(a.getId());
+            assertEquals(c.getWeight(), newWeight);
+            assertEquals(c.getId(), a.getId());
+        } catch (RecordNotFoundException e) {
+            Assert.fail();
+        }
     }
 
     public void testUpdateNotExisting() {
@@ -172,16 +180,20 @@ public class TestPathProvider extends ApplicationTestCase<Application> {
     }
 
     public void testGetByIDWithExistingPath() {
-        Path a = pp.getDummy();
-        a.setId(pp.insert(a));
+        try {
+            Path a = pp.getDummy();
+            a.setId(pp.insert(a));
 
-        assertNotSame(a.getId(), 0);
-        assertEquals(pp.getCount(), 1);
+            assertNotSame(a.getId(), 0);
+            assertEquals(pp.getCount(), 1);
 
-        Path b = pp.getByID(a.getId());
-        assertNotNull(b);
+            Path b = pp.getByID(a.getId());
+            assertNotNull(b);
 
-        assertTrue(a.isEqualTo(b));
+            assertTrue(a.isEqualTo(b));
+        } catch (RecordNotFoundException e) {
+            Assert.fail();
+        }
     }
 
     public void testGetByIdWithNotExistingPath() {
@@ -190,7 +202,7 @@ public class TestPathProvider extends ApplicationTestCase<Application> {
         try {
             Path b = pp.getByID(50);
             Assert.fail("Should've thrown an exception...");
-        } catch (SQLiteException ignored) {
+        } catch (RecordNotFoundException ignored) {
 
         }
     }

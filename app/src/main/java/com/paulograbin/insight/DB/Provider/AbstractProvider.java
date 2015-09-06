@@ -4,11 +4,11 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.provider.BaseColumns;
 import android.util.Log;
 
 import com.paulograbin.insight.DB.DatabaseHelper;
+import com.paulograbin.insight.Exceptions.RecordNotFoundException;
 import com.paulograbin.insight.Model.ModelInterface;
 
 import java.util.ArrayList;
@@ -65,7 +65,7 @@ public abstract class AbstractProvider<M extends ModelInterface> implements Prov
     }
 
     @Override
-    public M getByID(long id) {
+    public M getByID(long id) throws RecordNotFoundException {
         printToLog("Obtendo registro de " + getTableName() + " através do id " + id);
         M object;
 
@@ -75,7 +75,7 @@ public abstract class AbstractProvider<M extends ModelInterface> implements Prov
         if (c.moveToFirst()) {
             object = getFromCursor(c);
         } else {
-            throw new SQLiteException("Record not found in " + getTableName());
+            throw new RecordNotFoundException("Record not found in " + getTableName());
         }
 
         c.close();

@@ -2,11 +2,11 @@ package com.paulograbin.insight.DB;
 
 import android.app.Application;
 import android.content.ContentValues;
-import android.database.sqlite.SQLiteException;
 import android.test.ApplicationTestCase;
 
 import com.paulograbin.insight.DB.Provider.PlaceProvider;
 import com.paulograbin.insight.DB.Table.TablePlace;
+import com.paulograbin.insight.Exceptions.RecordNotFoundException;
 import com.paulograbin.insight.Model.Place;
 
 import junit.framework.Assert;
@@ -46,6 +46,30 @@ public class TestPlaceProvider extends ApplicationTestCase<Application> {
         p2.setId(pp.insert(p2));
 
         assertEquals(1, pp.getAllFavoritePlaces().size());
+    }
+
+    public void testGetByNameExisting() {
+        Place p = pp.getDummy();
+        p.setName("Ponto Initial");
+
+        long id = pp.insert(p);
+        assertNotNull(id);
+
+        try {
+            Place b = pp.getByName(p.getName());
+            assertEquals(b.getName(), p.getName());
+        } catch (RecordNotFoundException e) {
+
+        }
+    }
+
+    public void testGetByNameNotExisting() {
+        try {
+            Place p = pp.getByName("Any name");
+            Assert.fail("Should have thrown an SQLiteException");
+        } catch (RecordNotFoundException e) {
+
+        }
     }
 
     public long insertDummyPlaceDestination() {
@@ -199,7 +223,7 @@ public class TestPlaceProvider extends ApplicationTestCase<Application> {
         try {
             Place b = pp.getByID(50);
             Assert.fail("Should've thrown an exception...");
-        } catch (SQLiteException ignored) {
+        } catch (RecordNotFoundException ignored) {
 
         }
     }

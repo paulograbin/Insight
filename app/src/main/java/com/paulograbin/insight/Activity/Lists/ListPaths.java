@@ -37,7 +37,7 @@ public class ListPaths extends ListActivity {
         mAdapter.clear();
 
         PathProvider pp = new PathProvider(this);
-        List<Path> paths = pp.getAll();
+        paths = pp.getAll();
 
         mAdapter.addAll(paths);
     }

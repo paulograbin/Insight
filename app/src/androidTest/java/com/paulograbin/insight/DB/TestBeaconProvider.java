@@ -2,11 +2,11 @@ package com.paulograbin.insight.DB;
 
 import android.app.Application;
 import android.content.ContentValues;
-import android.database.sqlite.SQLiteException;
 import android.test.ApplicationTestCase;
 
 import com.paulograbin.insight.DB.Provider.BeaconProvider;
 import com.paulograbin.insight.DB.Table.TableBeacon;
+import com.paulograbin.insight.Exceptions.RecordNotFoundException;
 import com.paulograbin.insight.Model.Beacon;
 
 import junit.framework.Assert;
@@ -158,7 +158,7 @@ public class TestBeaconProvider extends ApplicationTestCase<Application> {
         try {
             Beacon b = mBeaconProvider.getByID(50);
             Assert.fail("Should've thrown an exception...");
-        } catch (SQLiteException ignored) {
+        } catch (RecordNotFoundException ignored) {
 
         }
     }
@@ -177,10 +177,11 @@ public class TestBeaconProvider extends ApplicationTestCase<Application> {
 
     public void testGetByUUIDWithNonExistingBeacon() {
         String uuid = "123456789-123456789-123456789";
+
         try {
             Beacon b = mBeaconProvider.getByUUID(uuid);
             Assert.fail("Should've thrown an exception");
-        } catch (SQLiteException ignored) {
+        } catch (RecordNotFoundException ignored) {
 
         }
     }

@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.paulograbin.insight.DB.Table.TablePlace;
+import com.paulograbin.insight.Exceptions.RecordNotFoundException;
 import com.paulograbin.insight.Model.Place;
 
 import java.util.ArrayList;
@@ -58,6 +59,41 @@ public class PlaceProvider extends AbstractProvider<Place> {
         return cv;
     }
 
+    public Place getByName(String name) throws RecordNotFoundException {
+        printToLog("Obtendo place a partir do nome");
+
+        SQLiteDatabase db = mDatabaseHelper.getReadableDatabase();
+
+        String query = "SELECT * FROM " + getTableName() + " WHERE " + TablePlace.COLUMN_NAME + " LIKE ?";
+        Cursor cursor = db.rawQuery(query, new String[]{name});
+
+        if(cursor.moveToFirst()) {
+            Place p = getFromCursor(cursor);
+            return p;
+        } else {
+            throw new RecordNotFoundException("Nenhum local com esse nome encontrado");
+        }
+    }
+
+    public List<Place> getAllFavoritePlaces() {
+        printToLog("Obtendo todos os locais favoritos");
+
+        List<Place> places = new ArrayList<>();
+        SQLiteDatabase db = mDatabaseHelper.getReadableDatabase();
+
+        String query = "SELECT * FROM " + getTableName() + " WHERE " + TablePlace.COLUMN_FAVORITE + " = 1;";
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                places.add(getFromCursor(cursor));
+            } while (cursor.moveToNext());
+        }
+
+        printToLog(places.toString());
+        return places;
+    }
+
     public List<Place> getAllDestinationPlaces() {
         printToLog("Obtendo os registros de " + getTableName());
 
@@ -91,25 +127,6 @@ public class PlaceProvider extends AbstractProvider<Place> {
             } while (cursor.moveToNext());
         }
 
-        return places;
-    }
-
-    public List<Place> getAllFavoritePlaces() {
-        printToLog("Obtendo todos os locais favoritos");
-
-        List<Place> places = new ArrayList<>();
-        SQLiteDatabase db = mDatabaseHelper.getReadableDatabase();
-
-        String query = "SELECT * FROM " + getTableName() + " WHERE " + TablePlace.COLUMN_FAVORITE + " = 1;";
-        Cursor cursor = db.rawQuery(query, null);
-
-        if (cursor.moveToFirst()) {
-            do {
-                places.add(getFromCursor(cursor));
-            } while (cursor.moveToNext());
-        }
-
-        printToLog(places.toString());
         return places;
     }
 

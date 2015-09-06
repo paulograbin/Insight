@@ -3,6 +3,8 @@ package com.paulograbin.insight.DB.Provider;
 import android.content.ContentValues;
 import android.database.Cursor;
 
+import com.paulograbin.insight.Exceptions.RecordNotFoundException;
+
 import java.util.List;
 
 /**
@@ -18,7 +20,7 @@ public interface ProviderInterface<T> {
 
     long insert(T object);
 
-    T getByID(long id);
+    T getByID(long id) throws RecordNotFoundException;
 
     List<T> getAll();
 

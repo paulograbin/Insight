@@ -48,6 +48,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return mDatabaseHelper;
     }
 
+    public void checkDatabase() {
+
+        BeaconProvider bp = new BeaconProvider(context);
+        MessageProvider mp = new MessageProvider(context);
+        PlaceProvider pp = new PlaceProvider(context);
+        PlaceBeaconProvider pbp = new PlaceBeaconProvider(context);
+
+        if ((bp.getCount() == 0) && ((mp.getCount() == 0) & (pp.getCount() == 0)) && (pbp.getCount() == 0)) {
+            insertStandardRecords();
+        }
+    }
+
     public static void insertStandardRecords() {
         /*
          * Mensagens padrão
@@ -182,6 +194,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         Log.i(TAG, TablePath.TABLE_CREATE_COMMAND);
         db.execSQL(TablePath.TABLE_CREATE_COMMAND);
+    }
+
+    public void dropTables() {
+        Log.i("Spiga", "Dropping all records from all tables");
+        SQLiteDatabase db = getWritableDatabase();
+
+        db.delete(TablePlace.TABLE_NAME, String.valueOf(1), null);
+        db.delete(TableBeacon.TABLE_NAME, String.valueOf(1), null);
+        db.delete(TablePlaceBeacon.TABLE_NAME, String.valueOf(1), null);
+        db.delete(TableMessage.TABLE_NAME, String.valueOf(1), null);
+        db.delete(TablePath.TABLE_NAME, String.valueOf(1), null);
+
+        insertStandardRecords();
     }
 
     @Override

@@ -54,4 +54,13 @@
         android:layout_toStartOf="@+id/btnPlaces"
         android:text="Show Paths" />
 
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Drop tables"
+        android:id="@+id/btnDropTables"
+        android:layout_alignParentBottom="true"
+        android:layout_toStartOf="@+id/btnShowPlaceBeacons"
+        android:layout_alignEnd="@+id/btnPlaces" />
+
 </RelativeLayout>

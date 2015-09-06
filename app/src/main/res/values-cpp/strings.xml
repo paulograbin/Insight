@@ -8,11 +8,13 @@
     <string name="title_activity_beacon_details">Detalhes do Beacon</string>
     <string name="title_activity_list_beacons">Lista de beacons</string>
     <string name="initial_place_not_identified">Não foi possível determinar o local atual</string>
-    <string name="title_activity_admin_panel"></string>
+    <string name="title_activity_admin_panel">Painel do administrador</string>
     <string name="title_activity_navigation">Navegação</string>
     <string name="choose_destination">Escolher destino</string>
     <string name="title_activity_main"></string>
     <string name="hello_world"></string>
     <string name="no_beacon_detected">Posição ainda não foi determinada</string>
-    <string name="admin_panel">Painel admin</string>
+    <string name="admin_panel">Admin</string>
+    <string name="distance">Distância</string>
+    <string name="title_activity_list_paths">Lista de caminhos</string>
 </resources>

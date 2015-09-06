@@ -2,11 +2,11 @@ package com.paulograbin.insight.DB;
 
 import android.app.Application;
 import android.content.ContentValues;
-import android.database.sqlite.SQLiteException;
 import android.test.ApplicationTestCase;
 
 import com.paulograbin.insight.DB.Provider.PlaceBeaconProvider;
 import com.paulograbin.insight.DB.Table.TablePlaceBeacon;
+import com.paulograbin.insight.Exceptions.RecordNotFoundException;
 import com.paulograbin.insight.Model.PlaceBeacon;
 
 import junit.framework.Assert;
@@ -178,7 +178,7 @@ public class TestPlaceBeaconProvider extends ApplicationTestCase<Application> {
         try {
             PlaceBeacon b = pbp.getByID(50);
             Assert.fail("Should've thrown an exception...");
-        } catch (SQLiteException ignored) {
+        } catch (RecordNotFoundException ignored) {
 
         }
     }

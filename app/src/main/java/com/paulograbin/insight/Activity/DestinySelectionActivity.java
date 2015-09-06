@@ -3,20 +3,25 @@ package com.paulograbin.insight.Activity;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.paulograbin.insight.Activity.Details.DetailsPlace;
 import com.paulograbin.insight.Adapter.PlaceSelectionAdapter;
 import com.paulograbin.insight.DB.Provider.PlaceProvider;
 import com.paulograbin.insight.Model.Place;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
-public class DestinySelectionActivity extends AppCompatActivity {
+public class DestinySelectionActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
+
+    private TextToSpeech tts;
 
     ListView listView;
     List<Place> places;
@@ -29,6 +34,7 @@ public class DestinySelectionActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 
         Intent intent = this.getIntent();
         if (intent.hasExtra("place")) {
@@ -53,6 +59,7 @@ public class DestinySelectionActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Place chosenPlace = (Place) parent.getItemAtPosition(position);
+                say("teste");
                 Log.i("Spiga", "Usuário escolheu destino: " + chosenPlace.toString());
 
                 Intent intent = new Intent();
@@ -63,8 +70,25 @@ public class DestinySelectionActivity extends AppCompatActivity {
             }
         });
 
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                Place p = mAdapter.getItem(position);
+                Log.i("Spiga", "Clicado na posição " + position + " id " + id);
+
+                Intent intent = new Intent(getBaseContext(), DetailsPlace.class);
+                intent.putExtra("place", p);
+                startActivity(intent);
+                return true;
+            }
+        });
+
         setContentView(listView);
         refreshList();
+
+        tts = new TextToSpeech(this, this);
+
+
     }
 
     private void refreshList() {
@@ -79,5 +103,18 @@ public class DestinySelectionActivity extends AppCompatActivity {
                     mAdapter.add(p);
                 }
             }
+    }
+
+    private void say(String text) {
+        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+    }
+
+    @Override
+    public void onInit(int status) {
+        if (status != TextToSpeech.ERROR) {
+            tts.setLanguage(Locale.getDefault());
+        } else {
+            Log.i("Spiga", status + "");
+        }
     }
 }

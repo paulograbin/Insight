@@ -1,6 +1,5 @@
 package com.paulograbin.insight.Activity;
 
-import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -25,9 +24,11 @@ import com.paulograbin.insight.Activity.Lists.ListFavoritePlaces;
 import com.paulograbin.insight.Adapter.PlaceAdapter;
 import com.paulograbin.insight.Adapter.PlaceSelectionAdapter;
 import com.paulograbin.insight.Bluetooth.BluetoothService;
+import com.paulograbin.insight.DB.DatabaseHelper;
 import com.paulograbin.insight.DB.Provider.BeaconProvider;
 import com.paulograbin.insight.DB.Provider.PlaceBeaconProvider;
 import com.paulograbin.insight.DB.Provider.PlaceProvider;
+import com.paulograbin.insight.Exceptions.NoWayException;
 import com.paulograbin.insight.LocationEngine.RouteFinder;
 import com.paulograbin.insight.Model.Place;
 import com.paulograbin.insight.Model.PlaceBeacon;
@@ -71,7 +72,6 @@ public class FirstScreenActivity extends AppCompatActivity implements TextToSpee
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_firstscreen);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        tts = new TextToSpeech(this, this);
 
         list = (ListView) findViewById(R.id.list);
 
@@ -126,43 +126,15 @@ public class FirstScreenActivity extends AppCompatActivity implements TextToSpee
                 Intent intent = new Intent(getBaseContext(), DestinySelectionActivity.class);
                 intent.putExtra("place", mCurrentPlace);
                 startActivityForResult(intent, selectedOption);
+//                say("Listando possíveis destinos");
             }
         });
 
-
-//        try {
-//            Log.i("Spiga", "Chamando service");
-//            Intent intent = new Intent(this, BluetoothService.class);
-//            startService(intent);
-//
-//            if(isMyServiceRunning(BluetoothService.class)) {
-//                Log.i("Spiga", "rodando");
-//            } else {
-//                Log.i("Spiga", "não ta rodando");
-//            }
-//
-//            bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-//            LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter(BluetoothService.FOUND_NEW_BEACON_EVENT));
-//        } catch (Exception e) {
-//            Log.i("Spiga", "Deu merda... " + e.getClass());
-//            e.printStackTrace();
-//        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
 
         try {
             Log.i("Spiga", "Chamando service");
             Intent intent = new Intent(this, BluetoothService.class);
             startService(intent);
-
-            if(isMyServiceRunning(BluetoothService.class)) {
-                Log.i("Spiga", "rodando");
-            } else {
-                Log.i("Spiga", "não ta rodando");
-            }
 
             bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
             LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter(BluetoothService.FOUND_NEW_BEACON_EVENT));
@@ -172,18 +144,22 @@ public class FirstScreenActivity extends AppCompatActivity implements TextToSpee
         }
     }
 
-    private void say(String text) {
-        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+    @Override
+    protected void onResume() {
+        super.onResume();
+        printToLog("onResume");
+
+        DatabaseHelper.getInstance(this).checkDatabase();
+        tts = new TextToSpeech(this, this);
     }
 
-    private boolean isMyServiceRunning(Class<?> serviceClass) {
-        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.getName().equals(service.service.getClassName())) {
-                return true;
-            }
-        }
-        return false;
+    @Override
+    protected void onPause() {
+        super.onPause();
+        printToLog("onPause");
+
+//        tts.stop();
+//        tts.shutdown();
     }
 
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -202,7 +178,7 @@ public class FirstScreenActivity extends AppCompatActivity implements TextToSpee
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Beacon receivedBeacon = (Beacon) intent.getParcelableExtra(BluetoothService.BEACON_KEY);
+            Beacon receivedBeacon = intent.getParcelableExtra(BluetoothService.BEACON_KEY);
             printToLog(this.getClass().getName() + " recebeu um beacon, " + receivedBeacon.getId1().toString());
 
             onBeaconReceived(receivedBeacon);
@@ -240,18 +216,18 @@ public class FirstScreenActivity extends AppCompatActivity implements TextToSpee
             Place placeSelectedByUser = (Place) data.getSerializableExtra("chosenPlace");
             Log.i(TAG, "Place selected by the user " + placeSelectedByUser);
 
-            RouteFinder routeFinder = new RouteFinder(this, mCurrentPlace, placeSelectedByUser);
-            path = routeFinder.getPathToTargetPlace();
+            try {
+                RouteFinder routeFinder = new RouteFinder(this, mCurrentPlace, placeSelectedByUser);
+                path = routeFinder.getPathToTargetPlace();
 
-            if(path != null) {
                 Location currentLocation = new Location("mCurrentLocation");
                 currentLocation.setLatitude(mCurrentPlace.getLatitude());
                 currentLocation.setLongitude(mCurrentPlace.getLongitude());
 
                 mPlaceSelectionAdapter = new PlaceSelectionAdapter(this, path, currentLocation);
                 list.setAdapter(mPlaceSelectionAdapter);
-            } else {
-                say("Caminho não encontrado");
+            } catch (NoWayException e) {
+                say("Não há um caminho cadastrado para o local selecionado");
                 mPlaceSelectionAdapter.clear();
             }
         }
@@ -264,6 +240,10 @@ public class FirstScreenActivity extends AppCompatActivity implements TextToSpee
     private void printToLog(String message) {
         if (debugActivityExecution)
             Log.i(TAG, message);
+    }
+
+    private void say(String text) {
+        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
     }
 
     @Override

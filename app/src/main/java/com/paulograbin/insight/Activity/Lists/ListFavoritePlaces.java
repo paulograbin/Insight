@@ -62,7 +62,7 @@ public class ListFavoritePlaces extends AppCompatActivity implements TextToSpeec
 
         PlaceProvider pp = new PlaceProvider(this);
         mFavorites = pp.getAllFavoritePlaces();
-
+        
 //        say(mFavorites.size() + " locais favoritos encontrados");
 
         mAdapter.addAll(mFavorites);

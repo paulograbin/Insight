@@ -4,9 +4,9 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 
 import com.paulograbin.insight.DB.Table.TableBeacon;
+import com.paulograbin.insight.Exceptions.RecordNotFoundException;
 import com.paulograbin.insight.Model.Beacon;
 
 import java.text.SimpleDateFormat;
@@ -25,7 +25,6 @@ public class BeaconProvider extends AbstractProvider<Beacon> {
     public BeaconProvider(Context context) {
         super(context);
     }
-
 
     @Override
     public Beacon getDummy() {
@@ -104,7 +103,7 @@ public class BeaconProvider extends AbstractProvider<Beacon> {
         return cv;
     }
 
-    public Beacon getByUUID(String uuid) throws SQLiteException {
+    public Beacon getByUUID(String uuid) throws RecordNotFoundException {
         printToLog("Buscando beacon a partir do UUID " + uuid);
         Beacon b;
 
@@ -114,7 +113,7 @@ public class BeaconProvider extends AbstractProvider<Beacon> {
         if (c.moveToFirst()) {
             b = getFromCursor(c);
         } else {
-            throw new SQLiteException("Beacon not found");
+            throw new RecordNotFoundException("Beacon not found");
         }
 
         c.close();

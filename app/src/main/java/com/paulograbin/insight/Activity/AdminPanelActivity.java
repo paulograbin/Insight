@@ -16,10 +16,6 @@ import com.paulograbin.insight.Activity.Lists.ListPaths;
 import com.paulograbin.insight.Activity.Lists.ListPlaceBeacons;
 import com.paulograbin.insight.Activity.Lists.ListPlacesAll;
 import com.paulograbin.insight.DB.DatabaseHelper;
-import com.paulograbin.insight.DB.Provider.BeaconProvider;
-import com.paulograbin.insight.DB.Provider.MessageProvider;
-import com.paulograbin.insight.DB.Provider.PlaceBeaconProvider;
-import com.paulograbin.insight.DB.Provider.PlaceProvider;
 import com.paulograbin.insight.R;
 
 
@@ -36,6 +32,7 @@ public class AdminPanelActivity extends ActionBarActivity {
     private Button btnShowPlaceList;
     private Button btnShowPlaceBeaconList;
     private Button btnPaths;
+    private Button btnDropTables;
 
     private BluetoothAdapter mBluetoothAdapter;
 
@@ -98,21 +95,16 @@ public class AdminPanelActivity extends ActionBarActivity {
             }
         });
 
-        checkDatabase();
+        btnDropTables = (Button) findViewById(R.id.btnDropTables);
+        btnDropTables.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatabaseHelper.getInstance(getApplicationContext()).dropTables();
+            }
+        });
+
         checkBluetoothIsSupported();
         checkIsBLEisSupported();
-    }
-
-    private void checkDatabase() {
-
-        BeaconProvider bp = new BeaconProvider(this);
-        MessageProvider mp = new MessageProvider(this);
-        PlaceProvider pp = new PlaceProvider(this);
-        PlaceBeaconProvider pbp = new PlaceBeaconProvider(this);
-
-        if (bp.getCount() == 0 && mp.getCount() == 0 & pp.getCount() == 0 && pbp.getCount() == 0) {
-            DatabaseHelper.insertStandardRecords();
-        }
     }
 
     public Boolean checkBluetoothIsSupported() {

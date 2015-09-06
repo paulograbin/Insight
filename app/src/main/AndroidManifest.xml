@@ -53,6 +53,10 @@
             android:label="@string/title_activity_list_paths" >
         </activity>
         <activity
+            android:name=".Activity.Details.DetailsPlace"
+            android:label="@string/title_activity_place_details" >
+        </activity>
+        <activity
             android:name=".Activity.Lists.ListFavoritePlaces"
             android:label="@string/title_activity_list_favorite_places" >
         </activity>
