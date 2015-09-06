@@ -18,66 +18,58 @@ import java.util.List;
 public class RouteFinder {
 
     private static final String TAG = "RouteFinder";
-
     private boolean debugExecution = true;
 
-    PlaceProvider mPlaceProvider;
-    PathProvider mPathProvider;
+    private PlaceProvider mPlaceProvider;
+    private PathProvider mPathProvider;
 
-    Place sourcePlace;
-    Place targetPlace;
+    private Place sourcePlace;
+    private Place targetPlace;
 
-    List<Vertex> nodes;
-    List<Edge> edges;
-    LinkedList<Vertex> path;
-    DijkstraAlgorithm da;
+    private List<Vertex> nodes;
+    private List<Edge> edges;
+
+    private DijkstraAlgorithm da;
 
 
     public RouteFinder(Context context, Place sourcePlace, Place targetPlace) {
         this.sourcePlace = sourcePlace;
         this.targetPlace = targetPlace;
 
-        path = new LinkedList<>();
+        nodes = new ArrayList<>();
+        edges = new ArrayList<>();
 
-        getNodesAndEdgesFromPlacesAndPaths(context);
+        populateNodesAndEdges(context);
 
         da = new DijkstraAlgorithm(nodes, edges);
         da.execute(getVertexFromPlace(sourcePlace));
-
-        path = da.getPath(getVertexFromPlace(targetPlace));
-
-        if(path != null) {
-            for (Vertex vertex : path) {
-                Log.i(TAG, vertex.toString());
-            }
-        } else {
-            printToLog("Caminho não encontrado...");
-        }
     }
 
     public LinkedList<Place> getPathToTargetPlace() {
         LinkedList<Place> convertedPath = new LinkedList<>();
+        LinkedList<Vertex> path = da.getPath(getVertexFromPlace(targetPlace));
 
-        if(path != null) {
+//        if(path != null) {
             for (Vertex v : path) {
                 convertedPath.add(getPlaceFromVertex(v));
             }
-        } else {
-            return null;
-        }
+//        } else {
+//            return null;
+//        }
 
         return convertedPath;
     }
 
-    private void getNodesAndEdgesFromPlacesAndPaths(Context context) {
+    /*
+     * Get all Paths and Places from the database and converts them
+     * into Edges and Nodes so the route can be calculated.
+     */
+    private void populateNodesAndEdges(Context context) {
         mPlaceProvider = new PlaceProvider(context);
         mPathProvider = new PathProvider(context);
 
         List<Place> places = mPlaceProvider.getAll();
         List<Path> paths = mPathProvider.getAll();
-
-        nodes = new ArrayList<>();
-        edges = new ArrayList<>();
 
         for (Place p : places) {
             nodes.add(getVertexFromPlace(p));
@@ -88,7 +80,7 @@ public class RouteFinder {
         }
     }
 
-    private Edge getEdgeFromPath(Path p) {
+    public Edge getEdgeFromPath(Path p) {
         Place sourcePlace = mPlaceProvider.getByID(p.getPlace());
         Place destinationPlace = mPlaceProvider.getByID(p.getConnectedTo());
         int weight = p.getWeight();
@@ -99,11 +91,17 @@ public class RouteFinder {
         return new Edge(source, destination, weight);
     }
 
-    private Vertex getVertexFromPlace(Place p) {
+    /*
+     * Return the result of a conversion from Place to Vertex
+     */
+    public Vertex getVertexFromPlace(Place p) {
         return new Vertex(String.valueOf(p.getId()), p.getName());
     }
 
-    private Place getPlaceFromVertex(Vertex v) {
+    /*
+     * Return the result of a conversion from Vertex to Place
+     */
+    public Place getPlaceFromVertex(Vertex v) {
         Place p = mPlaceProvider.getByID(Long.valueOf(v.getId()));
 
         return p;
