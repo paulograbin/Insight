@@ -1,5 +1,7 @@
 package com.paulograbin.insight.LocationEngine;
 
+import com.paulograbin.insight.Exceptions.NoWayException;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -105,20 +107,23 @@ public class DijkstraAlgorithm {
 
     /*
      * This method returns the path from the source to the selected target and
-     * NULL if no path exists
+     * throws a NoWayException if no path exists
      */
-    public LinkedList<Vertex> getPath(Vertex target) {
+    public LinkedList<Vertex> getPath(Vertex target) throws NoWayException {
         LinkedList<Vertex> path = new LinkedList<>();
         Vertex step = target;
+
         // check if a path exists
         if (predecessors.get(step) == null) {
-            return null;
+            throw new NoWayException("Não há um caminho até o local selecionado");
         }
+
         path.add(step);
         while (predecessors.get(step) != null) {
             step = predecessors.get(step);
             path.add(step);
         }
+
         // Put it into the correct order
         Collections.reverse(path);
         return path;
