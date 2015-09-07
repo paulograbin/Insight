@@ -1,17 +1,8 @@
 package com.paulograbin.insight.Activity;
 
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.speech.tts.TextToSpeech;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -23,9 +14,7 @@ import android.widget.Toast;
 import com.paulograbin.insight.Activity.Lists.ListFavoritePlaces;
 import com.paulograbin.insight.Adapter.PlaceAdapter;
 import com.paulograbin.insight.Adapter.PlaceSelectionAdapter;
-import com.paulograbin.insight.Bluetooth.BluetoothService;
 import com.paulograbin.insight.DB.DatabaseHelper;
-import com.paulograbin.insight.DB.Provider.BeaconProvider;
 import com.paulograbin.insight.DB.Provider.PlaceBeaconProvider;
 import com.paulograbin.insight.DB.Provider.PlaceProvider;
 import com.paulograbin.insight.Exceptions.NoWayException;
@@ -37,33 +26,30 @@ import com.paulograbin.insight.R;
 import org.altbeacon.beacon.Beacon;
 
 import java.util.LinkedList;
-import java.util.Locale;
 
-public class FirstScreenActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
+public class FirstScreenActivity extends ServiceActivity {
 
-    public static final String TAG = "Spiga";
+    private static final String TAG = "Spiga";
 
     private boolean debugActivityExecution = true;
-    private TextToSpeech tts;
-    private BluetoothService mBluetoothService;
 
-    Beacon mLastSeenBeacon;
-    Place mCurrentPlace;
-    Place mTargetPlace;
+    private Beacon mLastSeenBeacon;
+    private Place mCurrentPlace;
+    private Place mTargetPlace;
 
-    LinkedList<Place> path;
-    PlaceSelectionAdapter mPlaceSelectionAdapter;
+    private LinkedList<Place> path;
+    private PlaceSelectionAdapter mPlaceSelectionAdapter;
     PlaceAdapter mPlaceAdapter;
 
-    PlaceProvider mPlaceProvider;
-    PlaceBeaconProvider mPlaceBeaconProvider;
+    private PlaceProvider mPlaceProvider;
+    private PlaceBeaconProvider mPlaceBeaconProvider;
 
-    ListView list;
-    TextView txtCurrentPlace;
-    Button btnAdminPanel;
-    Button btnChooseDestiny;
-    Button btnCallHelp;
-    Button btnFavorites;
+    private ListView list;
+    private TextView txtCurrentPlace;
+    private Button btnAdminPanel;
+    private Button btnChooseDestiny;
+    private Button btnCallHelp;
+    private Button btnFavorites;
 
     int selectedOption = 33;
 
@@ -74,9 +60,6 @@ public class FirstScreenActivity extends AppCompatActivity implements TextToSpee
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         list = (ListView) findViewById(R.id.list);
-
-        mPlaceProvider = new PlaceProvider(this);
-        mPlaceBeaconProvider = new PlaceBeaconProvider(this);
 
         txtCurrentPlace = (TextView) findViewById(R.id.txtCurrentPlace);
         txtCurrentPlace.setText("Nenhum beacon foi detectado ainda... :(");
@@ -107,10 +90,14 @@ public class FirstScreenActivity extends AppCompatActivity implements TextToSpee
                     return;
                 }
 
+                if(mPlaceProvider.getAllFavoritePlaces().size() == 0) {
+                    say("Você não possui nenhum local marcado como favorito");
+                    return;
+                }
+
                 Intent intent = new Intent(getBaseContext(), ListFavoritePlaces.class);
                 intent.putExtra("place", mCurrentPlace);
                 startActivityForResult(intent, selectedOption);
-//                say("Listando possíveis destinos");
             }
         });
 
@@ -126,83 +113,46 @@ public class FirstScreenActivity extends AppCompatActivity implements TextToSpee
                 Intent intent = new Intent(getBaseContext(), DestinySelectionActivity.class);
                 intent.putExtra("place", mCurrentPlace);
                 startActivityForResult(intent, selectedOption);
-//                say("Listando possíveis destinos");
             }
         });
-
-
-        try {
-            Log.i("Spiga", "Chamando service");
-            Intent intent = new Intent(this, BluetoothService.class);
-            startService(intent);
-
-            bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-            LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter(BluetoothService.FOUND_NEW_BEACON_EVENT));
-        } catch (Exception e) {
-            Log.i("Spiga", "Deu merda... " + e.getClass());
-            e.printStackTrace();
-        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        printToLog("onResume");
+
+        mPlaceProvider = new PlaceProvider(this);
+        mPlaceBeaconProvider = new PlaceBeaconProvider(this);
+
+        mCurrentPlace = mPlaceProvider.getByName("Ponto Inicial"); //TODO: remove
 
         DatabaseHelper.getInstance(this).checkDatabase();
-        tts = new TextToSpeech(this, this);
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        printToLog("onPause");
-
-//        tts.stop();
-//        tts.shutdown();
-    }
-
-    private ServiceConnection mConnection = new ServiceConnection() {
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            BluetoothService.LocalBinder binder = (BluetoothService.LocalBinder) service;
-            mBluetoothService = binder.getService();
-            Log.i("Spiga", "Service binded");
-        }
-
-        public void onServiceDisconnected(ComponentName className) {
-            printToLog("onServiceDisconnected");
-            mBluetoothService = null;
-        }
-    };
-
-    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Beacon receivedBeacon = intent.getParcelableExtra(BluetoothService.BEACON_KEY);
-            printToLog(this.getClass().getName() + " recebeu um beacon, " + receivedBeacon.getId1().toString());
-
-            onBeaconReceived(receivedBeacon);
-        }
-    };
-
-    private void onBeaconReceived(Beacon lastSeenBeacon) {
+    protected void onBeaconReceived(Beacon lastSeenBeacon) {
         try {
             mLastSeenBeacon = lastSeenBeacon;
 
             PlaceBeacon pb = mPlaceBeaconProvider.getByUUID(mLastSeenBeacon.getId1().toString());
             mCurrentPlace = mPlaceProvider.getByID(pb.getIdPlace());
 
-            BeaconProvider beaconProvider = new BeaconProvider(this);
+            if(!mCurrentPlace.isEqualTo(mTargetPlace)) {
+                // Not final place
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        String message = "Você está em " + mCurrentPlace.getName();
 
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    String message = "Você está em " + mCurrentPlace.getName();
+                        txtCurrentPlace.setText(message);
+                        say(message + ", " + mCurrentPlace.getMessage());
+                    }
+                });
+            } else {
+                // Final place
+                say("Você chegou ao seu destino.");
 
-                    txtCurrentPlace.setText(message);
-                    say(message + ", " + mCurrentPlace.getMessage());
-                }
-            });
+            }
+
         } catch (Exception e) {
             printToLog("Beacon com uuid " + lastSeenBeacon.getId1().toString() + " não cadastrado, ignorando...");
         }
@@ -215,10 +165,13 @@ public class FirstScreenActivity extends AppCompatActivity implements TextToSpee
 
             Place placeSelectedByUser = (Place) data.getSerializableExtra("chosenPlace");
             Log.i(TAG, "Place selected by the user " + placeSelectedByUser);
+            mTargetPlace = placeSelectedByUser;
 
             try {
                 RouteFinder routeFinder = new RouteFinder(this, mCurrentPlace, placeSelectedByUser);
                 path = routeFinder.getPathToTargetPlace();
+
+                say("Calculando rota até " + placeSelectedByUser.getName());
 
                 Location currentLocation = new Location("mCurrentLocation");
                 currentLocation.setLatitude(mCurrentPlace.getLatitude());
@@ -226,32 +179,17 @@ public class FirstScreenActivity extends AppCompatActivity implements TextToSpee
 
                 mPlaceSelectionAdapter = new PlaceSelectionAdapter(this, path, currentLocation);
                 list.setAdapter(mPlaceSelectionAdapter);
+
+                say("Rota para " + mTargetPlace.getName() + " encontrada. Vamos passar por " + (mPlaceSelectionAdapter.getCount()-1) + " locais para chegar ao destino");
             } catch (NoWayException e) {
                 say("Não há um caminho cadastrado para o local selecionado");
-                mPlaceSelectionAdapter.clear();
+//                mPlaceSelectionAdapter.clear();
             }
         }
-    }
-
-    private void updateCurrentPlaceText(Place p) {
-        txtCurrentPlace.setText("Você está em " + p.getName());
     }
 
     private void printToLog(String message) {
         if (debugActivityExecution)
             Log.i(TAG, message);
-    }
-
-    private void say(String text) {
-        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
-    }
-
-    @Override
-    public void onInit(int status) {
-        if (status == TextToSpeech.SUCCESS) {
-            tts.setLanguage(Locale.getDefault());
-        } else {
-            Toast.makeText(this, "pau no TTS", Toast.LENGTH_SHORT).show();
-        }
     }
 }
