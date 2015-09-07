@@ -8,41 +8,40 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.speech.tts.TextToSpeech;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.paulograbin.insight.Bluetooth.BluetoothService;
+import com.paulograbin.insight.Output.Speaker;
 
 import org.altbeacon.beacon.Beacon;
-
-import java.util.Locale;
 
 /**
  * Created by paulograbin on 06/09/15.
  */
-public abstract class ServiceActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
+public abstract class ServiceActivity extends AppCompatActivity { // implements TextToSpeech.OnInitListener {
 
-    private TextToSpeech tts;
+//    private TextToSpeech tts;
     private BluetoothService mBluetoothService;
     private static final String TAG = "ServiceActivity";
+    private Speaker mSpeaker;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        mSpeaker = Speaker.getInstance(this);
         registerAsReceiver();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        tts = new TextToSpeech(this, this);
-    }
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//
+//        tts = new TextToSpeech(this, this);
+//    }
 
     private void registerAsReceiver() {
         try {
@@ -105,17 +104,18 @@ public abstract class ServiceActivity extends AppCompatActivity implements TextT
 //    }
 
     protected void say(String text) {
-        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+        mSpeaker.say(text);
+//        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
     }
 
-    @Override
-    public void onInit(int status) {
-        if (status == TextToSpeech.SUCCESS) {
-            tts.setLanguage(Locale.getDefault());
-        } else {
-            Toast.makeText(this, "pau no TTS", Toast.LENGTH_SHORT).show();
-        }
-    }
+//    @Override
+//    public void onInit(int status) {
+//        if (status == TextToSpeech.SUCCESS) {
+//            tts.setLanguage(Locale.getDefault());
+//        } else {
+//            Toast.makeText(this, "pau no TTS", Toast.LENGTH_SHORT).show();
+//        }
+//    }
 
     private void printToLog(String message) {
         boolean debugServiceActivity = true;
