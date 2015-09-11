@@ -44,6 +44,7 @@ public class PlaceSelectionAdapter extends ArrayAdapter<Place> {
         newLocation.setLongitude(p.getLongitude());
 
         holder.txtPlaceName.setText(p.getName());
+        holder.txtPlaceDescription.setText(p.getDescription());
         holder.txtPlaceDistance.setText(getDistanceFromCurrentLocation(newLocation) + "");
 
         return convertView;
@@ -55,10 +56,12 @@ public class PlaceSelectionAdapter extends ArrayAdapter<Place> {
 
     public class ViewHolder {
         TextView txtPlaceName;
+        TextView txtPlaceDescription;
         TextView txtPlaceDistance;
 
         public ViewHolder(View v) {
             txtPlaceName = (TextView) v.findViewById(R.id.txtPlaceName);
+            txtPlaceDescription = (TextView) v.findViewById(R.id.txtPlaceDescription);
             txtPlaceDistance = (TextView) v.findViewById(R.id.txtPlaceDistance);
         }
     }

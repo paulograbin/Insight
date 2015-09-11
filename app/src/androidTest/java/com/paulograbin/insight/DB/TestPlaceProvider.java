@@ -40,7 +40,7 @@ public class TestPlaceProvider extends ApplicationTestCase<Application> {
         p1.setFavorite(1);
 
         Place p2 = pp.getDummy();
-        p1.setFavorite(0);
+        p2.setFavorite(0);
 
         p1.setId(pp.insert(p1));
         p2.setId(pp.insert(p2));

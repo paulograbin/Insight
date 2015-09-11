@@ -30,11 +30,11 @@ import java.util.Calendar;
  */
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    static final int DATABASE_VERSION = 26;
-    static final String DATABASE_NAME = "insight.db";
+    private static final int DATABASE_VERSION = 26;
+    private static final String DATABASE_NAME = "insight.db";
     private static DatabaseHelper mDatabaseHelper;
     private static Context context;
-    private final String TAG = "Spiga";
+    private final String TAG = "Database";
 
     private DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -60,7 +60,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public static void insertStandardRecords() {
+    private static void insertStandardRecords() {
         /*
          * Mensagens padrão
          */
@@ -74,6 +74,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Place pMid = new Place("Caminho entre pontos", "Um caminho no meio do mapa", "", Place.NOT_FAVORITE, Place.NO_DESTINATION, -29.91305, -51.18932);
         Place pNowhere = new Place("Nowhere", "Algum lugar perdido", "", Place.NOT_FAVORITE, Place.NO_DESTINATION, -29.99447, -50.78694);
         Place pEnd = new Place("Ponto Final", "Um ponto no fim do mapa", "", Place.FAVORITE, Place.FINAL_DESTINATION, -30.03201, -51.21678);
+
+//        Place pInitial = new Place("Setor 2E", "Custom Developtment", "Siga pela direita até a porta de correr e então continue andando reto", Place.NOT_FAVORITE, Place.FINAL_DESTINATION, -29.78440, -51.14400);
+//        Place pMid = new Place("Setor 2C", "Centro do prédio", "Dobre a direita e siga até o elevador", Place.NOT_FAVORITE, Place.NO_DESTINATION, -29.91305, -51.18932);
+//        Place pNowhere = new Place("Setor 2D", "Algum lugar perdido", "Bla bla bla", Place.NOT_FAVORITE, Place.FINAL_DESTINATION, -29.99447, -50.78694);
+//        Place pEnd = new Place("Cafeteria", "Restaurante da SAP", "Continue enfrente até a sala de recreação", Place.FAVORITE, Place.FINAL_DESTINATION, -30.03201, -51.21678);
 
         PlaceProvider pp = new PlaceProvider(context);
         pInitial.setId(pp.insert(pInitial));
@@ -170,7 +175,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        Log.i(TAG, "Criando tabelas...");
+        printToLog("Criando tabelas...");
 
         try {
             createTables(db);
@@ -179,25 +184,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public void createTables(SQLiteDatabase db) {
-        Log.i(TAG, TableBeacon.TABLE_CREATE_COMMAND);
+    private void createTables(SQLiteDatabase db) {
+        printToLog(TableBeacon.TABLE_CREATE_COMMAND);
         db.execSQL(TableBeacon.TABLE_CREATE_COMMAND);
 
-        Log.i(TAG, TableMessage.TABLE_CREATE_COMMAND);
+        printToLog(TableMessage.TABLE_CREATE_COMMAND);
         db.execSQL(TableMessage.TABLE_CREATE_COMMAND);
 
-        Log.i(TAG, TablePlace.TABLE_CREATE_COMMAND);
+        printToLog(TablePlace.TABLE_CREATE_COMMAND);
         db.execSQL(TablePlace.TABLE_CREATE_COMMAND);
 
-        Log.i(TAG, TablePlaceBeacon.TABLE_CREATE_COMMAND);
+        printToLog(TablePlaceBeacon.TABLE_CREATE_COMMAND);
         db.execSQL(TablePlaceBeacon.TABLE_CREATE_COMMAND);
 
-        Log.i(TAG, TablePath.TABLE_CREATE_COMMAND);
+        printToLog(TablePath.TABLE_CREATE_COMMAND);
         db.execSQL(TablePath.TABLE_CREATE_COMMAND);
     }
 
     public void dropTables() {
-        Log.i("Spiga", "Dropping all records from all tables");
+        printToLog("Dropping all records from all tables");
         SQLiteDatabase db = getWritableDatabase();
 
         db.delete(TablePlace.TABLE_NAME, String.valueOf(1), null);
@@ -211,6 +216,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        printToLog("Upgrading - Dropping all records from all tables");
+
         db.execSQL("DROP TABLE IF EXISTS " + TableBeacon.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + TableMessage.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + TablePlace.TABLE_NAME);
@@ -218,5 +225,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TablePath.TABLE_NAME);
 
         onCreate(db);
+    }
+
+    private void printToLog(String message) {
+        Log.i(TAG, message);
     }
 }

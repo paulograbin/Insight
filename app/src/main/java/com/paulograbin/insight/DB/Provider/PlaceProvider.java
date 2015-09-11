@@ -68,8 +68,7 @@ public class PlaceProvider extends AbstractProvider<Place> {
         Cursor cursor = db.rawQuery(query, new String[]{name});
 
         if(cursor.moveToFirst()) {
-            Place p = getFromCursor(cursor);
-            return p;
+            return getFromCursor(cursor);
         } else {
             throw new RecordNotFoundException("Nenhum local com esse nome encontrado");
         }

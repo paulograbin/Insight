@@ -7,7 +7,7 @@ import java.io.Serializable;
  */
 public class Place implements ModelInterface<Place>, Serializable {
 
-    public static final int NO_DESTINATION = 0;     // Place is only a way to another place
+    public static final int NO_DESTINATION = 0;     // Place is only a way to another source
     public static final int FINAL_DESTINATION = 1;  // Place can be choosed as destination by the user
     public static final int NOT_FAVORITE = 0;
     public static final int FAVORITE = 1;

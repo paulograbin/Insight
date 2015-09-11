@@ -15,9 +15,6 @@ public class Speaker implements TextToSpeech.OnInitListener {
     private TextToSpeech tts;
     private boolean ready;
 
-    public boolean isReady() {
-        return ready;
-    }
 
     public static Speaker getInstance(Context context) {
         if(sSpeaker == null)
@@ -34,6 +31,8 @@ public class Speaker implements TextToSpeech.OnInitListener {
     public void say(String text) {
         if(ready)
             tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+        else
+            Log.i("Speaker", "Speaker not ready...");
     }
 
     @Override

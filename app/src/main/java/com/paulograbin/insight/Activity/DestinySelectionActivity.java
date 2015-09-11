@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.paulograbin.insight.Activity.Details.DetailsPlace;
 import com.paulograbin.insight.Adapter.PlaceSelectionAdapter;
@@ -23,13 +24,22 @@ public class DestinySelectionActivity extends AppCompatActivity implements TextT
 
     private TextToSpeech tts;
 
-    ListView listView;
-    List<Place> places;
+    ListView mList;
+    List<Place> mPlaces;
     PlaceSelectionAdapter mAdapter;
 
-    Place currentPlace;
-    Location currentLocation;
+    Place mCurrentPlace;
+    Location mCurrentLocation;
 
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        tts.stop();
+        tts.shutdown();
+        tts = null;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,24 +48,24 @@ public class DestinySelectionActivity extends AppCompatActivity implements TextT
 
         Intent intent = this.getIntent();
         if (intent.hasExtra("place")) {
-            currentPlace = (Place) intent.getSerializableExtra("place");
+            mCurrentPlace = (Place) intent.getSerializableExtra("place");
         }
 
-        currentLocation = new Location("teste");
-        currentLocation.setLatitude(currentPlace.getLatitude());
-        currentLocation.setLongitude(currentPlace.getLongitude());
+        mCurrentLocation = new Location("teste");
+        mCurrentLocation.setLatitude(mCurrentPlace.getLatitude());
+        mCurrentLocation.setLongitude(mCurrentPlace.getLongitude());
 
-        Log.i("Spiga", "CurrentPlace:" + currentPlace.getName() + ", " + currentPlace.getLatitude() + "/" + currentPlace.getLongitude());
-        Log.i("Spiga", "CurrentLocation:" + currentLocation.getLatitude() + " - " + currentLocation.getLongitude());
+        Log.i("Spiga", "CurrentPlace:" + mCurrentPlace.getName() + ", " + mCurrentPlace.getLatitude() + "/" + mCurrentPlace.getLongitude());
+        Log.i("Spiga", "CurrentLocation:" + mCurrentLocation.getLatitude() + " - " + mCurrentLocation.getLongitude());
 
-        listView = new ListView(this);
-        listView.setId(android.R.id.list);
+        mList = new ListView(this);
+        mList.setId(android.R.id.list);
 
-        places = new ArrayList<>();
-        mAdapter = new PlaceSelectionAdapter(this, places, currentLocation);
-        listView.setAdapter(mAdapter);
+        mPlaces = new ArrayList<>();
+        mAdapter = new PlaceSelectionAdapter(this, mPlaces, mCurrentLocation);
+        mList.setAdapter(mAdapter);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Place chosenPlace = (Place) parent.getItemAtPosition(position);
@@ -70,7 +80,7 @@ public class DestinySelectionActivity extends AppCompatActivity implements TextT
             }
         });
 
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        mList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 Place p = mAdapter.getItem(position);
@@ -83,23 +93,26 @@ public class DestinySelectionActivity extends AppCompatActivity implements TextT
             }
         });
 
-        setContentView(listView);
+        setContentView(mList);
         refreshList();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
 
         tts = new TextToSpeech(this, this);
-
-
     }
 
     private void refreshList() {
         mAdapter.clear();
 
         PlaceProvider pp = new PlaceProvider(this);
-        List<Place> places = pp.getAll();
+        List<Place> places = pp.getAll(); // TODO: selecionar apenas destinos
 
-        if(currentPlace != null)
+        if(mCurrentPlace != null)
             for (Place p: places) {
-                if (!p.isEqualTo(currentPlace)) {
+                if (!p.isEqualTo(mCurrentPlace)) {
                     mAdapter.add(p);
                 }
             }
@@ -111,10 +124,19 @@ public class DestinySelectionActivity extends AppCompatActivity implements TextT
 
     @Override
     public void onInit(int status) {
-        if (status != TextToSpeech.ERROR) {
+        //TODO: todo android vem com o sintetizador de voz
+        //TODO: inspiração veio quando minha namorada comentou que viu no trem...
+
+        if (status == TextToSpeech.SUCCESS) {
             tts.setLanguage(Locale.getDefault());
+
+            if(mPlaces.size() == 1)
+                say("Um possível destino encontrado.");
+            else if(mPlaces.size() > 1) {
+                say(mPlaces.size() + " possíveis destinos encontrados");
+            }
         } else {
-            Log.i("Spiga", status + "");
+            Toast.makeText(this, "pau no TTS", Toast.LENGTH_SHORT).show();
         }
     }
 }
