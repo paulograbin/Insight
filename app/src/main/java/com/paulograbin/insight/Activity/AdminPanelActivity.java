@@ -1,11 +1,8 @@
 package com.paulograbin.insight.Activity;
 
-import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -34,7 +31,7 @@ public class AdminPanelActivity extends ActionBarActivity {
     private Button btnPaths;
     private Button btnDropTables;
 
-    private BluetoothAdapter mBluetoothAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,13 +75,6 @@ public class AdminPanelActivity extends ActionBarActivity {
             }
         });
 
-        btnBluetooth = (Button) findViewById(R.id.btnBluetooth);
-        btnBluetooth.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                askUserToEnableBluetooth();
-            }
-        });
 
         btnPaths = (Button) findViewById(R.id.btnPaths);
         btnPaths.setOnClickListener(new View.OnClickListener() {
@@ -102,32 +92,5 @@ public class AdminPanelActivity extends ActionBarActivity {
                 DatabaseHelper.getInstance(getApplicationContext()).dropTables();
             }
         });
-
-        checkBluetoothIsSupported();
-        checkIsBLEisSupported();
-    }
-
-    public Boolean checkBluetoothIsSupported() {
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        return mBluetoothAdapter != null;
-
-    }
-
-    public void askUserToEnableBluetooth() {
-
-        if (!mBluetoothAdapter.isEnabled()) {
-            int REQUEST_ENABLE_BT = 0;
-
-            Intent enableBluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBluetoothIntent, REQUEST_ENABLE_BT);
-            Log.i(LOG_TAG, "Usuário respondeu:" + REQUEST_ENABLE_BT);
-        }
-    }
-
-    public Boolean checkIsBLEisSupported() {
-        // Use this check to determine whether BLE is supported on the device. Then
-        // you can selectively disable BLE-related features.
-        return getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE);
-
     }
 }

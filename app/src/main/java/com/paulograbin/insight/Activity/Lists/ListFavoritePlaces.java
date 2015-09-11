@@ -18,6 +18,8 @@ import java.util.Locale;
 
 public class ListFavoritePlaces extends AppCompatActivity implements TextToSpeech.OnInitListener {
 
+    //TODO: cada transição de tela tem uma mensagem de voz
+
     ListView mList;
     List<Place> mFavorites;
     PlaceSelectionAdapter mAdapter;
@@ -62,8 +64,6 @@ public class ListFavoritePlaces extends AppCompatActivity implements TextToSpeec
 
         PlaceProvider pp = new PlaceProvider(this);
         mFavorites = pp.getAllFavoritePlaces();
-        
-//        say(mFavorites.size() + " locais favoritos encontrados");
 
         mAdapter.addAll(mFavorites);
     }
@@ -86,6 +86,12 @@ public class ListFavoritePlaces extends AppCompatActivity implements TextToSpeec
         if (status == TextToSpeech.SUCCESS) {
             Toast.makeText(this, "TTS bombando", Toast.LENGTH_SHORT).show();
             tts.setLanguage(Locale.getDefault());
+
+            if(mFavorites.size() == 1)
+                say("Um local favorito encontrado");
+            else if(mFavorites.size() > 1) {
+                say(mFavorites.size() + " locais favoritos encontrados");
+            }
         } else {
             Toast.makeText(this, "pau no TTS", Toast.LENGTH_SHORT).show();
         }

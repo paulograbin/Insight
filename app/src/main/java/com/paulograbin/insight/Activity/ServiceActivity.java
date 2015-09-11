@@ -1,11 +1,13 @@
 package com.paulograbin.insight.Activity;
 
+import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
@@ -20,12 +22,13 @@ import org.altbeacon.beacon.Beacon;
 /**
  * Created by paulograbin on 06/09/15.
  */
-public abstract class ServiceActivity extends AppCompatActivity { // implements TextToSpeech.OnInitListener {
+public abstract class ServiceActivity extends AppCompatActivity {
 
-//    private TextToSpeech tts;
+    private BluetoothAdapter mBluetoothAdapter;
     private BluetoothService mBluetoothService;
     private static final String TAG = "ServiceActivity";
     private Speaker mSpeaker;
+    private int BLUETOOTH_REQUEST = 1;
 
 
     @Override
@@ -35,13 +38,6 @@ public abstract class ServiceActivity extends AppCompatActivity { // implements 
         mSpeaker = Speaker.getInstance(this);
         registerAsReceiver();
     }
-
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//
-//        tts = new TextToSpeech(this, this);
-//    }
 
     private void registerAsReceiver() {
         try {
@@ -108,19 +104,30 @@ public abstract class ServiceActivity extends AppCompatActivity { // implements 
 //        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
     }
 
-//    @Override
-//    public void onInit(int status) {
-//        if (status == TextToSpeech.SUCCESS) {
-//            tts.setLanguage(Locale.getDefault());
-//        } else {
-//            Toast.makeText(this, "pau no TTS", Toast.LENGTH_SHORT).show();
-//        }
-//    }
-
     private void printToLog(String message) {
         boolean debugServiceActivity = true;
 
         if (debugServiceActivity)
             Log.i(TAG, message);
+    }
+
+    public Boolean checkBluetoothIsSupported() {
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        return mBluetoothAdapter != null;
+    }
+
+    public void askUserToEnableBluetooth() {
+
+        if (!mBluetoothAdapter.isEnabled()) {
+            Intent enableBluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBluetoothIntent, BLUETOOTH_REQUEST);
+            Log.i(TAG, "Usuário respondeu:" + BLUETOOTH_REQUEST);
+        }
+    }
+
+    public Boolean checkIsBLEisSupported() {
+        // Use this check to determine whether BLE is supported on the device. Then
+        // you can selectively disable BLE-related features.
+        return getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE);
     }
 }
