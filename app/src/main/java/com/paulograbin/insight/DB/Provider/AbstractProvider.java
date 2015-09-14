@@ -60,7 +60,7 @@ public abstract class AbstractProvider<M extends ModelInterface> implements Prov
 
         db.close();
 
-        printToLog("Novo registro inserido em " + getTableName() + ", id " + newID);
+        printToLog("Novo registro inserido em " + getTableName() + ", id " + newID + " - " + object.toString());
         return newID;
     }
 

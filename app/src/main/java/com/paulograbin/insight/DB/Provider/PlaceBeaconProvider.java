@@ -4,9 +4,9 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 
 import com.paulograbin.insight.DB.Table.TablePlaceBeacon;
+import com.paulograbin.insight.Exceptions.RecordNotFoundException;
 import com.paulograbin.insight.Model.PlaceBeacon;
 
 /**
@@ -43,9 +43,6 @@ public class PlaceBeaconProvider extends AbstractProvider<PlaceBeacon> {
 
     @Override
     public PlaceBeacon getFromCursor(Cursor c) {
-        if (c == null)
-            return null;
-
         PlaceBeacon pb = new PlaceBeacon();
         int i = 0;
 
@@ -69,7 +66,7 @@ public class PlaceBeaconProvider extends AbstractProvider<PlaceBeacon> {
         if (c.moveToFirst()) {
             pb = getFromCursor(c);
         } else {
-            throw new SQLiteException("PlaceBeacon not found");
+            throw new RecordNotFoundException("PlaceBeacon not found");
         }
 
         c.close();

@@ -56,10 +56,6 @@ public class BeaconProvider extends AbstractProvider<Beacon> {
 
     @Override
     public Beacon getFromCursor(Cursor c) {
-        if (c == null)
-            return null;
-
-
         Beacon b = new Beacon();
         int i = 0;
 
@@ -82,7 +78,7 @@ public class BeaconProvider extends AbstractProvider<Beacon> {
     }
 
     public ContentValues getContentValues(Beacon beacon) {
-        printToLog("Obtendo contentValues do beacon " + beacon.getId());
+//        printToLog("Obtendo contentValues do beacon " + beacon.getId());
 
         ContentValues cv = new ContentValues();
 

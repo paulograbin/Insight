@@ -44,7 +44,7 @@ public class PlaceProvider extends AbstractProvider<Place> {
 
     @Override
     public ContentValues getContentValues(Place p) {
-        printToLog("Obtendo contentValues do place " + p.getName());
+//        printToLog("Obtendo contentValues do place " + p.getName());
 
         ContentValues cv = new ContentValues();
 
@@ -131,10 +131,6 @@ public class PlaceProvider extends AbstractProvider<Place> {
 
     @Override
     public Place getFromCursor(Cursor c) {
-        if (c == null) {
-            return null;
-        }
-
         Place p = new Place();
         int i = 0;
 
