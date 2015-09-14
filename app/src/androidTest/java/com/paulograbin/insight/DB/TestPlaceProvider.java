@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class TestPlaceProvider extends ApplicationTestCase<Application> {
 
-    PlaceProvider pp;
+    PlaceProvider mPlaceProvider;
 
     public TestPlaceProvider() {
         super(Application.class);
@@ -28,35 +28,50 @@ public class TestPlaceProvider extends ApplicationTestCase<Application> {
     protected void setUp() throws Exception {
         super.setUp();
 
-        pp = new PlaceProvider(getContext());
-        assertNotNull(pp);
+        mPlaceProvider = new PlaceProvider(getContext());
+        assertNotNull(mPlaceProvider);
 
-        pp.deleteAll();
-        assertEquals(pp.getCount(), 0);
+        mPlaceProvider.deleteAll();
+        assertEquals(mPlaceProvider.getCount(), 0);
+    }
+
+    public void testGetAllFavoritePlacesOnlyOneFavoriteRecord() {
+        Place p1 = mPlaceProvider.getDummy();
+        p1.setFavorite(1);
+        p1.setId(mPlaceProvider.insert(p1));
+
+        assertEquals(1, mPlaceProvider.getAllFavoritePlaces().size());
+    }
+
+    public void testGetAllFavoritePlacesNoOneFavoriteRecord() {
+        Place p1 = mPlaceProvider.getDummy();
+        p1.setId(mPlaceProvider.insert(p1));
+
+        assertEquals(0, mPlaceProvider.getAllFavoritePlaces().size());
     }
 
     public void testGetAllFavoritePlaces() {
-        Place p1 = pp.getDummy();
+        Place p1 = mPlaceProvider.getDummy();
         p1.setFavorite(1);
 
-        Place p2 = pp.getDummy();
+        Place p2 = mPlaceProvider.getDummy();
         p2.setFavorite(0);
 
-        p1.setId(pp.insert(p1));
-        p2.setId(pp.insert(p2));
+        p1.setId(mPlaceProvider.insert(p1));
+        p2.setId(mPlaceProvider.insert(p2));
 
-        assertEquals(1, pp.getAllFavoritePlaces().size());
+        assertEquals(1, mPlaceProvider.getAllFavoritePlaces().size());
     }
 
     public void testGetByNameExisting() {
-        Place p = pp.getDummy();
+        Place p = mPlaceProvider.getDummy();
         p.setName("Ponto Initial");
 
-        long id = pp.insert(p);
+        long id = mPlaceProvider.insert(p);
         assertNotNull(id);
 
         try {
-            Place b = pp.getByName(p.getName());
+            Place b = mPlaceProvider.getByName(p.getName());
             assertEquals(b.getName(), p.getName());
         } catch (RecordNotFoundException e) {
 
@@ -65,7 +80,7 @@ public class TestPlaceProvider extends ApplicationTestCase<Application> {
 
     public void testGetByNameNotExisting() {
         try {
-            Place p = pp.getByName("Any name");
+            Place p = mPlaceProvider.getByName("Any name");
             Assert.fail("Should have thrown an SQLiteException");
         } catch (RecordNotFoundException e) {
 
@@ -73,8 +88,8 @@ public class TestPlaceProvider extends ApplicationTestCase<Application> {
     }
 
     public long insertDummyPlaceDestination() {
-        Place p = pp.getDummy();
-        p.setId(pp.insert(p));
+        Place p = mPlaceProvider.getDummy();
+        p.setId(mPlaceProvider.insert(p));
 
         assertNotNull(p.getId());
         assertNotSame(p.getId(), 0);
@@ -83,10 +98,10 @@ public class TestPlaceProvider extends ApplicationTestCase<Application> {
     }
 
     public long insertDummyPlaceNonDestination() {
-        Place p = pp.getDummy();
+        Place p = mPlaceProvider.getDummy();
         p.setDestination(0);
 
-        p.setId(pp.insert(p));
+        p.setId(mPlaceProvider.insert(p));
 
         assertNotNull(p.getId());
         assertNotSame(p.getId(), 0);
@@ -96,71 +111,71 @@ public class TestPlaceProvider extends ApplicationTestCase<Application> {
 
     public void testDeleteByPlaceExisting() {
         long id = insertDummyPlaceDestination();
-        assertEquals(pp.getCount(), 1);
+        assertEquals(mPlaceProvider.getCount(), 1);
 
-        Place m = pp.getByID(id);
+        Place m = mPlaceProvider.getByID(id);
 
-        int affectedRows = pp.delete(m);
+        int affectedRows = mPlaceProvider.delete(m);
 
         assertEquals(affectedRows, 1);
-        assertEquals(pp.getCount(), 0);
+        assertEquals(mPlaceProvider.getCount(), 0);
     }
 
     public void testDeleteByPlaceNotExisting() {
-        Place b = pp.getDummy();
-        long id = pp.insert(b);
+        Place b = mPlaceProvider.getDummy();
+        long id = mPlaceProvider.insert(b);
 
-        int affectedRows = pp.delete(b);
+        int affectedRows = mPlaceProvider.delete(b);
 
         assertEquals(affectedRows, 0);
     }
 
     public void testDeleteByIDExisting() {
-        assertEquals(pp.getCount(), 0);
+        assertEquals(mPlaceProvider.getCount(), 0);
 
         long id = insertDummyPlaceDestination();
-        assertEquals(pp.getCount(), 1);
+        assertEquals(mPlaceProvider.getCount(), 1);
 
-        int affectedRows = pp.delete(id);
-        assertEquals(pp.getCount(), 0);
+        int affectedRows = mPlaceProvider.delete(id);
+        assertEquals(mPlaceProvider.getCount(), 0);
         assertEquals(affectedRows, 1);
     }
 
     public void testDeleteByIDNotExisting() {
-        assertEquals(pp.getCount(), 0);
-        int affetedRows = pp.delete(50);
+        assertEquals(mPlaceProvider.getCount(), 0);
+        int affetedRows = mPlaceProvider.delete(50);
 
         assertEquals(affetedRows, 0);
     }
 
     public void testGetAllNoPlace() {
-        assertEquals(pp.getCount(), 0);
+        assertEquals(mPlaceProvider.getCount(), 0);
 
-        List<Place> beacons = pp.getAll();
+        List<Place> beacons = mPlaceProvider.getAll();
         assertEquals(beacons.size(), 0);
     }
 
     public void testGetAllManyPlace() {
-        assertEquals(pp.getCount(), 0);
-        List<Place> Places = pp.getAll();
+        assertEquals(mPlaceProvider.getCount(), 0);
+        List<Place> Places = mPlaceProvider.getAll();
 
         insertDummyPlaceDestination();
-        Places = pp.getAll();
-        assertEquals(Places.size(), pp.getCount());
+        Places = mPlaceProvider.getAll();
+        assertEquals(Places.size(), mPlaceProvider.getCount());
         assertEquals(Places.size(), 1);
 
         insertDummyPlaceDestination();
-        Places = pp.getAll();
-        assertEquals(Places.size(), pp.getCount());
+        Places = mPlaceProvider.getAll();
+        assertEquals(Places.size(), mPlaceProvider.getCount());
         assertEquals(Places.size(), 2);
 
         insertDummyPlaceDestination();
-        Places = pp.getAll();
-        assertEquals(Places.size(), pp.getCount());
+        Places = mPlaceProvider.getAll();
+        assertEquals(Places.size(), mPlaceProvider.getCount());
         assertEquals(Places.size(), 3);
 
         Place a = Places.get(2);
-        Place b = pp.getDummy();
+        Place b = mPlaceProvider.getDummy();
 
         assertEquals(a.getName(), b.getName());
     }
@@ -169,59 +184,59 @@ public class TestPlaceProvider extends ApplicationTestCase<Application> {
         insertDummyPlaceNonDestination();
 
         insertDummyPlaceDestination();
-        assertEquals(pp.getAllDestinationPlaces().size(), pp.getCount() - 1);
+        assertEquals(mPlaceProvider.getAllDestinationPlaces().size(), mPlaceProvider.getCount() - 1);
     }
 
     public void testGetAllNonDestination() {
         insertDummyPlaceDestination();
 
         insertDummyPlaceNonDestination();
-        assertEquals(pp.getAllNonDestinationPlaces().size(), pp.getCount() - 1);
+        assertEquals(mPlaceProvider.getAllNonDestinationPlaces().size(), mPlaceProvider.getCount() - 1);
     }
 
     public void testUpdateExisting() {
-        Place a = pp.getDummy();
-        long id = pp.insert(a);
+        Place a = mPlaceProvider.getDummy();
+        long id = mPlaceProvider.insert(a);
 
-        Place b = pp.getByID(id);
+        Place b = mPlaceProvider.getByID(id);
         String newText = "123456789";
         b.setName(newText);
 
-        pp.update(b);
+        mPlaceProvider.update(b);
 
-        Place c = pp.getByID(id);
+        Place c = mPlaceProvider.getByID(id);
         assertEquals(c.getName(), newText);
         assertEquals(c.getId(), id);
     }
 
     public void testUpdateNotExisting() {
-        Place b = pp.getDummy();
+        Place b = mPlaceProvider.getDummy();
 
         String newText = "123456789";
         b.setName(newText);
 
-        int affectedRows = pp.update(b);
+        int affectedRows = mPlaceProvider.update(b);
         assertEquals(affectedRows, 0);
     }
 
     public void testGetByIDWithExistingPlace() {
-        Place a = pp.getDummy();
-        long id = pp.insert(a);
+        Place a = mPlaceProvider.getDummy();
+        long id = mPlaceProvider.insert(a);
 
         assertNotSame(id, 0);
-        assertEquals(pp.getCount(), 1);
+        assertEquals(mPlaceProvider.getCount(), 1);
 
-        Place b = pp.getByID(id);
+        Place b = mPlaceProvider.getByID(id);
         assertNotNull(b);
 
         assertEquals(a.getName(), b.getName());
     }
 
     public void testGetByIdWithNotExistingPlace() {
-        assertEquals(pp.getCount(), 0);
+        assertEquals(mPlaceProvider.getCount(), 0);
 
         try {
-            Place b = pp.getByID(50);
+            Place b = mPlaceProvider.getByID(50);
             Assert.fail("Should've thrown an exception...");
         } catch (RecordNotFoundException ignored) {
 
@@ -229,37 +244,37 @@ public class TestPlaceProvider extends ApplicationTestCase<Application> {
     }
 
     public void testInsertOne() {
-        assertEquals(pp.getCount(), 0);
+        assertEquals(mPlaceProvider.getCount(), 0);
 
         long id = insertDummyPlaceDestination();
 
-        assertEquals(pp.getCount(), 1);
+        assertEquals(mPlaceProvider.getCount(), 1);
         assertNotNull(id);
     }
 
     public void testInsertTwo() {
         long id1, id2;
 
-        pp.deleteAll();
+        mPlaceProvider.deleteAll();
 
-        assertEquals(pp.getCount(), 0);
+        assertEquals(mPlaceProvider.getCount(), 0);
 
-        Place b = pp.getDummy();
-        id1 = pp.insert(b);
-        id2 = pp.insert(b);
+        Place b = mPlaceProvider.getDummy();
+        id1 = mPlaceProvider.insert(b);
+        id2 = mPlaceProvider.insert(b);
 
-        assertEquals(pp.getCount(), 2);
+        assertEquals(mPlaceProvider.getCount(), 2);
         assertNotNull(id1);
         assertNotNull(id2);
     }
 
     public void testInsertDuplicated() {
-        Place a = pp.getDummy();
-        Place b = pp.getDummy();
+        Place a = mPlaceProvider.getDummy();
+        Place b = mPlaceProvider.getDummy();
         b.setName(a.getName());
 
-        pp.insert(a);
-        pp.insert(b);
+        mPlaceProvider.insert(a);
+        mPlaceProvider.insert(b);
     }
 
     public void testGetContentValues() {
@@ -269,7 +284,7 @@ public class TestPlaceProvider extends ApplicationTestCase<Application> {
         b.setLatitude(39);
         b.setLongitude(38);
 
-        ContentValues cv = pp.getContentValues(b);
+        ContentValues cv = mPlaceProvider.getContentValues(b);
 
         assertEquals(cv.get(TablePlace.COLUMN_NAME), b.getName());
         assertEquals(cv.get(TablePlace.COLUMN_DESTINATION), b.getDestination());
@@ -278,20 +293,21 @@ public class TestPlaceProvider extends ApplicationTestCase<Application> {
     }
 
     public void testDeleteAllWithNoRecords() {
-        pp.deleteAll();
-        assertEquals(pp.getCount(), 0);
+        mPlaceProvider.deleteAll();
+        assertEquals(mPlaceProvider.getCount(), 0);
     }
 
     public void testDeleteAllWithRecords() {
-        long countBeforeAdd = pp.getCount();
+        long countBeforeAdd = mPlaceProvider.getCount();
+        assertNotSame(0, countBeforeAdd);
 
         insertDummyPlaceDestination();
 
-        long countAfterAdd = pp.getCount();
+        long countAfterAdd = mPlaceProvider.getCount();
 
-        pp.deleteAll();
+        mPlaceProvider.deleteAll();
 
-        long countDeleted = pp.getCount();
+        long countDeleted = mPlaceProvider.getCount();
 
         assertEquals(countDeleted, 0);
         assertNotSame(countDeleted, countAfterAdd);
@@ -299,6 +315,6 @@ public class TestPlaceProvider extends ApplicationTestCase<Application> {
     }
 
     public void testGetTableName() throws Exception {
-        assertTrue(pp.getTableName().equals(TablePlace.TABLE_NAME));
+        assertTrue(mPlaceProvider.getTableName().equals(TablePlace.TABLE_NAME));
     }
 }

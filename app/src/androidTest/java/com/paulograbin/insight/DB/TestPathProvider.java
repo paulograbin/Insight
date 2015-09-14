@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class TestPathProvider extends ApplicationTestCase<Application> {
 
-    PathProvider pp;
+    PathProvider mPathProvider;
 
     long idDummyPlace = 1L;
     long idDummyConnectedTo = 3L;
@@ -32,16 +32,16 @@ public class TestPathProvider extends ApplicationTestCase<Application> {
     protected void setUp() throws Exception {
         super.setUp();
 
-        pp = new PathProvider(getContext());
-        assertNotNull(pp);
+        mPathProvider = new PathProvider(getContext());
+        assertNotNull(mPathProvider);
 
-        pp.deleteAll();
-        assertEquals(pp.getCount(), 0);
+        mPathProvider.deleteAll();
+        assertEquals(mPathProvider.getCount(), 0);
     }
 
     public long insertDummyPath() {
-        Path p = pp.getDummy();
-        p.setId(pp.insert(p));
+        Path p = mPathProvider.getDummy();
+        p.setId(mPathProvider.insert(p));
 
         assertNotNull(p.getId());
         assertNotSame(p.getId(), 0);
@@ -55,97 +55,97 @@ public class TestPathProvider extends ApplicationTestCase<Application> {
         Path ph2 = new Path(20L, 30L, 1);
         Path ph4 = new Path(20L, 40, 1);
 
-        ph1.setId(pp.insert(ph1));
-        ph2.setId(pp.insert(ph2));
-        ph3.setId(pp.insert(ph3));
-        ph4.setId(pp.insert(ph4));
+        ph1.setId(mPathProvider.insert(ph1));
+        ph2.setId(mPathProvider.insert(ph2));
+        ph3.setId(mPathProvider.insert(ph3));
+        ph4.setId(mPathProvider.insert(ph4));
     }
 
     public void testGetAllPlaceConnections() {
         insertTestRecords();
 
-        List<Path> paths = pp.getAllPlaceConnections(10L);
+        List<Path> paths = mPathProvider.getAllPlaceConnections(10L);
         assertEquals(paths.size(), 2);
     }
 
     public void testGetAllPlacesConnectedTo() {
         insertTestRecords();
 
-        List<Path> paths = pp.getAllPlacesConnectedTo(30L);
+        List<Path> paths = mPathProvider.getAllPlacesConnectedTo(30L);
         assertEquals(paths.size(), 2);
     }
 
     public void testDeleteByPathExisting() {
         try {
             long id = insertDummyPath();
-            assertEquals(pp.getCount(), 1);
+            assertEquals(mPathProvider.getCount(), 1);
 
-            Path p = pp.getByID(id);
+            Path p = mPathProvider.getByID(id);
 
-            int affectedRows = pp.delete(p);
+            int affectedRows = mPathProvider.delete(p);
 
             assertEquals(affectedRows, 1);
-            assertEquals(pp.getCount(), 0);
+            assertEquals(mPathProvider.getCount(), 0);
         } catch(RecordNotFoundException e) {
             Assert.fail();
         }
     }
 
     public void testDeleteByPathNotExisting() {
-        Path b = pp.getDummy();
-        long id = pp.insert(b);
+        Path b = mPathProvider.getDummy();
+        long id = mPathProvider.insert(b);
 
-        int affectedRows = pp.delete(b);
+        int affectedRows = mPathProvider.delete(b);
 
         assertEquals(affectedRows, 0);
     }
 
     public void testDeleteByIDExisting() {
-        assertEquals(pp.getCount(), 0);
+        assertEquals(mPathProvider.getCount(), 0);
 
         long id = insertDummyPath();
-        assertEquals(pp.getCount(), 1);
+        assertEquals(mPathProvider.getCount(), 1);
 
-        int affectedRows = pp.delete(id);
-        assertEquals(pp.getCount(), 0);
+        int affectedRows = mPathProvider.delete(id);
+        assertEquals(mPathProvider.getCount(), 0);
         assertEquals(affectedRows, 1);
     }
 
     public void testDeleteByIDNotExisting() {
-        assertEquals(pp.getCount(), 0);
-        int affetedRows = pp.delete(50);
+        assertEquals(mPathProvider.getCount(), 0);
+        int affetedRows = mPathProvider.delete(50);
 
         assertEquals(affetedRows, 0);
     }
 
     public void testGetAllNoPath() {
-        assertEquals(pp.getCount(), 0);
+        assertEquals(mPathProvider.getCount(), 0);
 
-        List<Path> beacons = pp.getAll();
+        List<Path> beacons = mPathProvider.getAll();
         assertEquals(beacons.size(), 0);
     }
 
     public void testGetAllManyPath() {
-        assertEquals(pp.getCount(), 0);
-        List<Path> Paths = pp.getAll();
+        assertEquals(mPathProvider.getCount(), 0);
+        List<Path> Paths = mPathProvider.getAll();
 
         insertDummyPath();
-        Paths = pp.getAll();
-        assertEquals(Paths.size(), pp.getCount());
+        Paths = mPathProvider.getAll();
+        assertEquals(Paths.size(), mPathProvider.getCount());
         assertEquals(Paths.size(), 1);
 
         insertDummyPath();
-        Paths = pp.getAll();
-        assertEquals(Paths.size(), pp.getCount());
+        Paths = mPathProvider.getAll();
+        assertEquals(Paths.size(), mPathProvider.getCount());
         assertEquals(Paths.size(), 2);
 
         insertDummyPath();
-        Paths = pp.getAll();
-        assertEquals(Paths.size(), pp.getCount());
+        Paths = mPathProvider.getAll();
+        assertEquals(Paths.size(), mPathProvider.getCount());
         assertEquals(Paths.size(), 3);
 
         Path a = Paths.get(2);
-        Path b = pp.getDummy();
+        Path b = mPathProvider.getDummy();
 
         assertEquals(a.getPlace(), b.getPlace());
         assertEquals(a.getConnectedTo(), b.getConnectedTo());
@@ -154,17 +154,17 @@ public class TestPathProvider extends ApplicationTestCase<Application> {
 
     public void testUpdateExisting() {
         try {
-            Path a = pp.getDummy();
-            a.setId(pp.insert(a));
+            Path a = mPathProvider.getDummy();
+            a.setId(mPathProvider.insert(a));
 
-            Path b = pp.getByID(a.getId());
+            Path b = mPathProvider.getByID(a.getId());
 
             int newWeight = 999;
             b.setWeight(newWeight);
 
-            pp.update(b);
+            mPathProvider.update(b);
 
-            Path c = pp.getByID(a.getId());
+            Path c = mPathProvider.getByID(a.getId());
             assertEquals(c.getWeight(), newWeight);
             assertEquals(c.getId(), a.getId());
         } catch (RecordNotFoundException e) {
@@ -173,21 +173,21 @@ public class TestPathProvider extends ApplicationTestCase<Application> {
     }
 
     public void testUpdateNotExisting() {
-        Path b = pp.getDummy();
+        Path b = mPathProvider.getDummy();
 
-        int affectedRows = pp.update(b);
+        int affectedRows = mPathProvider.update(b);
         assertEquals(affectedRows, 0);
     }
 
     public void testGetByIDWithExistingPath() {
         try {
-            Path a = pp.getDummy();
-            a.setId(pp.insert(a));
+            Path a = mPathProvider.getDummy();
+            a.setId(mPathProvider.insert(a));
 
             assertNotSame(a.getId(), 0);
-            assertEquals(pp.getCount(), 1);
+            assertEquals(mPathProvider.getCount(), 1);
 
-            Path b = pp.getByID(a.getId());
+            Path b = mPathProvider.getByID(a.getId());
             assertNotNull(b);
 
             assertTrue(a.isEqualTo(b));
@@ -197,10 +197,10 @@ public class TestPathProvider extends ApplicationTestCase<Application> {
     }
 
     public void testGetByIdWithNotExistingPath() {
-        assertEquals(pp.getCount(), 0);
+        assertEquals(mPathProvider.getCount(), 0);
 
         try {
-            Path b = pp.getByID(50);
+            Path b = mPathProvider.getByID(50);
             Assert.fail("Should've thrown an exception...");
         } catch (RecordNotFoundException ignored) {
 
@@ -208,36 +208,36 @@ public class TestPathProvider extends ApplicationTestCase<Application> {
     }
 
     public void testInsertOne() {
-        assertEquals(pp.getCount(), 0);
+        assertEquals(mPathProvider.getCount(), 0);
 
         long id = insertDummyPath();
 
-        assertEquals(pp.getCount(), 1);
+        assertEquals(mPathProvider.getCount(), 1);
         assertNotNull(id);
     }
 
     public void testInsertTwo() {
         long id1, id2;
 
-        pp.deleteAll();
+        mPathProvider.deleteAll();
 
-        assertEquals(pp.getCount(), 0);
+        assertEquals(mPathProvider.getCount(), 0);
 
-        Path b = pp.getDummy();
-        id1 = pp.insert(b);
-        id2 = pp.insert(b);
+        Path b = mPathProvider.getDummy();
+        id1 = mPathProvider.insert(b);
+        id2 = mPathProvider.insert(b);
 
-        assertEquals(pp.getCount(), 2);
+        assertEquals(mPathProvider.getCount(), 2);
         assertNotNull(id1);
         assertNotNull(id2);
     }
 
     public void testInsertDuplicated() {
-        Path a = pp.getDummy();
-        Path b = pp.getDummy();
+        Path a = mPathProvider.getDummy();
+        Path b = mPathProvider.getDummy();
 
-        pp.insert(a);
-        pp.insert(b);
+        mPathProvider.insert(a);
+        mPathProvider.insert(b);
 
         // TODO: make it no allowed to insert duplicate records
     }
@@ -249,7 +249,7 @@ public class TestPathProvider extends ApplicationTestCase<Application> {
         p.setConnectedTo(idDummyConnectedTo);
         p.setWeight(weightDummy);
 
-        ContentValues cv = pp.getContentValues(p);
+        ContentValues cv = mPathProvider.getContentValues(p);
 
         assertEquals(cv.get(TablePath.COLUMN_PLACE), p.getPlace());
         assertEquals(cv.get(TablePath.COLUMN_CONNECTED_TO), p.getConnectedTo());
@@ -257,20 +257,20 @@ public class TestPathProvider extends ApplicationTestCase<Application> {
     }
 
     public void testDeleteAllWithNoRecords() {
-        pp.deleteAll();
-        assertEquals(pp.getCount(), 0);
+        mPathProvider.deleteAll();
+        assertEquals(mPathProvider.getCount(), 0);
     }
 
     public void testDeleteAllWithRecords() {
-        long countBeforeAdd = pp.getCount();
+        long countBeforeAdd = mPathProvider.getCount();
 
         insertDummyPath();
 
-        long countAfterAdd = pp.getCount();
+        long countAfterAdd = mPathProvider.getCount();
 
-        pp.deleteAll();
+        mPathProvider.deleteAll();
 
-        long countDeleted = pp.getCount();
+        long countDeleted = mPathProvider.getCount();
 
         assertEquals(countDeleted, 0);
         assertNotSame(countDeleted, countAfterAdd);
@@ -278,6 +278,6 @@ public class TestPathProvider extends ApplicationTestCase<Application> {
     }
 
     public void testGetTableName() throws Exception {
-        assertTrue(pp.getTableName().equals(TablePath.TABLE_NAME));
+        assertTrue(mPathProvider.getTableName().equals(TablePath.TABLE_NAME));
     }
 }

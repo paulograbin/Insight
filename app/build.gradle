@@ -12,6 +12,9 @@ android {
         versionName "1.0"
     }
     buildTypes {
+        debug {
+            testCoverageEnabled = true
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -24,5 +27,4 @@ dependencies {
     compile 'com.android.support:appcompat-v7:22.2.0'
     //    compile files('libs/indoors-library-surface.jar')
     compile 'org.altbeacon:android-beacon-library:2+'
-    compile 'com.android.support:support-annotations:23.0.0'
 }

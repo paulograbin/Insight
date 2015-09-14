@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class TestPlaceBeaconProvider extends ApplicationTestCase<Application> {
 
-    PlaceBeaconProvider pbp;
+    PlaceBeaconProvider mPlaceBeaconProvider;
 
     public TestPlaceBeaconProvider() {
         super(Application.class);
@@ -30,18 +30,18 @@ public class TestPlaceBeaconProvider extends ApplicationTestCase<Application> {
     protected void setUp() throws Exception {
         super.setUp();
 
-        pbp = new PlaceBeaconProvider(getContext());
-        assertNotNull(pbp);
+        mPlaceBeaconProvider = new PlaceBeaconProvider(getContext());
+        assertNotNull(mPlaceBeaconProvider);
 
-        pbp.deleteAll();
-        assertEquals(pbp.getCount(), 0);
+        mPlaceBeaconProvider.deleteAll();
+        assertEquals(mPlaceBeaconProvider.getCount(), 0);
     }
 
     public long insertDummyPlaceBeacon() {
         long id;
 
-        PlaceBeacon m = pbp.getDummy();
-        id = pbp.insert(m);
+        PlaceBeacon m = mPlaceBeaconProvider.getDummy();
+        id = mPlaceBeaconProvider.insert(m);
 
         assertNotNull(id);
         assertNotSame(id, 0);
@@ -51,71 +51,88 @@ public class TestPlaceBeaconProvider extends ApplicationTestCase<Application> {
 
     public void testDeleteByPlaceBeaconExisting() {
         long id = insertDummyPlaceBeacon();
-        assertEquals(pbp.getCount(), 1);
+        assertEquals(mPlaceBeaconProvider.getCount(), 1);
 
-        PlaceBeacon m = pbp.getByID(id);
+        PlaceBeacon m = mPlaceBeaconProvider.getByID(id);
 
-        int affectedRows = pbp.delete(m);
+        int affectedRows = mPlaceBeaconProvider.delete(m);
 
         assertEquals(affectedRows, 1);
-        assertEquals(pbp.getCount(), 0);
+        assertEquals(mPlaceBeaconProvider.getCount(), 0);
     }
 
     public void testDeleteByPlaceBeaconNotExisting() {
-        PlaceBeacon b = pbp.getDummy();
-        long id = pbp.insert(b);
+        PlaceBeacon b = mPlaceBeaconProvider.getDummy();
+        long id = mPlaceBeaconProvider.insert(b);
 
-        int affectedRows = pbp.delete(b);
+        int affectedRows = mPlaceBeaconProvider.delete(b);
 
         assertEquals(affectedRows, 0);
     }
 
     public void testDeleteByIDExisting() {
-        assertEquals(pbp.getCount(), 0);
+        assertEquals(mPlaceBeaconProvider.getCount(), 0);
 
         long id = insertDummyPlaceBeacon();
-        assertEquals(pbp.getCount(), 1);
+        assertEquals(mPlaceBeaconProvider.getCount(), 1);
 
-        int affectedRows = pbp.delete(id);
-        assertEquals(pbp.getCount(), 0);
+        int affectedRows = mPlaceBeaconProvider.delete(id);
+        assertEquals(mPlaceBeaconProvider.getCount(), 0);
         assertEquals(affectedRows, 1);
     }
 
     public void testDeleteByIDNotExisting() {
-        assertEquals(pbp.getCount(), 0);
-        int affetedRows = pbp.delete(50);
+        assertEquals(mPlaceBeaconProvider.getCount(), 0);
+        int affetedRows = mPlaceBeaconProvider.delete(50);
 
         assertEquals(affetedRows, 0);
     }
 
-    public void testGetAllNoPlaceBeacon() {
-        assertEquals(pbp.getCount(), 0);
+    public void testGetByUUIDExisting() {
+        PlaceBeacon pb = mPlaceBeaconProvider.getDummy();
+        pb.setId(mPlaceBeaconProvider.insert(pb));
 
-        List<PlaceBeacon> beacons = pbp.getAll();
+        PlaceBeacon pb2 = mPlaceBeaconProvider.getByUUID(pb.getUuid());
+        assertEquals(pb.getUuid(), pb2.getUuid());
+    }
+
+    public void testGetByUUIDNonExisting() {
+        try {
+            PlaceBeacon pb2 = mPlaceBeaconProvider.getByUUID("blablabla");
+            Assert.fail("Shoud have thrown an exception");
+        } catch(RecordNotFoundException e) {
+
+        }
+    }
+
+    public void testGetAllNoPlaceBeacon() {
+        assertEquals(mPlaceBeaconProvider.getCount(), 0);
+
+        List<PlaceBeacon> beacons = mPlaceBeaconProvider.getAll();
         assertEquals(beacons.size(), 0);
     }
 
     public void testGetAllManyPlaceBeacon() {
-        assertEquals(pbp.getCount(), 0);
-        List<PlaceBeacon> PlaceBeacons = pbp.getAll();
+        assertEquals(mPlaceBeaconProvider.getCount(), 0);
+        List<PlaceBeacon> PlaceBeacons = mPlaceBeaconProvider.getAll();
 
         insertDummyPlaceBeacon();
-        PlaceBeacons = pbp.getAll();
-        assertEquals(PlaceBeacons.size(), pbp.getCount());
+        PlaceBeacons = mPlaceBeaconProvider.getAll();
+        assertEquals(PlaceBeacons.size(), mPlaceBeaconProvider.getCount());
         assertEquals(PlaceBeacons.size(), 1);
 
         insertDummyPlaceBeacon();
-        PlaceBeacons = pbp.getAll();
-        assertEquals(PlaceBeacons.size(), pbp.getCount());
+        PlaceBeacons = mPlaceBeaconProvider.getAll();
+        assertEquals(PlaceBeacons.size(), mPlaceBeaconProvider.getCount());
         assertEquals(PlaceBeacons.size(), 2);
 
         insertDummyPlaceBeacon();
-        PlaceBeacons = pbp.getAll();
-        assertEquals(PlaceBeacons.size(), pbp.getCount());
+        PlaceBeacons = mPlaceBeaconProvider.getAll();
+        assertEquals(PlaceBeacons.size(), mPlaceBeaconProvider.getCount());
         assertEquals(PlaceBeacons.size(), 3);
 
         PlaceBeacon a = PlaceBeacons.get(2);
-        PlaceBeacon b = pbp.getDummy();
+        PlaceBeacon b = mPlaceBeaconProvider.getDummy();
 
         assertEquals(a.getIdPlace(), b.getIdPlace());
         assertEquals(a.getIdBeacon(), b.getIdBeacon());
@@ -124,10 +141,10 @@ public class TestPlaceBeaconProvider extends ApplicationTestCase<Application> {
     }
 
     public void testUpdateExisting() {
-        PlaceBeacon a = pbp.getDummy();
-        long id = pbp.insert(a);
+        PlaceBeacon a = mPlaceBeaconProvider.getDummy();
+        long id = mPlaceBeaconProvider.insert(a);
 
-        PlaceBeacon b = pbp.getByID(id);
+        PlaceBeacon b = mPlaceBeaconProvider.getByID(id);
 
         long newIdPlace = 10;
         long newIdBeacon = 20;
@@ -135,16 +152,16 @@ public class TestPlaceBeaconProvider extends ApplicationTestCase<Application> {
         b.setIdPlace(newIdPlace);
         b.setIdBeacon(newIdBeacon);
 
-        pbp.update(b);
+        mPlaceBeaconProvider.update(b);
 
-        PlaceBeacon c = pbp.getByID(id);
+        PlaceBeacon c = mPlaceBeaconProvider.getByID(id);
         assertEquals(c.getIdPlace(), newIdPlace);
         assertEquals(c.getIdBeacon(), newIdBeacon);
         assertEquals(c.getId(), id);
     }
 
     public void testUpdateNotExisting() {
-        PlaceBeacon b = pbp.getDummy();
+        PlaceBeacon b = mPlaceBeaconProvider.getDummy();
 
         long newIdPlace = 10;
         long newIdBeacon = 20;
@@ -152,18 +169,18 @@ public class TestPlaceBeaconProvider extends ApplicationTestCase<Application> {
         b.setIdPlace(newIdPlace);
         b.setIdBeacon(newIdBeacon);
 
-        int affectedRows = pbp.update(b);
+        int affectedRows = mPlaceBeaconProvider.update(b);
         assertEquals(affectedRows, 0);
     }
 
     public void testGetByIDWithExistingPlaceBeacon() {
-        PlaceBeacon a = pbp.getDummy();
-        long id = pbp.insert(a);
+        PlaceBeacon a = mPlaceBeaconProvider.getDummy();
+        long id = mPlaceBeaconProvider.insert(a);
 
         assertNotSame(id, 0);
-        assertEquals(pbp.getCount(), 1);
+        assertEquals(mPlaceBeaconProvider.getCount(), 1);
 
-        PlaceBeacon b = pbp.getByID(id);
+        PlaceBeacon b = mPlaceBeaconProvider.getByID(id);
         assertNotNull(b);
 
         assertEquals(a.getIdPlace(), b.getIdPlace());
@@ -173,10 +190,10 @@ public class TestPlaceBeaconProvider extends ApplicationTestCase<Application> {
     }
 
     public void testGetByIdWithNotExistingPlaceBeacon() {
-        assertEquals(pbp.getCount(), 0);
+        assertEquals(mPlaceBeaconProvider.getCount(), 0);
 
         try {
-            PlaceBeacon b = pbp.getByID(50);
+            PlaceBeacon b = mPlaceBeaconProvider.getByID(50);
             Assert.fail("Should've thrown an exception...");
         } catch (RecordNotFoundException ignored) {
 
@@ -184,37 +201,37 @@ public class TestPlaceBeaconProvider extends ApplicationTestCase<Application> {
     }
 
     public void testInsertOne() {
-        assertEquals(pbp.getCount(), 0);
+        assertEquals(mPlaceBeaconProvider.getCount(), 0);
 
         long id = insertDummyPlaceBeacon();
 
-        assertEquals(pbp.getCount(), 1);
+        assertEquals(mPlaceBeaconProvider.getCount(), 1);
         assertNotNull(id);
     }
 
     public void testInsertTwo() {
         long id1, id2;
 
-        pbp.deleteAll();
+        mPlaceBeaconProvider.deleteAll();
 
-        assertEquals(pbp.getCount(), 0);
+        assertEquals(mPlaceBeaconProvider.getCount(), 0);
 
-        PlaceBeacon b = pbp.getDummy();
-        id1 = pbp.insert(b);
-        id2 = pbp.insert(b);
+        PlaceBeacon b = mPlaceBeaconProvider.getDummy();
+        id1 = mPlaceBeaconProvider.insert(b);
+        id2 = mPlaceBeaconProvider.insert(b);
 
-        assertEquals(pbp.getCount(), 2);
+        assertEquals(mPlaceBeaconProvider.getCount(), 2);
         assertNotNull(id1);
         assertNotNull(id2);
     }
 
 //    public void testInsertDuplicated() {
-//        PlaceBeacon a = pbp.getDummy();
-//        PlaceBeacon b = pbp.getDummy();
+//        PlaceBeacon a = mPlaceBeaconProvider.getDummy();
+//        PlaceBeacon b = mPlaceBeaconProvider.getDummy();
 //        b.setText(a.getText());
 //
-//        pbp.insert(a);
-//        pbp.insert(b);
+//        mPlaceBeaconProvider.insert(a);
+//        mPlaceBeaconProvider.insert(b);
 //    }
 
     public void testGetContentValues() {
@@ -229,7 +246,7 @@ public class TestPlaceBeaconProvider extends ApplicationTestCase<Application> {
         b.setCreatedDate(formatDate.format(Calendar.getInstance().getTime()));
         b.setCreatedTime(formatTime.format(Calendar.getInstance().getTime()));
 
-        ContentValues cv = pbp.getContentValues(b);
+        ContentValues cv = mPlaceBeaconProvider.getContentValues(b);
 
         assertEquals(cv.get(TablePlaceBeacon.COLUMN_IDPLACE), b.getIdPlace());
         assertEquals(cv.get(TablePlaceBeacon.COLUMN_IDBEACON), b.getIdBeacon());
@@ -238,20 +255,20 @@ public class TestPlaceBeaconProvider extends ApplicationTestCase<Application> {
     }
 
     public void testDeleteAllWithNoRecords() {
-        pbp.deleteAll();
-        assertEquals(pbp.getCount(), 0);
+        mPlaceBeaconProvider.deleteAll();
+        assertEquals(mPlaceBeaconProvider.getCount(), 0);
     }
 
     public void testDeleteAllWithRecords() {
-        long countBeforeAdd = pbp.getCount();
+        long countBeforeAdd = mPlaceBeaconProvider.getCount();
 
         insertDummyPlaceBeacon();
 
-        long countAfterAdd = pbp.getCount();
+        long countAfterAdd = mPlaceBeaconProvider.getCount();
 
-        pbp.deleteAll();
+        mPlaceBeaconProvider.deleteAll();
 
-        long countDeleted = pbp.getCount();
+        long countDeleted = mPlaceBeaconProvider.getCount();
 
         assertEquals(countDeleted, 0);
         assertNotSame(countDeleted, countAfterAdd);
@@ -259,6 +276,6 @@ public class TestPlaceBeaconProvider extends ApplicationTestCase<Application> {
     }
 
     public void testGetTableName() throws Exception {
-        assertTrue(pbp.getTableName().equals(TablePlaceBeacon.TABLE_NAME));
+        assertTrue(mPlaceBeaconProvider.getTableName().equals(TablePlaceBeacon.TABLE_NAME));
     }
 }
