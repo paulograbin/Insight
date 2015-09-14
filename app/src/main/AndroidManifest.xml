@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <uses-feature
         android:name="android.hardware.bluetooth_le"
@@ -23,9 +24,6 @@
             android:name=".Activity.AdminPanelActivity"
             android:label="@string/title_activity_admin_panel" >
         </activity>
-        <activity
-            android:name=".Activity.Lists.ListMessages"
-            android:label="@string/title_activity_message_list" />
         <activity
             android:name=".Activity.DestinySelectionActivity"
             android:label="@string/title_activity_list_places" />
@@ -56,7 +54,7 @@
             android:label="@string/title_activity_place_details" >
         </activity>
         <activity
-            android:name=".Activity.Lists.ListFavoritePlaces"
+            android:name=".Activity.ListFavoritePlaces"
             android:label="@string/title_activity_list_favorite_places" >
         </activity>
     </application>

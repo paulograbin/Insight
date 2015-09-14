@@ -8,29 +8,29 @@ import android.view.WindowManager;
 import android.widget.Button;
 
 import com.paulograbin.insight.Activity.Lists.ListBeacons;
-import com.paulograbin.insight.Activity.Lists.ListMessages;
 import com.paulograbin.insight.Activity.Lists.ListPaths;
 import com.paulograbin.insight.Activity.Lists.ListPlaceBeacons;
 import com.paulograbin.insight.Activity.Lists.ListPlacesAll;
 import com.paulograbin.insight.DB.DatabaseHelper;
+import com.paulograbin.insight.Output.Vibrate;
 import com.paulograbin.insight.R;
 
 
 public class AdminPanelActivity extends ActionBarActivity {
 
-    //    TODO: No primeiro uso, pergunta se o usuário quer que o aplicativo monitore sua região e
-    //    se auto execute quando chega na área
+    // TODO: No primeiro uso, pergunta se o usuário quer que o aplicativo monitore sua região e
+    // se auto execute quando chega na área
 
     private String LOG_TAG = "Spiga";
 
-    private Button btnBluetooth;
     private Button btnShowBeaconList;
-    private Button btnShowMessageList;
+    private Button btnVibrate;
     private Button btnShowPlaceList;
     private Button btnShowPlaceBeaconList;
     private Button btnPaths;
     private Button btnDropTables;
 
+    Vibrate vibrate;
 
 
     @Override
@@ -39,20 +39,13 @@ public class AdminPanelActivity extends ActionBarActivity {
         setContentView(R.layout.activity_admin_panel);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+        vibrate = new Vibrate(this);
+
         btnShowBeaconList = (Button) findViewById(R.id.btnShowBeacons);
         btnShowBeaconList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), ListBeacons.class);
-                startActivity(intent);
-            }
-        });
-
-        btnShowMessageList = (Button) findViewById(R.id.btnShowMessages);
-        btnShowMessageList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), ListMessages.class);
                 startActivity(intent);
             }
         });
@@ -75,6 +68,13 @@ public class AdminPanelActivity extends ActionBarActivity {
             }
         });
 
+        btnVibrate = (Button) findViewById(R.id.btnVibrate);
+        btnVibrate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                vibrate.onVibrate();
+            }
+        });
 
         btnPaths = (Button) findViewById(R.id.btnPaths);
         btnPaths.setOnClickListener(new View.OnClickListener() {

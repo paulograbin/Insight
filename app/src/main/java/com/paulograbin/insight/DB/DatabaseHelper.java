@@ -7,17 +7,14 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.paulograbin.insight.DB.Provider.BeaconProvider;
-import com.paulograbin.insight.DB.Provider.MessageProvider;
 import com.paulograbin.insight.DB.Provider.PathProvider;
 import com.paulograbin.insight.DB.Provider.PlaceBeaconProvider;
 import com.paulograbin.insight.DB.Provider.PlaceProvider;
 import com.paulograbin.insight.DB.Table.TableBeacon;
-import com.paulograbin.insight.DB.Table.TableMessage;
 import com.paulograbin.insight.DB.Table.TablePath;
 import com.paulograbin.insight.DB.Table.TablePlace;
 import com.paulograbin.insight.DB.Table.TablePlaceBeacon;
 import com.paulograbin.insight.Model.Beacon;
-import com.paulograbin.insight.Model.Message;
 import com.paulograbin.insight.Model.Path;
 import com.paulograbin.insight.Model.Place;
 import com.paulograbin.insight.Model.PlaceBeacon;
@@ -51,29 +48,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void checkDatabase() {
 
         BeaconProvider bp = new BeaconProvider(context);
-        MessageProvider mp = new MessageProvider(context);
         PlaceProvider pp = new PlaceProvider(context);
         PlaceBeaconProvider pbp = new PlaceBeaconProvider(context);
 
-        if ((bp.getCount() == 0) && ((mp.getCount() == 0) & (pp.getCount() == 0)) && (pbp.getCount() == 0)) {
+        if ((bp.getCount() == 0) && (pp.getCount() == 0) && (pbp.getCount() == 0)) {
             insertStandardRecords();
         }
     }
 
     private static void insertStandardRecords() {
         /*
-         * Mensagens padrão
-         */
-        insertStandardMessages();
-
-
-        /*
          * Places
          */
-        Place pInitial = new Place("Ponto Inicial", "Um ponto no inicio mapa", "Mensagem de teste!", Place.NOT_FAVORITE, Place.FINAL_DESTINATION, -29.78440, -51.14400);
-        Place pMid = new Place("Caminho entre pontos", "Um caminho no meio do mapa", "", Place.NOT_FAVORITE, Place.NO_DESTINATION, -29.91305, -51.18932);
-        Place pNowhere = new Place("Nowhere", "Algum lugar perdido", "", Place.NOT_FAVORITE, Place.NO_DESTINATION, -29.99447, -50.78694);
-        Place pEnd = new Place("Ponto Final", "Um ponto no fim do mapa", "", Place.FAVORITE, Place.FINAL_DESTINATION, -30.03201, -51.21678);
+        Place pInitial = new Place("Ponto Inicial", "Um ponto no inicio mapa", "Mensagem de teste!", Place.NOT_FAVORITE, Place.FINAL_DESTINATION, -29.784539, -51.144191);
+        Place pMid = new Place("Caminho entre pontos", "Um caminho no meio do mapa", "", Place.NOT_FAVORITE, Place.NO_DESTINATION, -29.791465, -51.151202);
+        Place pNowhere = new Place("Nowhere", "Algum lugar perdido", "", Place.NOT_FAVORITE, Place.NO_DESTINATION, -29.898537, -51.152074);
+        Place pEnd = new Place("Ponto Final", "Um ponto no fim do mapa", "", Place.FAVORITE, Place.FINAL_DESTINATION, -29.796614, -51.148895);
 
 //        Place pInitial = new Place("Setor 2E", "Custom Developtment", "Siga pela direita até a porta de correr e então continue andando reto", Place.NOT_FAVORITE, Place.FINAL_DESTINATION, -29.78440, -51.14400);
 //        Place pMid = new Place("Setor 2C", "Centro do prédio", "Dobre a direita e siga até o elevador", Place.NOT_FAVORITE, Place.NO_DESTINATION, -29.91305, -51.18932);
@@ -164,15 +154,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ph4.setId(ph.insert(ph4));
     }
 
-    private static void insertStandardMessages() {
-        Message m1 = new Message("Você chegou ao seu destino.");
-        Message m2 = new Message("Você está em ");
-
-        MessageProvider mp = new MessageProvider(context);
-        m1.setId(mp.insert(m1));
-        m2.setId(mp.insert(m2));
-    }
-
     @Override
     public void onCreate(SQLiteDatabase db) {
         printToLog("Criando tabelas...");
@@ -187,9 +168,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private void createTables(SQLiteDatabase db) {
         printToLog(TableBeacon.TABLE_CREATE_COMMAND);
         db.execSQL(TableBeacon.TABLE_CREATE_COMMAND);
-
-        printToLog(TableMessage.TABLE_CREATE_COMMAND);
-        db.execSQL(TableMessage.TABLE_CREATE_COMMAND);
 
         printToLog(TablePlace.TABLE_CREATE_COMMAND);
         db.execSQL(TablePlace.TABLE_CREATE_COMMAND);
@@ -208,7 +186,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.delete(TablePlace.TABLE_NAME, String.valueOf(1), null);
         db.delete(TableBeacon.TABLE_NAME, String.valueOf(1), null);
         db.delete(TablePlaceBeacon.TABLE_NAME, String.valueOf(1), null);
-        db.delete(TableMessage.TABLE_NAME, String.valueOf(1), null);
         db.delete(TablePath.TABLE_NAME, String.valueOf(1), null);
 
         insertStandardRecords();
@@ -219,7 +196,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         printToLog("Upgrading - Dropping all records from all tables");
 
         db.execSQL("DROP TABLE IF EXISTS " + TableBeacon.TABLE_NAME);
-        db.execSQL("DROP TABLE IF EXISTS " + TableMessage.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + TablePlace.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + TablePlaceBeacon.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + TablePath.TABLE_NAME);
