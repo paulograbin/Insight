@@ -3,48 +3,34 @@ package com.paulograbin.insight.Activity;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
-import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.paulograbin.insight.Activity.Details.DetailsPlace;
 import com.paulograbin.insight.Adapter.PlaceSelectionAdapter;
 import com.paulograbin.insight.DB.Provider.PlaceProvider;
 import com.paulograbin.insight.Model.Place;
+import com.paulograbin.insight.Output.Speaker;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
-public class DestinySelectionActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
-
-    private TextToSpeech tts;
+public class DestinySelectionActivity extends AppCompatActivity {
 
     ListView mList;
-    List<Place> mPlaces;
+    List<Place> mPossibleDestinies;
     PlaceSelectionAdapter mAdapter;
-
     Place mCurrentPlace;
     Location mCurrentLocation;
-
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        tts.stop();
-        tts.shutdown();
-        tts = null;
-    }
+    private Speaker mSpeaker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        mSpeaker = Speaker.getInstance(this);
 
         Intent intent = this.getIntent();
         if (intent.hasExtra("place")) {
@@ -61,15 +47,14 @@ public class DestinySelectionActivity extends AppCompatActivity implements TextT
         mList = new ListView(this);
         mList.setId(android.R.id.list);
 
-        mPlaces = new ArrayList<>();
-        mAdapter = new PlaceSelectionAdapter(this, mPlaces, mCurrentLocation);
+        mPossibleDestinies = new ArrayList<>();
+        mAdapter = new PlaceSelectionAdapter(this, mPossibleDestinies, mCurrentLocation);
         mList.setAdapter(mAdapter);
 
         mList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Place chosenPlace = (Place) parent.getItemAtPosition(position);
-                say("teste");
                 Log.i("Spiga", "Usuário escolheu destino: " + chosenPlace.toString());
 
                 Intent intent = new Intent();
@@ -97,13 +82,6 @@ public class DestinySelectionActivity extends AppCompatActivity implements TextT
         refreshList();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        tts = new TextToSpeech(this, this);
-    }
-
     private void refreshList() {
         mAdapter.clear();
 
@@ -116,27 +94,14 @@ public class DestinySelectionActivity extends AppCompatActivity implements TextT
                     mAdapter.add(p);
                 }
             }
-    }
 
-    private void say(String text) {
-        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
-    }
-
-    @Override
-    public void onInit(int status) {
-        //TODO: todo android vem com o sintetizador de voz
-        //TODO: inspiração veio quando minha namorada comentou que viu no trem...
-
-        if (status == TextToSpeech.SUCCESS) {
-            tts.setLanguage(Locale.getDefault());
-
-            if(mPlaces.size() == 1)
-                say("Um possível destino encontrado.");
-            else if(mPlaces.size() > 1) {
-                say(mPlaces.size() + " possíveis destinos encontrados");
-            }
+        if (mPossibleDestinies.size() == 1) {
+            mSpeaker.say("Um possível destino encontrado");
         } else {
-            Toast.makeText(this, "pau no TTS", Toast.LENGTH_SHORT).show();
+            mSpeaker.say(mPossibleDestinies.size() + " possíveis destinos encontrado");
         }
     }
+
+    //TODO: todo android vem com o sintetizador de voz
+    //TODO: inspiração veio quando minha namorada comentou que viu no trem...
 }

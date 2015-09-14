@@ -16,23 +16,16 @@ public class Speaker implements TextToSpeech.OnInitListener {
     private boolean ready;
 
 
-    public static Speaker getInstance(Context context) {
-        if(sSpeaker == null)
-            sSpeaker = new Speaker(context);
-
-        return sSpeaker;
-    }
-
     private Speaker(Context context) {
         ready = false;
         tts = new TextToSpeech(context, this);
     }
 
-    public void say(String text) {
-        if(ready)
-            tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
-        else
-            Log.i("Speaker", "Speaker not ready...");
+    public static Speaker getInstance(Context context) {
+        if(sSpeaker == null)
+            sSpeaker = new Speaker(context);
+
+        return sSpeaker;
     }
 
     @Override
@@ -44,5 +37,14 @@ public class Speaker implements TextToSpeech.OnInitListener {
         } else {
             Log.i("Speaker", "Speaker fail");
         }
+    }
+
+    public void say(String text) {
+        Log.i("speaker", "Saying: " + text);
+
+        if (ready)
+            tts.speak(text, TextToSpeech.QUEUE_ADD, null);
+        else
+            Log.i("Speaker", "Speaker not ready...");
     }
 }

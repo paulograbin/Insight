@@ -2,20 +2,17 @@ package com.paulograbin.insight.Activity.Details;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.paulograbin.insight.DB.Provider.PlaceProvider;
 import com.paulograbin.insight.Model.Place;
+import com.paulograbin.insight.Output.Speaker;
 import com.paulograbin.insight.R;
 
-import java.util.Locale;
-
-public class DetailsPlace extends AppCompatActivity implements TextToSpeech.OnInitListener {
+public class DetailsPlace extends AppCompatActivity {
 
     private TextView txtPlaceName;
     private TextView txtPlaceDescription;
@@ -24,20 +21,12 @@ public class DetailsPlace extends AppCompatActivity implements TextToSpeech.OnIn
     private Button btnFavorite;
 
     private Place mPlace;
-    private TextToSpeech tts;
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        tts.stop();
-        tts.shutdown();
-        tts = null;
-    }
+    private Speaker mSpeaker;
 
     @Override
     protected void onResume() {
         super.onResume();
+        mSpeaker = Speaker.getInstance(this);
 
         Intent intent = this.getIntent();
         if (intent != null && intent.hasExtra("place")) {
@@ -59,10 +48,10 @@ public class DetailsPlace extends AppCompatActivity implements TextToSpeech.OnIn
             public void onClick(View v) {
                 if (mPlace.getFavorite() == 0) {
                     mPlace.setFavorite(1);
-                    say(mPlace.getName() + "  salvo como favorito.");
+                    mSpeaker.say(mPlace.getName() + "  salvo como favorito.");
                 } else {
                     mPlace.setFavorite(0);
-                    say(mPlace.getName() + "  desmarcado como favorito.");
+                    mSpeaker.say(mPlace.getName() + "  desmarcado como favorito.");
                 }
 
                 new PlaceProvider(getApplicationContext()).update(mPlace);
@@ -81,21 +70,5 @@ public class DetailsPlace extends AppCompatActivity implements TextToSpeech.OnIn
         txtDistance = (TextView) findViewById(R.id.txtPlaceDistance);
         btnGo = (Button) findViewById(R.id.btnGo);
         btnFavorite = (Button) findViewById(R.id.btnFavorite);
-
-        tts = new TextToSpeech(this, this);
-    }
-
-    @Override
-    public void onInit(int status) {
-        if (status == TextToSpeech.SUCCESS) {
-            Toast.makeText(this, "TTS bombando", Toast.LENGTH_SHORT).show();
-            tts.setLanguage(Locale.getDefault());
-        } else {
-            Toast.makeText(this, "pau no TTS", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void say(String text) {
-        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
     }
 }

@@ -1,22 +1,20 @@
-package com.paulograbin.insight.Activity.Lists;
+package com.paulograbin.insight.Activity;
 
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
-import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.paulograbin.insight.Adapter.PlaceSelectionAdapter;
 import com.paulograbin.insight.DB.Provider.PlaceProvider;
 import com.paulograbin.insight.Model.Place;
+import com.paulograbin.insight.Output.Speaker;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
-public class ListFavoritePlaces extends AppCompatActivity implements TextToSpeech.OnInitListener {
+public class ListFavoritePlaces extends AppCompatActivity {
 
     //TODO: cada transição de tela tem uma mensagem de voz
 
@@ -26,22 +24,17 @@ public class ListFavoritePlaces extends AppCompatActivity implements TextToSpeec
 
     Place mCurrentPlace;
     Location mCurrentLocation;
-    private TextToSpeech tts;
+    private Speaker mSpeaker;
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        tts = new TextToSpeech(this, this);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mSpeaker = Speaker.getInstance(this);
 
         Intent intent = this.getIntent();
         if (intent.hasExtra("place")) {
-            mCurrentPlace = (Place) intent.getSerializableExtra("place");
+            mCurrentPlace = (Place) intent.getParcelableExtra("place");
         }
 
         mCurrentLocation = new Location("teste");
@@ -66,34 +59,19 @@ public class ListFavoritePlaces extends AppCompatActivity implements TextToSpeec
         mFavorites = pp.getAllFavoritePlaces();
 
         mAdapter.addAll(mFavorites);
+
+        if(mFavorites.size() == 1)
+            mSpeaker.say("Um local favorito encontrado");
+        else if(mFavorites.size() > 1) {
+            mSpeaker.say(mFavorites.size() + " locais favoritos encontrados");
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
 
-        tts.stop();
-        tts.shutdown();
-        tts = null;
-    }
-
-    private void say(String text) {
-        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
-    }
-
-    @Override
-    public void onInit(int status) {
-        if (status == TextToSpeech.SUCCESS) {
-            Toast.makeText(this, "TTS bombando", Toast.LENGTH_SHORT).show();
-            tts.setLanguage(Locale.getDefault());
-
-            if(mFavorites.size() == 1)
-                say("Um local favorito encontrado");
-            else if(mFavorites.size() > 1) {
-                say(mFavorites.size() + " locais favoritos encontrados");
-            }
-        } else {
-            Toast.makeText(this, "pau no TTS", Toast.LENGTH_SHORT).show();
-        }
+        mSpeaker = null;
+        finish();
     }
 }

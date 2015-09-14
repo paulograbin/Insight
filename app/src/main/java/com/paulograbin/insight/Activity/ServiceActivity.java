@@ -24,12 +24,32 @@ import org.altbeacon.beacon.Beacon;
  */
 public abstract class ServiceActivity extends AppCompatActivity {
 
+    private static final String TAG = "ServiceActivity";
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothService mBluetoothService;
-    private static final String TAG = "ServiceActivity";
     private Speaker mSpeaker;
     private int BLUETOOTH_REQUEST = 1;
+    private ServiceConnection mConnection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            BluetoothService.LocalBinder binder = (BluetoothService.LocalBinder) service;
+            mBluetoothService = binder.getService();
+            Log.i("Spiga", "Service binded");
+        }
 
+        public void onServiceDisconnected(ComponentName className) {
+            printToLog("onServiceDisconnected");
+            mBluetoothService = null;
+        }
+    };
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Beacon receivedBeacon = intent.getParcelableExtra(BluetoothService.BEACON_KEY);
+            printToLog(this.getClass().getName() + " recebeu um beacon, " + receivedBeacon.getId1().toString());
+
+            onBeaconReceived(receivedBeacon);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,29 +72,6 @@ public abstract class ServiceActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
-    private ServiceConnection mConnection = new ServiceConnection() {
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            BluetoothService.LocalBinder binder = (BluetoothService.LocalBinder) service;
-            mBluetoothService = binder.getService();
-            Log.i("Spiga", "Service binded");
-        }
-
-        public void onServiceDisconnected(ComponentName className) {
-            printToLog("onServiceDisconnected");
-            mBluetoothService = null;
-        }
-    };
-
-    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Beacon receivedBeacon = intent.getParcelableExtra(BluetoothService.BEACON_KEY);
-            printToLog(this.getClass().getName() + " recebeu um beacon, " + receivedBeacon.getId1().toString());
-
-            onBeaconReceived(receivedBeacon);
-        }
-    };
 
     protected abstract void onBeaconReceived(Beacon lastSeenBeacon); //{
 //        try {
@@ -101,7 +98,6 @@ public abstract class ServiceActivity extends AppCompatActivity {
 
     protected void say(String text) {
         mSpeaker.say(text);
-//        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
     }
 
     private void printToLog(String message) {

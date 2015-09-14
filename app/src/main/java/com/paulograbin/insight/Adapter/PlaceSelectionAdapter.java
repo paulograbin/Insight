@@ -50,8 +50,8 @@ public class PlaceSelectionAdapter extends ArrayAdapter<Place> {
         return convertView;
     }
 
-    private float getDistanceFromCurrentLocation(Location newLocation) {
-        return currentLocation.distanceTo(newLocation);
+    private int getDistanceFromCurrentLocation(Location newLocation) {
+        return Math.round(currentLocation.distanceTo(newLocation));
     }
 
     public class ViewHolder {
