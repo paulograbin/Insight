@@ -45,7 +45,7 @@ public class RouteFinder {
         da.execute(getVertexFromPlace(sourcePlace));
     }
 
-    public LinkedList<Place> getPathToTargetPlace() {
+    public LinkedList<Place> getPath() {
         LinkedList<Place> convertedPath = new LinkedList<>();
         LinkedList<Vertex> path = da.getPath(getVertexFromPlace(targetPlace));
 

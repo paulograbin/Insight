@@ -45,7 +45,7 @@ public class TestRouteFinder extends ApplicationTestCase<Application> {
         assertNotNull(mRouteFinder);
 
         try {
-            mRouteFinder.getPathToTargetPlace();
+            mRouteFinder.getPath();
         } catch(NoWayException e) {
             Assert.fail();
         }
@@ -56,7 +56,7 @@ public class TestRouteFinder extends ApplicationTestCase<Application> {
         assertNotNull(mRouteFinder);
 
         try {
-            mRouteFinder.getPathToTargetPlace();
+            mRouteFinder.getPath();
             Assert.fail();
         } catch(NoWayException e) {
 

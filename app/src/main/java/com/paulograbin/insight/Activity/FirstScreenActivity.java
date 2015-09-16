@@ -5,7 +5,6 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -15,14 +14,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.paulograbin.insight.Activity.Lists.ListFavoritePlaces;
-import com.paulograbin.insight.Adapter.PlaceAdapter;
 import com.paulograbin.insight.Adapter.PlaceSelectionAdapter;
 import com.paulograbin.insight.DB.DatabaseHelper;
 import com.paulograbin.insight.DB.Provider.PlaceBeaconProvider;
 import com.paulograbin.insight.DB.Provider.PlaceProvider;
 import com.paulograbin.insight.Exceptions.NoWayException;
 import com.paulograbin.insight.Exceptions.RecordNotFoundException;
+import com.paulograbin.insight.LocationEngine.Navigation;
 import com.paulograbin.insight.LocationEngine.RouteFinder;
 import com.paulograbin.insight.Model.Place;
 import com.paulograbin.insight.Model.PlaceBeacon;
@@ -30,36 +28,36 @@ import com.paulograbin.insight.R;
 
 import org.altbeacon.beacon.Beacon;
 
-import java.util.LinkedList;
-
 public class FirstScreenActivity extends ServiceActivity implements SensorEventListener {
 
-    private SensorManager mSensorManager;
-    private Sensor mCompass;
+    //TODO: usar o objeto navigation
+    //TODO: direção do sensor
+
+    //TODO: navigation, initicializa já no primeiro lugar do camihno
 
     private static final String TAG = "Spiga";
-
+    private SensorManager mSensorManager;
+    private Sensor mCompass;
     private boolean debugActivityExecution = true;
 
     private Beacon mLastSeenBeacon;
     private Place mCurrentPlace;
-    private Place mTargetPlace;
 
-    private LinkedList<Place> path;
+    private Navigation mNavigation;
     private PlaceSelectionAdapter mPlaceSelectionAdapter;
-    PlaceAdapter mPlaceAdapter;
 
     private PlaceProvider mPlaceProvider;
+
     private PlaceBeaconProvider mPlaceBeaconProvider;
 
-    private ListView list;
+    private ListView mPathPlacesList;
     private TextView txtCurrentPlace;
     private Button btnAdminPanel;
     private Button btnChooseDestiny;
     private Button btnCallHelp;
-    private Button btnFavorites;
 
-    private int destiny_request = 33;
+    private Button btnFavorites;
+    private int pathRequest = 33;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +68,7 @@ public class FirstScreenActivity extends ServiceActivity implements SensorEventL
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         mCompass = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
 
-        list = (ListView) findViewById(R.id.list);
+        mPathPlacesList = (ListView) findViewById(R.id.list);
 
         txtCurrentPlace = (TextView) findViewById(R.id.txtCurrentPlace);
         txtCurrentPlace.setText("Nenhum beacon foi detectado ainda... :(");
@@ -108,7 +106,7 @@ public class FirstScreenActivity extends ServiceActivity implements SensorEventL
 
                 Intent intent = new Intent(getBaseContext(), ListFavoritePlaces.class);
                 intent.putExtra("place", mCurrentPlace);
-                startActivityForResult(intent, destiny_request);
+                startActivityForResult(intent, pathRequest);
             }
         });
 
@@ -123,7 +121,7 @@ public class FirstScreenActivity extends ServiceActivity implements SensorEventL
 
                 Intent intent = new Intent(getBaseContext(), DestinySelectionActivity.class);
                 intent.putExtra("place", mCurrentPlace);
-                startActivityForResult(intent, destiny_request);
+                startActivityForResult(intent, pathRequest);
             }
         });
     }
@@ -145,12 +143,12 @@ public class FirstScreenActivity extends ServiceActivity implements SensorEventL
         mPlaceProvider = new PlaceProvider(this);
         mPlaceBeaconProvider = new PlaceBeaconProvider(this);
 
-        mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION), SensorManager.SENSOR_DELAY_GAME);
+        mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION), SensorManager.SENSOR_DELAY_NORMAL);
 
         try {
             mCurrentPlace = mPlaceProvider.getByName("Ponto Inicial"); //TODO: remove
         } catch (RecordNotFoundException e) {
-            // do not
+            Toast.makeText(this, "Não pegou o place inicial fake", Toast.LENGTH_SHORT).show();
         }
 
         DatabaseHelper.getInstance(this).checkDatabase();
@@ -163,7 +161,7 @@ public class FirstScreenActivity extends ServiceActivity implements SensorEventL
             PlaceBeacon pb = mPlaceBeaconProvider.getByUUID(mLastSeenBeacon.getId1().toString());
             mCurrentPlace = mPlaceProvider.getByID(pb.getIdPlace());
 
-            if(!mCurrentPlace.isEqualTo(mTargetPlace)) {
+            if (!mCurrentPlace.isEqualTo(mNavigation.getTargetPlace())) {
                 // Not final place
                 runOnUiThread(new Runnable() {
                     @Override
@@ -186,33 +184,31 @@ public class FirstScreenActivity extends ServiceActivity implements SensorEventL
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (resultCode == RESULT_OK) {
-            Log.i(TAG, "SelectedOption: " + destiny_request + "; requestCode: " + requestCode);
+            if (requestCode == pathRequest) {
+                Place destinationPlace = (Place) intent.getParcelableExtra("chosenPlace");
+                onUserSelectedADestinationPlace(destinationPlace);
+            }
+        }
+    }
 
-            if(requestCode == destiny_request) {
-                Place placeSelectedByUser = (Place) data.getSerializableExtra("chosenPlace");
-                Log.i(TAG, "Place selected by the user " + placeSelectedByUser);
-                mTargetPlace = placeSelectedByUser;
+    private void onUserSelectedADestinationPlace(Place destinationPlaceSelectedByUser) {
+        try {
+            RouteFinder routeFinder = new RouteFinder(this, mCurrentPlace, destinationPlaceSelectedByUser);
 
-                try {
-                    RouteFinder routeFinder = new RouteFinder(this, mCurrentPlace, placeSelectedByUser);
-                    path = routeFinder.getPathToTargetPlace();
+            mNavigation = new Navigation(routeFinder.getPath(), mCurrentPlace, destinationPlaceSelectedByUser);
 
-                    say("Calculando rota até " + placeSelectedByUser.getName());
+            say("Calculando rota até " + destinationPlaceSelectedByUser.getName());
 
-                    Location currentLocation = new Location("mCurrentLocation");
-                    currentLocation.setLatitude(mCurrentPlace.getLatitude());
-                    currentLocation.setLongitude(mCurrentPlace.getLongitude());
+            mPlaceSelectionAdapter = new PlaceSelectionAdapter(this, routeFinder.getPath(), mCurrentPlace.getLocation());
+            mPathPlacesList.setAdapter(mPlaceSelectionAdapter);
 
-                    mPlaceSelectionAdapter = new PlaceSelectionAdapter(this, path, currentLocation);
-                    list.setAdapter(mPlaceSelectionAdapter);
-
-                    say("Rota para " + mTargetPlace.getName() + " encontrada. Vamos passar por " + (mPlaceSelectionAdapter.getCount()-1) + " locais para chegar ao destino");
-                } catch (NoWayException e) {
-                    say("Não há um caminho cadastrado para o local selecionado");
-    //                mPlaceSelectionAdapter.clear();
-                }
+            say("Rota para " + destinationPlaceSelectedByUser.getName() + " encontrada. Vamos passar por " + (mPlaceSelectionAdapter.getCount() - 1) + " locais para chegar ao destino");
+        } catch (NoWayException e) {
+            say("Não há um caminho cadastrado para o local selecionado");
+            if (mPlaceSelectionAdapter != null) {
+                mPlaceSelectionAdapter.clear();
             }
         }
     }

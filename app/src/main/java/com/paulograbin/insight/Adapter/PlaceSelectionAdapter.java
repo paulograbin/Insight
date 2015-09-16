@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class PlaceSelectionAdapter extends ArrayAdapter<Place> {
 
-    Location currentLocation;
+    Location currentLocation; // To get distance to other places
 
     public PlaceSelectionAdapter(Context context, List<Place> places, Location currentLocation) {
         super(context, android.R.layout.simple_list_item_1, places);
@@ -28,6 +28,7 @@ public class PlaceSelectionAdapter extends ArrayAdapter<Place> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
+
         if (convertView == null) {
             LayoutInflater vi = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = vi.inflate(R.layout.list_item_place_selection, null);
@@ -39,13 +40,11 @@ public class PlaceSelectionAdapter extends ArrayAdapter<Place> {
 
         Place p = getItem(position);
 
-        Location newLocation = new Location("teste");
-        newLocation.setLatitude(p.getLatitude());
-        newLocation.setLongitude(p.getLongitude());
+        int distance = getDistanceFromCurrentLocation(p.getLocation());
 
         holder.txtPlaceName.setText(p.getName());
         holder.txtPlaceDescription.setText(p.getDescription());
-        holder.txtPlaceDistance.setText(getDistanceFromCurrentLocation(newLocation) + "");
+        holder.txtPlaceDistance.setText(distance + "");
 
         return convertView;
     }
@@ -57,8 +56,8 @@ public class PlaceSelectionAdapter extends ArrayAdapter<Place> {
     public class ViewHolder {
         TextView txtPlaceName;
         TextView txtPlaceDescription;
-        TextView txtPlaceDistance;
 
+        TextView txtPlaceDistance;
         public ViewHolder(View v) {
             txtPlaceName = (TextView) v.findViewById(R.id.txtPlaceName);
             txtPlaceDescription = (TextView) v.findViewById(R.id.txtPlaceDescription);

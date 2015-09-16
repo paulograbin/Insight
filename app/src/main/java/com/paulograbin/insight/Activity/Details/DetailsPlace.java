@@ -23,6 +23,8 @@ public class DetailsPlace extends AppCompatActivity {
     private Place mPlace;
     private Speaker mSpeaker;
 
+    //TODO: Implement button Go and place description
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -30,7 +32,7 @@ public class DetailsPlace extends AppCompatActivity {
 
         Intent intent = this.getIntent();
         if (intent != null && intent.hasExtra("place")) {
-            mPlace = (Place) intent.getSerializableExtra("place");
+            mPlace = (Place) intent.getParcelableExtra("place");
 
             txtPlaceName.setText(mPlace.getName());
             txtPlaceDescription.setText(mPlace.getDescription());

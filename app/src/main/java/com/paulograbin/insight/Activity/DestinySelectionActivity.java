@@ -23,8 +23,8 @@ public class DestinySelectionActivity extends AppCompatActivity {
     ListView mList;
     List<Place> mPossibleDestinies;
     PlaceSelectionAdapter mAdapter;
-    Place mCurrentPlace;
-    Location mCurrentLocation;
+    Place mCurrentPlace; // To NOT show it in the list
+
     private Speaker mSpeaker;
 
     @Override
@@ -34,21 +34,16 @@ public class DestinySelectionActivity extends AppCompatActivity {
 
         Intent intent = this.getIntent();
         if (intent.hasExtra("place")) {
-            mCurrentPlace = (Place) intent.getSerializableExtra("place");
+            mCurrentPlace = (Place) intent.getParcelableExtra("place");
         }
 
-        mCurrentLocation = new Location("teste");
-        mCurrentLocation.setLatitude(mCurrentPlace.getLatitude());
-        mCurrentLocation.setLongitude(mCurrentPlace.getLongitude());
-
-        Log.i("Spiga", "CurrentPlace:" + mCurrentPlace.getName() + ", " + mCurrentPlace.getLatitude() + "/" + mCurrentPlace.getLongitude());
-        Log.i("Spiga", "CurrentLocation:" + mCurrentLocation.getLatitude() + " - " + mCurrentLocation.getLongitude());
+        Location currentLocation = mCurrentPlace.getLocation();
 
         mList = new ListView(this);
         mList.setId(android.R.id.list);
 
         mPossibleDestinies = new ArrayList<>();
-        mAdapter = new PlaceSelectionAdapter(this, mPossibleDestinies, mCurrentLocation);
+        mAdapter = new PlaceSelectionAdapter(this, mPossibleDestinies, currentLocation);
         mList.setAdapter(mAdapter);
 
         mList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -69,7 +64,7 @@ public class DestinySelectionActivity extends AppCompatActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 Place p = mAdapter.getItem(position);
-                Log.i("Spiga", "Clicado na posição " + position + " id " + id);
+                Log.i("Spiga", "Clique longo na posição " + position + " id " + id);
 
                 Intent intent = new Intent(getBaseContext(), DetailsPlace.class);
                 intent.putExtra("place", p);
