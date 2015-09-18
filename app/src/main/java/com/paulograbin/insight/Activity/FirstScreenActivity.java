@@ -2,8 +2,6 @@ package com.paulograbin.insight.Activity;
 
 import android.content.Intent;
 import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,12 +26,13 @@ import com.paulograbin.insight.R;
 
 import org.altbeacon.beacon.Beacon;
 
-public class FirstScreenActivity extends ServiceActivity implements SensorEventListener {
+public class FirstScreenActivity extends ServiceActivity {
 
-    //TODO: usar o objeto navigation
     //TODO: direção do sensor
 
     //TODO: navigation, initicializa já no primeiro lugar do camihno
+
+    //TODO: app roda no plano de fundo
 
     private static final String TAG = "Spiga";
     private SensorManager mSensorManager;
@@ -143,7 +142,8 @@ public class FirstScreenActivity extends ServiceActivity implements SensorEventL
         mPlaceProvider = new PlaceProvider(this);
         mPlaceBeaconProvider = new PlaceBeaconProvider(this);
 
-        mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION), SensorManager.SENSOR_DELAY_NORMAL);
+//        mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION), SensorManager.SENSOR_DELAY_NORMAL);
+
 
         try {
             mCurrentPlace = mPlaceProvider.getByName("Ponto Inicial"); //TODO: remove
@@ -158,29 +158,61 @@ public class FirstScreenActivity extends ServiceActivity implements SensorEventL
         try {
             mLastSeenBeacon = lastSeenBeacon;
 
-            PlaceBeacon pb = mPlaceBeaconProvider.getByUUID(mLastSeenBeacon.getId1().toString());
+            PlaceBeacon pb = mPlaceBeaconProvider.getByUUID(mLastSeenBeacon.getId1().toString().toUpperCase());
             mCurrentPlace = mPlaceProvider.getByID(pb.getIdPlace());
 
-            if (!mCurrentPlace.isEqualTo(mNavigation.getTargetPlace())) {
-                // Not final place
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        String message = "Você está em " + mCurrentPlace.getName();
-
-                        txtCurrentPlace.setText(message);
-                        say(message + ", " + mCurrentPlace.getMessage());
-                    }
-                });
-            } else {
-                // Final place
-                say("Você chegou ao seu destino.");
-
-            }
-
+            handleUserMovement();
         } catch (Exception e) {
-            printToLog("Beacon com uuid " + lastSeenBeacon.getId1().toString() + " não cadastrado, ignorando...");
+//            printToLog("Beacon com uuid " + lastSeenBeacon.getId1().toString().toUpperCase() + " não cadastrado, ignorando...");
+            e.printStackTrace();
         }
+    }
+
+    // todo: pegar direção até proximo place e apontar/vibrar pra ele
+    private void handleUserMovement() {
+        printToLog("handleUserMovement " + userHasStartedNavigating());
+
+        if(userHasStartedNavigating()) {
+            // Destination selected
+            if(!mCurrentPlace.isEqualTo(mNavigation.getTargetPlace())) {
+
+                updateScreenWithPlaceName();
+                say("Você está em " + mCurrentPlace.getName()); // + ". Agora " + mCurrentPlace.getMessage());
+
+                // Chegou ao proximo place
+                if(mCurrentPlace.isEqualTo(mNavigation.checkNextPlace())) {
+                    mNavigation.getNextPlace();
+                    say(mCurrentPlace.getMessage());
+
+                    float bearing = mCurrentPlace.getLocation().bearingTo(mNavigation.checkNextPlace().getLocation());
+                    printToLog(bearing + " is the bearing from " + mCurrentPlace.getName() + " to " + mNavigation.checkNextPlace().getName());
+
+                }
+            } else {
+                // Chegou ao destino
+                say("Você chegou em " + mCurrentPlace.getName());
+            }
+        } else { // Destination not selected yet
+            updateScreenWithPlaceName();
+            sayPlaceName(txtCurrentPlace.getText().toString());
+        }
+    }
+
+    private void sayPlaceName(String message) {
+        say(message);
+    }
+
+    private void updateScreenWithPlaceName() {
+        txtCurrentPlace.setText("Você está em " + mCurrentPlace.getName());
+    }
+
+    private boolean userHasStartedNavigating() {
+        boolean navigating = false;
+
+        if(mNavigation != null)
+            navigating = true;
+
+        return navigating;
     }
 
     @Override
@@ -199,12 +231,16 @@ public class FirstScreenActivity extends ServiceActivity implements SensorEventL
 
             mNavigation = new Navigation(routeFinder.getPath(), mCurrentPlace, destinationPlaceSelectedByUser);
 
-            say("Calculando rota até " + destinationPlaceSelectedByUser.getName());
-
             mPlaceSelectionAdapter = new PlaceSelectionAdapter(this, routeFinder.getPath(), mCurrentPlace.getLocation());
             mPathPlacesList.setAdapter(mPlaceSelectionAdapter);
 
-            say("Rota para " + destinationPlaceSelectedByUser.getName() + " encontrada. Vamos passar por " + (mPlaceSelectionAdapter.getCount() - 1) + " locais para chegar ao destino");
+            say("Vamos passar por " + (mPlaceSelectionAdapter.getCount() - 1) + " locais para chegar ao destino");
+
+            float bearing = mCurrentPlace.getLocation().bearingTo(mNavigation.checkNextPlace().getLocation());
+            printToLog(bearing + " is the bearing from current place to " + mNavigation.checkNextPlace().getName());
+
+
+            say(mNavigation.getCurrentPlace().getMessage());
         } catch (NoWayException e) {
             say("Não há um caminho cadastrado para o local selecionado");
             if (mPlaceSelectionAdapter != null) {
@@ -216,19 +252,5 @@ public class FirstScreenActivity extends ServiceActivity implements SensorEventL
     private void printToLog(String message) {
         if (debugActivityExecution)
             Log.i(TAG, message);
-    }
-
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-//        float azimuth = Math.round(event.values[0]);
-        // The other values provided are:
-        //  float pitch = event.values[1];
-        //  float roll = event.values[2];
-//        Log.i("sensor", "azimuth: " + Float.toString(azimuth));
-    }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
     }
 }
