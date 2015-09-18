@@ -127,11 +127,18 @@ public class BluetoothService extends IntentService implements BeaconConsumer {
             printToLog("Ultimo beacon encontrado é " + beacon.getId1().toString());
             mLastSeenBeacon = beacon;
 
-            printToLog("Enviando broadcast");
-            Intent intent = new Intent(FOUND_NEW_BEACON_EVENT);
-            intent.putExtra(BEACON_KEY, mLastSeenBeacon);
-            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+            fireBroadcast();
         }
+    }
+
+    private void fireBroadcast() {
+        if(mLastSeenBeacon == null)
+            return;
+
+        printToLog("Enviando broadcast");
+        Intent intent = new Intent(FOUND_NEW_BEACON_EVENT);
+        intent.putExtra(BEACON_KEY, mLastSeenBeacon);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
     @Override
@@ -155,6 +162,9 @@ public class BluetoothService extends IntentService implements BeaconConsumer {
     public IBinder onBind(Intent intent) {
         printToLog("Bindaram");
         mBindCount++;
+
+        fireBroadcast();
+
         return mBinder;
     }
 

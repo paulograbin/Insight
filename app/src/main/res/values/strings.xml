@@ -12,7 +12,6 @@
     <string name="title_activity_list_beacons">List of Beacons</string>
     <string name="title_activity_place_details">Detalhes do local</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_list_place_beacons">PlaceBeacon Listing</string>
     <string name="title_activity_place_beacon_details">PlaceBeacon Details</string>
@@ -25,5 +24,6 @@
     <string name="title_activity_list_favorite_places">Listagem de locais favoritos</string>
 
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_positioned">Positioned</string>
 
 </resources>

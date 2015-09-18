@@ -23,7 +23,7 @@ public class Navigation {
         this.path = path;
         this.mInitialPlace = sourcePlace;
         this.mTargetPlace = targetPlace;
-        this.currentPlaceNumber = -1;
+        this.currentPlaceNumber = 0;
     }
 
     public Place get(int i) {

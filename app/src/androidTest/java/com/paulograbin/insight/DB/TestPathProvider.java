@@ -238,8 +238,6 @@ public class TestPathProvider extends ApplicationTestCase<Application> {
 
         mPathProvider.insert(a);
         mPathProvider.insert(b);
-
-        // TODO: make it no allowed to insert duplicate records
     }
 
     public void testGetContentValues() {

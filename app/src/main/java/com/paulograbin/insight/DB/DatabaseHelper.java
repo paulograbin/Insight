@@ -61,9 +61,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
          * Places
          */
         Place pInitial = new Place("Ponto Inicial", "Um ponto no inicio mapa", "Mensagem de teste!", Place.NOT_FAVORITE, Place.FINAL_DESTINATION, -29.784539, -51.144191);
-        Place pMid = new Place("Caminho entre pontos", "Um caminho no meio do mapa", "", Place.NOT_FAVORITE, Place.NO_DESTINATION, -29.791465, -51.151202);
-        Place pNowhere = new Place("Nowhere", "Algum lugar perdido", "", Place.NOT_FAVORITE, Place.NO_DESTINATION, -29.898537, -51.152074);
-        Place pEnd = new Place("Ponto Final", "Um ponto no fim do mapa", "", Place.FAVORITE, Place.FINAL_DESTINATION, -29.796614, -51.148895);
+        Place pMid = new Place("Caminho entre pontos", "Um caminho no meio do mapa", "Segunda Mensagem de teste!", Place.NOT_FAVORITE, Place.NO_DESTINATION, -29.791465, -51.151202);
+        Place pNowhere = new Place("Nowhere", "Algum lugar perdido", "Não faz parte do caminho", Place.NOT_FAVORITE, Place.NO_DESTINATION, -29.898537, -51.152074);
+        Place pEnd = new Place("Ponto Final", "Um ponto no fim do mapa", "Ultima mensagem de teste", Place.FAVORITE, Place.FINAL_DESTINATION, -29.796614, -51.148895);
 
 //        Place pInitial = new Place("Setor 2E", "Custom Developtment", "Siga pela direita até a porta de correr e então continue andando reto", Place.NOT_FAVORITE, Place.FINAL_DESTINATION, -29.78440, -51.14400);
 //        Place pMid = new Place("Setor 2C", "Centro do prédio", "Dobre a direita e siga até o elevador", Place.NOT_FAVORITE, Place.NO_DESTINATION, -29.91305, -51.18932);

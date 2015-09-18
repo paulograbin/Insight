@@ -81,7 +81,7 @@ public class DestinySelectionActivity extends AppCompatActivity {
         mAdapter.clear();
 
         PlaceProvider pp = new PlaceProvider(this);
-        List<Place> places = pp.getAll(); // TODO: selecionar apenas destinos
+        List<Place> places = pp.getAllDestinationPlaces(); // TODO: selecionar apenas destinos
 
         if(mCurrentPlace != null)
             for (Place p: places) {
@@ -93,7 +93,7 @@ public class DestinySelectionActivity extends AppCompatActivity {
         if (mPossibleDestinies.size() == 1) {
             mSpeaker.say("Um possível destino encontrado");
         } else {
-            mSpeaker.say(mPossibleDestinies.size() + " possíveis destinos encontrado");
+            mSpeaker.say(mPossibleDestinies.size() + " possíveis destinos encontrados");
         }
     }
 

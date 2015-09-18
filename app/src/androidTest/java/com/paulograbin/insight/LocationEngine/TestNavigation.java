@@ -58,15 +58,14 @@ public class TestNavigation extends ApplicationTestCase<Application> {
         assertNotNull(mNavigation);
         testPathSize(3);
 
-        assertEquals(-1, mNavigation.getCurrentPlaceNumber());
+        assertEquals(0, mNavigation.getCurrentPlaceNumber());
         assertFalse(mNavigation.isLastPlace());
 
         // PREVIOUS AND NEXT
         testPreviousPlace(null);
-        testNextPlace("Ponto Inicial");
 
         // FIRST PLACE
-        mCurrentPlace = mNavigation.getNextPlace();
+        mCurrentPlace = mNavigation.getCurrentPlace();
         assertEquals("Ponto Inicial", mCurrentPlace.getName());
         assertFalse(mNavigation.isLastPlace());
         assertEquals("Ponto Inicial", mNavigation.getCurrentPlace().getName());
