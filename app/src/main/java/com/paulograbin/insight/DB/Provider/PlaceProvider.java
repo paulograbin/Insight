@@ -53,8 +53,8 @@ public class PlaceProvider extends AbstractProvider<Place> {
         cv.put(TablePlace.COLUMN_MESSAGE, p.getMessage());
         cv.put(TablePlace.COLUMN_FAVORITE, p.getFavorite());
         cv.put(TablePlace.COLUMN_DESTINATION, p.getDestination());
-        cv.put(TablePlace.COLUMN_LATITUDE, p.getLatitude());
-        cv.put(TablePlace.COLUMN_LONGITUDE, p.getLongitude());
+        cv.put(TablePlace.COLUMN_LATITUDE, p.getLocation().getLatitude());
+        cv.put(TablePlace.COLUMN_LONGITUDE, p.getLocation().getLongitude());
 
         return cv;
     }

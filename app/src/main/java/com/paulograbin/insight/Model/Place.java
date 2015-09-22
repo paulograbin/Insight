@@ -13,6 +13,13 @@ public class Place implements ModelInterface<Place>, Parcelable {
     public static final int FINAL_DESTINATION = 1;  // Place can be choosed as destination by the user
     public static final int NOT_FAVORITE = 0;
     public static final int FAVORITE = 1;
+    long id;
+    String name;
+    String description;
+    String message;
+    int favorite;
+    int destination;
+    Location location;
     public static final Parcelable.Creator<Place> CREATOR = new Creator<Place>() {
         @Override
         public Place createFromParcel(Parcel source) {
@@ -24,15 +31,6 @@ public class Place implements ModelInterface<Place>, Parcelable {
             return new Place[0];
         }
     };
-    long id;
-    String name;
-    String description;
-    String message;
-    int favorite;
-    int destination;
-    double latitude;
-    double longitude;
-    Location location;
 
     public Place() {
         location = new Location("");
@@ -44,9 +42,6 @@ public class Place implements ModelInterface<Place>, Parcelable {
         this.message = message;
         this.favorite = favorite;
         this.destination = destination;
-        this.latitude = latitude;
-        this.longitude = longitude;
-
         location = new Location(name);
         location.setLatitude(latitude);
         location.setLongitude(longitude);
@@ -57,9 +52,6 @@ public class Place implements ModelInterface<Place>, Parcelable {
         this.name = name;
         this.description = description;
         this.destination = destination;
-        this.latitude = latitude;
-        this.longitude = longitude;
-
         location = new Location(name);
         location.setLatitude(latitude);
         location.setLongitude(longitude);
@@ -72,17 +64,21 @@ public class Place implements ModelInterface<Place>, Parcelable {
         this.message = p.readString();
         this.favorite = p.readInt();
         this.destination = p.readInt();
-        this.latitude = p.readDouble();
-        this.longitude = p.readDouble();
-        this.location = Location.CREATOR.createFromParcel(p);
+
+        double latitude = p.readDouble();
+        double longitude = p.readDouble();
+
+        location = new Location("");
+        location.setLatitude(latitude);
+        location.setLongitude(longitude);
     }
 
     @Override
     public boolean isEqualTo(Place anotherPlace) {
         if (anotherPlace instanceof Place) {
             if (this.name.equalsIgnoreCase(anotherPlace.getName()) &&
-                    this.latitude == anotherPlace.getLatitude() &&
-                    this.longitude == anotherPlace.getLongitude())
+                    this.getLocation().getLatitude() == anotherPlace.getLocation().getLatitude() &&
+                    this.getLocation().getLongitude() == anotherPlace.getLocation().getLongitude())
                 return true;
         }
 
@@ -122,21 +118,11 @@ public class Place implements ModelInterface<Place>, Parcelable {
         this.message = message;
     }
 
-    public double getLatitude() {
-        return latitude;
-    }
-
     public void setLatitude(double latitude) {
-        this.latitude = latitude;
         this.location.setLatitude(latitude);
     }
 
-    public double getLongitude() {
-        return longitude;
-    }
-
     public void setLongitude(double longitude) {
-        this.longitude = longitude;
         this.location.setLongitude(longitude);
     }
 
@@ -164,8 +150,10 @@ public class Place implements ModelInterface<Place>, Parcelable {
     public String toString() {
         StringBuilder sb = new StringBuilder(id + " - " + name);
 
-        if (latitude > 0 && longitude > 0) {
-            sb.append(", lat/long " + latitude + "/" + longitude);
+        double latitude = location.getLatitude();
+        double longitude = location.getLongitude();
+        if (latitude != 0 && longitude != 0) {
+            sb.append(", lat/long " + location.getLatitude() + "/" + location.getLongitude());
         }
 
         return sb.toString();
@@ -184,8 +172,8 @@ public class Place implements ModelInterface<Place>, Parcelable {
         dest.writeString(message);
         dest.writeInt(favorite);
         dest.writeInt(destination);
-        dest.writeDouble(latitude);
-        dest.writeDouble(longitude);
+        dest.writeDouble(location.getLatitude());
+        dest.writeDouble(location.getLongitude());
         dest.writeParcelable(location, 0);
     }
 }

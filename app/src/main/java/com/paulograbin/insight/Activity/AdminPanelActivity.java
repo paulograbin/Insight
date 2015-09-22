@@ -12,16 +12,12 @@ import com.paulograbin.insight.Activity.Lists.ListPaths;
 import com.paulograbin.insight.Activity.Lists.ListPlaceBeacons;
 import com.paulograbin.insight.Activity.Lists.ListPlacesAll;
 import com.paulograbin.insight.DB.DatabaseHelper;
+import com.paulograbin.insight.Output.Speaker;
 import com.paulograbin.insight.Output.Vibrate;
 import com.paulograbin.insight.R;
 
 
 public class AdminPanelActivity extends ActionBarActivity {
-
-    // TODO: No primeiro uso, pergunta se o usuário quer que o aplicativo monitore sua região e
-    // se auto execute quando chega na área
-
-    private String LOG_TAG = "Spiga";
 
     private Button btnShowBeaconList;
     private Button btnVibrate;
@@ -72,7 +68,13 @@ public class AdminPanelActivity extends ActionBarActivity {
         btnVibrate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                vibrate.onVibrate();
+//                vibrate.onVibrate();
+//                MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.music_marimba_chord);
+//                mp.start();
+
+//                Speaker.getInstance(getApplicationContext()).
+
+                Speaker.getInstance(getApplicationContext()).playWithAlert("teste do paulo");
             }
         });
 

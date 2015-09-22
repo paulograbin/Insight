@@ -81,7 +81,7 @@ public class DestinySelectionActivity extends AppCompatActivity {
         mAdapter.clear();
 
         PlaceProvider pp = new PlaceProvider(this);
-        List<Place> places = pp.getAllDestinationPlaces(); // TODO: selecionar apenas destinos
+        List<Place> places = pp.getAllDestinationPlaces();
 
         if(mCurrentPlace != null)
             for (Place p: places) {
@@ -91,12 +91,9 @@ public class DestinySelectionActivity extends AppCompatActivity {
             }
 
         if (mPossibleDestinies.size() == 1) {
-            mSpeaker.say("Um possível destino encontrado");
+            mSpeaker.playWithoutAlert("Um possível destino encontrado");
         } else {
-            mSpeaker.say(mPossibleDestinies.size() + " possíveis destinos encontrados");
+            mSpeaker.playWithoutAlert(mPossibleDestinies.size() + " possíveis destinos encontrados");
         }
     }
-
-    //TODO: todo android vem com o sintetizador de voz
-    //TODO: inspiração veio quando minha namorada comentou que viu no trem...
 }

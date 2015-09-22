@@ -88,7 +88,7 @@ public abstract class ServiceActivity extends AppCompatActivity {
 //                    String message = "Você está em " + mCurrentPlace.getName();
 //
 //                    txtCurrentPlace.setText(message);
-//                    say(message + ", " + mCurrentPlace.getMessage());
+//                    playWithAlert(message + ", " + mCurrentPlace.getMessage());
 //                }
 //            });
 //        } catch (Exception e) {
@@ -97,7 +97,11 @@ public abstract class ServiceActivity extends AppCompatActivity {
 //    }
 
     protected void say(String text) {
-        mSpeaker.say(text);
+        mSpeaker.playWithoutAlert(text);
+    }
+
+    protected void sayWithAlert(String text) {
+        mSpeaker.playWithAlert(text);
     }
 
     private void printToLog(String message) {

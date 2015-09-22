@@ -38,20 +38,20 @@ public class Navigation {
         Location location2 = new Location("aux2");
 
         Place starting = get(0);
-        location.setLatitude(starting.getLatitude());
-        location.setLongitude(starting.getLongitude());
+        location.setLatitude(starting.getLocation().getLatitude());
+        location.setLongitude(starting.getLocation().getLongitude());
 
         for (int i = 1; i < path.size(); i++) {
             Place p = get(i);
 
-            location2.setLatitude(p.getLatitude());
-            location2.setLongitude(p.getLongitude());
+            location2.setLatitude(p.getLocation().getLatitude());
+            location2.setLongitude(p.getLocation().getLongitude());
 
             distance += location.distanceTo(location2);
 
             starting = p;
-            location.setLatitude(starting.getLatitude());
-            location.setLongitude(starting.getLongitude());
+            location.setLatitude(starting.getLocation().getLatitude());
+            location.setLongitude(starting.getLocation().getLongitude());
         }
 
         return Math.round(distance);

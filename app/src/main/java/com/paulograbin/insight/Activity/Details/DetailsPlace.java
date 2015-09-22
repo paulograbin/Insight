@@ -50,10 +50,10 @@ public class DetailsPlace extends AppCompatActivity {
             public void onClick(View v) {
                 if (mPlace.getFavorite() == 0) {
                     mPlace.setFavorite(1);
-                    mSpeaker.say(mPlace.getName() + "  salvo como favorito.");
+                    mSpeaker.playWithAlert(mPlace.getName() + "  salvo como favorito.");
                 } else {
                     mPlace.setFavorite(0);
-                    mSpeaker.say(mPlace.getName() + "  desmarcado como favorito.");
+                    mSpeaker.playWithAlert(mPlace.getName() + "  desmarcado como favorito.");
                 }
 
                 new PlaceProvider(getApplicationContext()).update(mPlace);

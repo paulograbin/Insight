@@ -16,8 +16,6 @@ import java.util.List;
 
 public class ListFavoritePlaces extends AppCompatActivity {
 
-    //TODO: cada transição de tela tem uma mensagem de voz
-
     ListView mList;
     List<Place> mFavorites;
     PlaceSelectionAdapter mAdapter;
@@ -38,8 +36,8 @@ public class ListFavoritePlaces extends AppCompatActivity {
         }
 
         mCurrentLocation = new Location("teste");
-        mCurrentLocation.setLatitude(mCurrentPlace.getLatitude());
-        mCurrentLocation.setLongitude(mCurrentPlace.getLongitude());
+        mCurrentLocation.setLatitude(mCurrentPlace.getLocation().getLatitude());
+        mCurrentLocation.setLongitude(mCurrentPlace.getLocation().getLongitude());
 
         mList = new ListView(this);
         mList.setId(android.R.id.list);
@@ -61,9 +59,9 @@ public class ListFavoritePlaces extends AppCompatActivity {
         mAdapter.addAll(mFavorites);
 
         if(mFavorites.size() == 1)
-            mSpeaker.say("Um local favorito encontrado");
+            mSpeaker.playWithoutAlert("Um local favorito encontrado");
         else if(mFavorites.size() > 1) {
-            mSpeaker.say(mFavorites.size() + " locais favoritos encontrados");
+            mSpeaker.playWithoutAlert(mFavorites.size() + " locais favoritos encontrados");
         }
     }
 

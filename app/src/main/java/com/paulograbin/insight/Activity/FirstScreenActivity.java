@@ -2,6 +2,8 @@ package com.paulograbin.insight.Activity;
 
 import android.content.Intent;
 import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,7 +19,6 @@ import com.paulograbin.insight.DB.DatabaseHelper;
 import com.paulograbin.insight.DB.Provider.PlaceBeaconProvider;
 import com.paulograbin.insight.DB.Provider.PlaceProvider;
 import com.paulograbin.insight.Exceptions.NoWayException;
-import com.paulograbin.insight.Exceptions.RecordNotFoundException;
 import com.paulograbin.insight.LocationEngine.Navigation;
 import com.paulograbin.insight.LocationEngine.RouteFinder;
 import com.paulograbin.insight.Model.Place;
@@ -26,36 +27,30 @@ import com.paulograbin.insight.R;
 
 import org.altbeacon.beacon.Beacon;
 
-public class FirstScreenActivity extends ServiceActivity {
+public class FirstScreenActivity extends ServiceActivity implements SensorEventListener {
+
+    //bug nas distancias
+    //prioridade das falas
+    //beep
 
     //TODO: direção do sensor
-
-    //TODO: navigation, initicializa já no primeiro lugar do camihno
-
-    //TODO: app roda no plano de fundo
-
-    private static final String TAG = "Spiga";
     private SensorManager mSensorManager;
     private Sensor mCompass;
-    private boolean debugActivityExecution = true;
 
     private Beacon mLastSeenBeacon;
     private Place mCurrentPlace;
 
     private Navigation mNavigation;
     private PlaceSelectionAdapter mPlaceSelectionAdapter;
-
     private PlaceProvider mPlaceProvider;
-
     private PlaceBeaconProvider mPlaceBeaconProvider;
-
     private ListView mPathPlacesList;
     private TextView txtCurrentPlace;
     private Button btnAdminPanel;
     private Button btnChooseDestiny;
     private Button btnCallHelp;
-
     private Button btnFavorites;
+
     private int pathRequest = 33;
 
     @Override
@@ -142,14 +137,14 @@ public class FirstScreenActivity extends ServiceActivity {
         mPlaceProvider = new PlaceProvider(this);
         mPlaceBeaconProvider = new PlaceBeaconProvider(this);
 
-//        mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION), SensorManager.SENSOR_DELAY_NORMAL);
+        mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION), SensorManager.SENSOR_DELAY_NORMAL);
 
 
-        try {
-            mCurrentPlace = mPlaceProvider.getByName("Ponto Inicial"); //TODO: remove
-        } catch (RecordNotFoundException e) {
-            Toast.makeText(this, "Não pegou o place inicial fake", Toast.LENGTH_SHORT).show();
-        }
+//        try {
+//            mCurrentPlace = mPlaceProvider.getByName("Ponto Inicial"); //TODO: remove
+//        } catch (RecordNotFoundException e) {
+//            Toast.makeText(this, "Não pegou o place inicial fake", Toast.LENGTH_SHORT).show();
+//        }
 
         DatabaseHelper.getInstance(this).checkDatabase();
     }
@@ -163,7 +158,6 @@ public class FirstScreenActivity extends ServiceActivity {
 
             handleUserMovement();
         } catch (Exception e) {
-//            printToLog("Beacon com uuid " + lastSeenBeacon.getId1().toString().toUpperCase() + " não cadastrado, ignorando...");
             e.printStackTrace();
         }
     }
@@ -172,12 +166,12 @@ public class FirstScreenActivity extends ServiceActivity {
     private void handleUserMovement() {
         printToLog("handleUserMovement " + userHasStartedNavigating());
 
+        updateScreenWithPlaceName();
         if(userHasStartedNavigating()) {
             // Destination selected
-            if(!mCurrentPlace.isEqualTo(mNavigation.getTargetPlace())) {
 
-                updateScreenWithPlaceName();
-                say("Você está em " + mCurrentPlace.getName()); // + ". Agora " + mCurrentPlace.getMessage());
+            if(!mCurrentPlace.isEqualTo(mNavigation.getTargetPlace())) {
+                sayWithAlert("Você está em " + mCurrentPlace.getName()); // + ". Agora " + mCurrentPlace.getMessage());
 
                 // Chegou ao proximo place
                 if(mCurrentPlace.isEqualTo(mNavigation.checkNextPlace())) {
@@ -186,20 +180,18 @@ public class FirstScreenActivity extends ServiceActivity {
 
                     float bearing = mCurrentPlace.getLocation().bearingTo(mNavigation.checkNextPlace().getLocation());
                     printToLog(bearing + " is the bearing from " + mCurrentPlace.getName() + " to " + mNavigation.checkNextPlace().getName());
-
                 }
             } else {
                 // Chegou ao destino
-                say("Você chegou em " + mCurrentPlace.getName());
+                sayWithAlert("Você chegou em " + mCurrentPlace.getName());
             }
         } else { // Destination not selected yet
-            updateScreenWithPlaceName();
             sayPlaceName(txtCurrentPlace.getText().toString());
         }
     }
 
     private void sayPlaceName(String message) {
-        say(message);
+        sayWithAlert(message);
     }
 
     private void updateScreenWithPlaceName() {
@@ -250,7 +242,24 @@ public class FirstScreenActivity extends ServiceActivity {
     }
 
     private void printToLog(String message) {
+        String TAG = "Spiga";
+        boolean debugActivityExecution = true;
+
         if (debugActivityExecution)
             Log.i(TAG, message);
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        float azimuth = Math.round(event.values[0]);
+        // The other values provided are:
+        //  float pitch = event.values[1];
+        //  float roll = event.values[2];
+//        Log.i("Spiga", "azimuth: " + Float.toString(azimuth));
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
     }
 }
