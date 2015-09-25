@@ -51,7 +51,8 @@ public class FirstScreenActivity extends ServiceActivity implements SensorEventL
     private Button btnCallHelp;
     private Button btnFavorites;
 
-    private int pathRequest = 33;
+    private final int pathRequest = 33;
+    private final int bluetoothTurnedOn = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,12 +127,15 @@ public class FirstScreenActivity extends ServiceActivity implements SensorEventL
 
         if(checkBluetoothIsSupported()) {
             if (checkIsBLEisSupported()) {
-                askUserToEnableBluetooth();
+                if(!isBluetoothOn()) {
+                    say("Por favor, ative sua comunicação bluetooth");
+                    askUserToEnableBluetooth();
+                }
             } else {
-
+                say("Seu aplicativo não suport a versão que o aplicativo exige para funcionar.");
             }
         } else {
-
+            say("Seu dispositivo não tem suporte a tecnologia Bluetooth, por isso o aplicativo não pode funcionar.");
         }
 
         mPlaceProvider = new PlaceProvider(this);
@@ -171,7 +175,7 @@ public class FirstScreenActivity extends ServiceActivity implements SensorEventL
             // Destination selected
 
             if(!mCurrentPlace.isEqualTo(mNavigation.getTargetPlace())) {
-                sayWithAlert("Você está em " + mCurrentPlace.getName()); // + ". Agora " + mCurrentPlace.getMessage());
+                sayWithAlert("Você está em " + mCurrentPlace.getName());
 
                 // Chegou ao proximo place
                 if(mCurrentPlace.isEqualTo(mNavigation.checkNextPlace())) {
@@ -209,10 +213,20 @@ public class FirstScreenActivity extends ServiceActivity implements SensorEventL
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        Log.i("result", "RequestCode:" + requestCode + " - ResultCode " + resultCode);
+
         if (resultCode == RESULT_OK) {
             if (requestCode == pathRequest) {
-                Place destinationPlace = (Place) intent.getParcelableExtra("chosenPlace");
+                Place destinationPlace = intent.getParcelableExtra("chosenPlace");
                 onUserSelectedADestinationPlace(destinationPlace);
+            } else if(requestCode == 1)
+            {
+                Log.i("result", "bluetooth request accepter");
+            }
+        } else if (resultCode == RESULT_CANCELED){
+            if(requestCode != pathRequest) {
+                Log.i("result", "usuário cancelou request bluetooth - requestCode " + requestCode);
+                say("O aplicativo necessita que a comunicação Bluetooth de seu telefone esteja ativa.");
             }
         }
     }

@@ -4,6 +4,9 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.paulograbin.insight.Adapter.PlaceSelectionAdapter;
@@ -16,12 +19,12 @@ import java.util.List;
 
 public class ListFavoritePlaces extends AppCompatActivity {
 
-    ListView mList;
-    List<Place> mFavorites;
-    PlaceSelectionAdapter mAdapter;
+    private ListView mList;
+    private List<Place> mFavorites;
+    private PlaceSelectionAdapter mAdapter;
 
-    Place mCurrentPlace;
-    Location mCurrentLocation;
+    private Place mCurrentPlace;
+    private Location mCurrentLocation;
     private Speaker mSpeaker;
 
 
@@ -32,7 +35,7 @@ public class ListFavoritePlaces extends AppCompatActivity {
 
         Intent intent = this.getIntent();
         if (intent.hasExtra("place")) {
-            mCurrentPlace = (Place) intent.getParcelableExtra("place");
+            mCurrentPlace = intent.getParcelableExtra("place");
         }
 
         mCurrentLocation = new Location("teste");
@@ -45,6 +48,20 @@ public class ListFavoritePlaces extends AppCompatActivity {
         mFavorites = new ArrayList<>();
         mAdapter = new PlaceSelectionAdapter(this, mFavorites, mCurrentLocation);
         mList.setAdapter(mAdapter);
+
+        mList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Place chosenPlace = (Place) parent.getItemAtPosition(position);
+                Log.i("Spiga", "Usuário escolheu destino: " + chosenPlace.toString());
+
+                Intent intent = new Intent();
+                intent.putExtra("chosenPlace", chosenPlace);
+
+                setResult(RESULT_OK, intent);
+                finish();
+            }
+        });
 
         setContentView(mList);
         refreshList();
