@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.accessibility.AccessibilityEvent;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
@@ -28,19 +29,25 @@ public class DestinySelectionActivity extends AppCompatActivity {
     private Speaker mSpeaker;
 
     @Override
+    public boolean dispatchPopulateAccessibilityEvent(AccessibilityEvent event) {
+        return true;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mSpeaker = Speaker.getInstance(this);
 
         Intent intent = this.getIntent();
         if (intent.hasExtra("place")) {
-            mCurrentPlace = (Place) intent.getParcelableExtra("place");
+            mCurrentPlace = intent.getParcelableExtra("place");
         }
 
         Location currentLocation = mCurrentPlace.getLocation();
 
         mList = new ListView(this);
         mList.setId(android.R.id.list);
+        mList.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
 
         mPossibleDestinies = new ArrayList<>();
         mAdapter = new PlaceSelectionAdapter(this, mPossibleDestinies, currentLocation);

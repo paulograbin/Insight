@@ -59,6 +59,8 @@ public abstract class ServiceActivity extends AppCompatActivity {
         registerAsReceiver();
     }
 
+    protected abstract void onBeaconReceived(Beacon lastSeenBeacon);
+
     private void registerAsReceiver() {
         try {
             Log.i("Spiga", "Chamando service");
@@ -73,31 +75,12 @@ public abstract class ServiceActivity extends AppCompatActivity {
         }
     }
 
-    protected abstract void onBeaconReceived(Beacon lastSeenBeacon); //{
-//        try {
-//            mLastSeenBeacon = lastSeenBeacon;
-//
-//            PlaceBeacon pb = mPlaceBeaconProvider.getByUUID(mLastSeenBeacon.getId1().toString());
-//            mCurrentPlace = mPlaceProvider.getByID(pb.getIdPlace());
-//
-//            BeaconProvider beaconProvider = new BeaconProvider(this);
-//
-//            runOnUiThread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    String message = "Você está em " + mCurrentPlace.getName();
-//
-//                    txtCurrentPlace.setText(message);
-//                    playWithAlert(message + ", " + mCurrentPlace.getMessage());
-//                }
-//            });
-//        } catch (Exception e) {
-//            printToLog("Beacon com uuid " + lastSeenBeacon.getId1().toString() + " não cadastrado, ignorando...");
-//        }
-//    }
-
     protected void say(String text) {
         mSpeaker.playWithoutAlert(text);
+    }
+
+    protected void sayImmediately(String text) {
+        mSpeaker.sayImmediately(text);
     }
 
     protected void sayWithAlert(String text) {
@@ -118,11 +101,15 @@ public abstract class ServiceActivity extends AppCompatActivity {
 
     public void askUserToEnableBluetooth() {
 
-        if (!mBluetoothAdapter.isEnabled()) {
+        if (!isBluetoothOn()) {
             Intent enableBluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBluetoothIntent, BLUETOOTH_REQUEST);
             Log.i(TAG, "Usuário respondeu:" + BLUETOOTH_REQUEST);
         }
+    }
+
+    protected boolean isBluetoothOn() {
+        return mBluetoothAdapter.isEnabled();
     }
 
     public Boolean checkIsBLEisSupported() {

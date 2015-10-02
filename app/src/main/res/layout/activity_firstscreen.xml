@@ -18,23 +18,6 @@
         android:text="@string/no_beacon_detected"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <Button
-        android:id="@+id/btnChooseDestination"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:text="@string/choose_destination" />
-
-    <Button
-        android:id="@+id/btnAdminPanel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/admin_panel"
-        android:layout_above="@+id/btnCallHelp"
-        android:layout_alignEnd="@+id/list"
-        android:layout_alignStart="@+id/btnCallHelp" />
-
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -42,23 +25,46 @@
         android:layout_below="@+id/txtCurrentPlace"
         android:layout_alignParentStart="true"
         android:choiceMode="none"
-        android:layout_above="@+id/btnAdminPanel" />
+        tools:listitem="@android:layout/simple_expandable_list_item_2"
+        android:layout_above="@+id/linearLayout2"
+        android:contentDescription="Caminho a ser percorrido" />
 
-    <Button
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Chamar ajuda"
-        android:id="@+id/btnCallHelp"
+        android:gravity="bottom"
+        android:id="@+id/linearLayout2"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_centerHorizontal="true">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Locais favoritos"
-        android:id="@+id/btnFavorites"
-        android:layout_above="@+id/btnChooseDestination"
-        android:layout_alignEnd="@+id/btnChooseDestination"
-        android:layout_alignParentStart="true" />
+        <Button
+            android:id="@+id/btnChooseDestination"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/choose_destination"
+            android:layout_below="@+id/list"
+            android:layout_alignParentStart="true"
+            android:layout_gravity="left" />
+
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Locais favoritos"
+            android:id="@+id/btnFavorites"
+            android:layout_below="@+id/btnAdminPanel"
+            android:layout_alignParentStart="true"
+            android:layout_alignEnd="@+id/btnChooseDestination" />
+
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Chamar ajuda"
+            android:id="@+id/btnCallHelp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="right" />
+
+    </LinearLayout>
 
 </RelativeLayout>

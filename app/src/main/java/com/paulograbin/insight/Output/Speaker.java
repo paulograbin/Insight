@@ -68,8 +68,8 @@ public class Speaker implements TextToSpeech.OnInitListener {
         Log.i("speaker", "Saying immediately: " + text);
 
         if (ready) {
-            tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
             tts.playEarcon("beep", TextToSpeech.QUEUE_FLUSH, null);
+            tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
         }
         else {
             Log.i("Speaker", "Speaker not ready...");

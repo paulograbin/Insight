@@ -1,14 +1,13 @@
 package com.paulograbin.insight.Activity;
 
 import android.content.Intent;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -27,26 +26,19 @@ import com.paulograbin.insight.R;
 
 import org.altbeacon.beacon.Beacon;
 
-public class FirstScreenActivity extends ServiceActivity implements SensorEventListener {
-
-    //bug nas distancias
-    //prioridade das falas
-    //beep
-
-    //TODO: direção do sensor
-    private SensorManager mSensorManager;
-    private Sensor mCompass;
+public class FirstScreenActivity extends ServiceActivity {
 
     private Beacon mLastSeenBeacon;
     private Place mCurrentPlace;
+    private Place mPreviousPlace;
 
     private Navigation mNavigation;
     private PlaceSelectionAdapter mPlaceSelectionAdapter;
     private PlaceProvider mPlaceProvider;
     private PlaceBeaconProvider mPlaceBeaconProvider;
+
     private ListView mPathPlacesList;
     private TextView txtCurrentPlace;
-    private Button btnAdminPanel;
     private Button btnChooseDestiny;
     private Button btnCallHelp;
     private Button btnFavorites;
@@ -60,10 +52,8 @@ public class FirstScreenActivity extends ServiceActivity implements SensorEventL
         setContentView(R.layout.activity_firstscreen);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        mCompass = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
-
         mPathPlacesList = (ListView) findViewById(R.id.list);
+        mPathPlacesList.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
 
         txtCurrentPlace = (TextView) findViewById(R.id.txtCurrentPlace);
         txtCurrentPlace.setText("Nenhum beacon foi detectado ainda... :(");
@@ -76,21 +66,12 @@ public class FirstScreenActivity extends ServiceActivity implements SensorEventL
             }
         });
 
-        btnAdminPanel = (Button) findViewById(R.id.btnAdminPanel);
-        btnAdminPanel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), AdminPanelActivity.class);
-                startActivity(intent);
-            }
-        });
-
         btnFavorites = (Button) findViewById(R.id.btnFavorites);
         btnFavorites.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mCurrentPlace == null) {
-                    Toast.makeText(getBaseContext(), R.string.initial_place_not_identified, Toast.LENGTH_SHORT).show();
+                    sayImmediately(getString(R.string.initial_place_not_identified));
                     return;
                 }
 
@@ -110,7 +91,7 @@ public class FirstScreenActivity extends ServiceActivity implements SensorEventL
             @Override
             public void onClick(View v) {
                 if (mCurrentPlace == null) {
-                    Toast.makeText(getBaseContext(), R.string.initial_place_not_identified, Toast.LENGTH_SHORT).show();
+                    sayImmediately(getString(R.string.initial_place_not_identified));
                     return;
                 }
 
@@ -122,33 +103,53 @@ public class FirstScreenActivity extends ServiceActivity implements SensorEventL
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+//        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, AdminPanelActivity.class);
+            startActivity(intent);
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean dispatchPopulateAccessibilityEvent(AccessibilityEvent event) {
+        return true;
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
 
         if(checkBluetoothIsSupported()) {
             if (checkIsBLEisSupported()) {
                 if(!isBluetoothOn()) {
-                    say("Por favor, ative sua comunicação bluetooth");
+                    sayImmediately("Por favor, ative sua comunicação bluetooth");
                     askUserToEnableBluetooth();
                 }
             } else {
-                say("Seu aplicativo não suport a versão que o aplicativo exige para funcionar.");
+                sayImmediately("Seu aplicativo não suport a versão que o aplicativo exige para funcionar.");
             }
         } else {
-            say("Seu dispositivo não tem suporte a tecnologia Bluetooth, por isso o aplicativo não pode funcionar.");
+            sayImmediately("Seu dispositivo não tem suporte a tecnologia Bluetooth, por isso o aplicativo não pode funcionar.");
         }
 
         mPlaceProvider = new PlaceProvider(this);
         mPlaceBeaconProvider = new PlaceBeaconProvider(this);
 
-        mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION), SensorManager.SENSOR_DELAY_NORMAL);
-
-
-//        try {
-//            mCurrentPlace = mPlaceProvider.getByName("Ponto Inicial"); //TODO: remove
-//        } catch (RecordNotFoundException e) {
-//            Toast.makeText(this, "Não pegou o place inicial fake", Toast.LENGTH_SHORT).show();
-//        }
+        if(mCurrentPlace != null && !userHasStartedNavigating())
+//            sayPlaceName(txtCurrentPlace.getText().toString());
 
         DatabaseHelper.getInstance(this).checkDatabase();
     }
@@ -157,18 +158,22 @@ public class FirstScreenActivity extends ServiceActivity implements SensorEventL
         try {
             mLastSeenBeacon = lastSeenBeacon;
 
-            PlaceBeacon pb = mPlaceBeaconProvider.getByUUID(mLastSeenBeacon.getId1().toString().toUpperCase());
+            mPreviousPlace = mCurrentPlace;
+
+            PlaceBeacon pb = mPlaceBeaconProvider.getByUUID(mLastSeenBeacon.getId1().toString());
             mCurrentPlace = mPlaceProvider.getByID(pb.getIdPlace());
 
-            handleUserMovement();
+            onUserHasArrivedInNewPlace();
         } catch (Exception e) {
-            e.printStackTrace();
+            printToLog("Beacon não cadastrado " + lastSeenBeacon.getId1().toString());
+
+            Toast t = Toast.makeText(this, "Beacon não cadastrado", Toast.LENGTH_SHORT);
+            t.show();
         }
     }
 
-    // todo: pegar direção até proximo place e apontar/vibrar pra ele
-    private void handleUserMovement() {
-        printToLog("handleUserMovement " + userHasStartedNavigating());
+    private void onUserHasArrivedInNewPlace() {
+        printToLog("onUserHasArrivedInNewPlace " + userHasStartedNavigating());
 
         updateScreenWithPlaceName();
         if(userHasStartedNavigating()) {
@@ -179,19 +184,28 @@ public class FirstScreenActivity extends ServiceActivity implements SensorEventL
 
                 // Chegou ao proximo place
                 if(mCurrentPlace.isEqualTo(mNavigation.checkNextPlace())) {
+
+//                    removePlaceFromScreeList();
                     mNavigation.getNextPlace();
                     say(mCurrentPlace.getMessage());
+
+                    getRouteToTargetPlace(mNavigation.getTargetPlace());
 
                     float bearing = mCurrentPlace.getLocation().bearingTo(mNavigation.checkNextPlace().getLocation());
                     printToLog(bearing + " is the bearing from " + mCurrentPlace.getName() + " to " + mNavigation.checkNextPlace().getName());
                 }
             } else {
                 // Chegou ao destino
+                removePlaceFromScreeList();
                 sayWithAlert("Você chegou em " + mCurrentPlace.getName());
             }
         } else { // Destination not selected yet
             sayPlaceName(txtCurrentPlace.getText().toString());
         }
+    }
+
+    private void removePlaceFromScreeList() {
+        mPlaceSelectionAdapter.remove(mPlaceSelectionAdapter.getItem(0));
     }
 
     private void sayPlaceName(String message) {
@@ -233,14 +247,13 @@ public class FirstScreenActivity extends ServiceActivity implements SensorEventL
 
     private void onUserSelectedADestinationPlace(Place destinationPlaceSelectedByUser) {
         try {
-            RouteFinder routeFinder = new RouteFinder(this, mCurrentPlace, destinationPlaceSelectedByUser);
+            getRouteToTargetPlace(destinationPlaceSelectedByUser);
 
-            mNavigation = new Navigation(routeFinder.getPath(), mCurrentPlace, destinationPlaceSelectedByUser);
-
-            mPlaceSelectionAdapter = new PlaceSelectionAdapter(this, routeFinder.getPath(), mCurrentPlace.getLocation());
-            mPathPlacesList.setAdapter(mPlaceSelectionAdapter);
-
-            say("Vamos passar por " + (mPlaceSelectionAdapter.getCount() - 1) + " locais para chegar ao destino");
+            if(mPlaceSelectionAdapter.getCount() == 2) {
+                say("Passaremos por " + (mPlaceSelectionAdapter.getCount() - 1) + " local até o destino");
+            } else {
+                say("Passaremos por " + (mPlaceSelectionAdapter.getCount() - 1) + " locais até o destino");
+            }
 
             float bearing = mCurrentPlace.getLocation().bearingTo(mNavigation.checkNextPlace().getLocation());
             printToLog(bearing + " is the bearing from current place to " + mNavigation.checkNextPlace().getName());
@@ -255,25 +268,21 @@ public class FirstScreenActivity extends ServiceActivity implements SensorEventL
         }
     }
 
+    private void getRouteToTargetPlace(Place destinationPlaceSelectedByUser) {
+        RouteFinder routeFinder = new RouteFinder(this, mCurrentPlace, destinationPlaceSelectedByUser);
+
+        mNavigation = new Navigation(routeFinder.getPath(), mCurrentPlace, destinationPlaceSelectedByUser);
+
+        mPlaceSelectionAdapter = new PlaceSelectionAdapter(this, routeFinder.getPath(), mCurrentPlace.getLocation());
+        mPathPlacesList.setAdapter(mPlaceSelectionAdapter);
+        mPathPlacesList.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+    }
+
     private void printToLog(String message) {
         String TAG = "Spiga";
-        boolean debugActivityExecution = true;
+        boolean debugActivityExecution = false;
 
         if (debugActivityExecution)
             Log.i(TAG, message);
-    }
-
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-        float azimuth = Math.round(event.values[0]);
-        // The other values provided are:
-        //  float pitch = event.values[1];
-        //  float roll = event.values[2];
-//        Log.i("Spiga", "azimuth: " + Float.toString(azimuth));
-    }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
     }
 }

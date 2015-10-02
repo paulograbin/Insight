@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.paulograbin.insight.DB.Provider.BeaconProvider;
 import com.paulograbin.insight.DB.Provider.PlaceProvider;
 import com.paulograbin.insight.Model.PlaceBeacon;
 import com.paulograbin.insight.R;

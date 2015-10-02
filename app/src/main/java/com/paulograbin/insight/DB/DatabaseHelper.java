@@ -60,6 +60,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         /*
          * Places
          */
+        Log.i("Database", "Inserindo registros padrão");
         Place pInitial = new Place("Ponto Inicial", "Um ponto no inicio mapa", "Mensagem de teste!", Place.NOT_FAVORITE, Place.FINAL_DESTINATION, -29.784246, -51.143911);
         Place pMid = new Place("Caminho entre pontos", "Um caminho no meio do mapa", "Segunda Mensagem de teste!", Place.NOT_FAVORITE, Place.FINAL_DESTINATION, -29.783780, -51.144770);
         Place pNowhere = new Place("Nowhere", "Algum lugar perdido", "Não faz parte do caminho", Place.NOT_FAVORITE, Place.NO_DESTINATION, -29.898537, -51.152074);
@@ -177,6 +178,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         printToLog(TablePath.TABLE_CREATE_COMMAND);
         db.execSQL(TablePath.TABLE_CREATE_COMMAND);
+
+//        insertStandardRecords();
     }
 
     public void dropTables() {

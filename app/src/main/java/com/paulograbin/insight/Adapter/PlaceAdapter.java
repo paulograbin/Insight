@@ -37,7 +37,7 @@ public class PlaceAdapter extends ArrayAdapter<Place> {
         Place p = getItem(position);
         PlaceProvider pp = new PlaceProvider(super.getContext());
 
-        holder.txtPlaceName.setText(p.getName());
+        holder.txtPlaceName.setText(p.getId() + " - " + p.getName());
         holder.txtPlaceDescription.setText(p.getDescription() + " / " + p.getMessage());
 
         return convertView;
