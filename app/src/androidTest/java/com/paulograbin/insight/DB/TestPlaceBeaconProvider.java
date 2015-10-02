@@ -100,7 +100,7 @@ public class TestPlaceBeaconProvider extends ApplicationTestCase<Application> {
         try {
             PlaceBeacon pb2 = mPlaceBeaconProvider.getByUUID("blablabla");
             Assert.fail("Shoud have thrown an exception");
-        } catch(RecordNotFoundException e) {
+        } catch(RecordNotFoundException ignored) {
 
         }
     }

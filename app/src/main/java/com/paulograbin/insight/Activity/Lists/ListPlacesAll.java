@@ -13,9 +13,9 @@ import java.util.List;
 
 public class ListPlacesAll extends ActionBarActivity {
 
-    ListView mListView;
-    List<Place> places;
-    PlaceAdapter mAdapter;
+    private ListView mListView;
+    private List<Place> places;
+    private PlaceAdapter mAdapter;
 
 
     @Override

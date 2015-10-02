@@ -100,6 +100,7 @@ public abstract class AbstractProvider<M extends ModelInterface> implements Prov
             } while (cursor.moveToNext());
         }
 
+        printToLog(beacons.toString());
         return beacons;
     }
 

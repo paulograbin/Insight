@@ -97,7 +97,7 @@ public class TestNavigation extends ApplicationTestCase<Application> {
         try {
             mCurrentPlace = mNavigation.getNextPlace();
             Assert.fail("Should have thrown an exception");
-        } catch (RuntimeException e) {
+        } catch (RuntimeException ignored) {
         }
     }
 
@@ -123,7 +123,7 @@ public class TestNavigation extends ApplicationTestCase<Application> {
         try {
             mPreviousPlace = mNavigation.checkPreviousPlace();
             Assert.fail("Shoud've thrown an exception");
-        } catch (RuntimeException e) {
+        } catch (RuntimeException ignored) {
         }
 
         assertNull(mPreviousPlace);
@@ -152,7 +152,7 @@ public class TestNavigation extends ApplicationTestCase<Application> {
         try {
             mNextPlace = mNavigation.checkNextPlace();
             Assert.fail("Shoud've thrown an exception");
-        } catch (RuntimeException e) {
+        } catch (RuntimeException ignored) {
         }
 
         assertNull(mNextPlace);

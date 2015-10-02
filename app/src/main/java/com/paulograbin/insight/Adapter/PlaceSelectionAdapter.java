@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class PlaceSelectionAdapter extends ArrayAdapter<Place> {
 
-    Location currentLocation; // To get distance to other places
+    private Location currentLocation; // To get distance to other places
 
     public PlaceSelectionAdapter(Context context, List<Place> places, Location currentLocation) {
         super(context, android.R.layout.simple_list_item_1, places);

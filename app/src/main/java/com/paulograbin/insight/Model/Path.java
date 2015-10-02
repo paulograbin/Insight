@@ -5,10 +5,10 @@ package com.paulograbin.insight.Model;
  */
 public class Path implements ModelInterface<Path> {
 
-    long id;
-    long place;
-    long connectedTo;
-    int weight;
+    private long id;
+    private long place;
+    private long connectedTo;
+    private int weight;
 
 
     public Path(long place, long connectedTo, int weight) {

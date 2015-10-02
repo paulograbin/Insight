@@ -18,7 +18,6 @@ import java.util.List;
 public class RouteFinder {
 
     private static final String TAG = "RouteFinder";
-    private boolean debugExecution = true;
 
     private PlaceProvider mPlaceProvider;
     private PathProvider mPathProvider;
@@ -46,16 +45,12 @@ public class RouteFinder {
     }
 
     public LinkedList<Place> getPath() {
-        LinkedList<Place> convertedPath = new LinkedList<>();
         LinkedList<Vertex> path = da.getPath(getVertexFromPlace(targetPlace));
 
-//        if(path != null) {
-            for (Vertex v : path) {
-                convertedPath.add(getPlaceFromVertex(v));
-            }
-//        } else {
-//            return null;
-//        }
+        LinkedList<Place> convertedPath = new LinkedList<>();
+        for (Vertex v : path) {
+            convertedPath.add(getPlaceFromVertex(v));
+        }
 
         return convertedPath;
     }
@@ -102,12 +97,12 @@ public class RouteFinder {
      * Return the result of a conversion from Vertex to Place
      */
     public Place getPlaceFromVertex(Vertex v) {
-        Place p = mPlaceProvider.getByID(Long.valueOf(v.getId()));
-
-        return p;
+        return mPlaceProvider.getByID(Long.valueOf(v.getId()));
     }
 
     private void printToLog(String message) {
+        boolean debugExecution = true;
+
         if (debugExecution)
             Log.i(TAG, message);
     }

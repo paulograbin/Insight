@@ -115,7 +115,7 @@ public class DijkstraAlgorithm {
 
         // check if a path exists
         if (predecessors.get(step) == null) {
-            throw new NoWayException("Não há um caminho até o local selecionado");
+            throw new NoWayException();
         }
 
         path.add(step);

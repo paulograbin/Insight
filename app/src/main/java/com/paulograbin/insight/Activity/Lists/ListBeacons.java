@@ -13,9 +13,9 @@ import java.util.List;
 
 public class ListBeacons extends ActionBarActivity {
 
-    ListView mListView;
-    List<Beacon> beacons;
-    ArrayAdapter<String> mAdapter;
+    private ListView mListView;
+    private List<Beacon> beacons;
+    private ArrayAdapter<String> mAdapter;
 
 
     @Override
@@ -32,7 +32,7 @@ public class ListBeacons extends ActionBarActivity {
         refreshList();
     }
 
-    public void refreshList() {
+    private void refreshList() {
         mAdapter.clear();
 
         BeaconProvider bp = new BeaconProvider(this);

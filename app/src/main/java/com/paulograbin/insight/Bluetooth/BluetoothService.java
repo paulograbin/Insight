@@ -32,15 +32,10 @@ public class BluetoothService extends IntentService implements BeaconConsumer {
     private BeaconManager mBeaconManager;
     private Beacon mLastSeenBeacon;
     private int mBindCount;
-    private boolean debugServiceExecution = true;
 
 
     public BluetoothService() {
         super("myBluetoothService");
-    }
-
-    public int getBindCount() {
-        return mBindCount;
     }
 
     public Beacon getLastSeenBeacon() {
@@ -154,6 +149,8 @@ public class BluetoothService extends IntentService implements BeaconConsumer {
     }
 
     private void printToLog(String msg) {
+        boolean debugServiceExecution = true;
+
         if (debugServiceExecution)
             Log.i(LOG_TAG, msg);
     }

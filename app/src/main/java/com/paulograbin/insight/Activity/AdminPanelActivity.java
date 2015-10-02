@@ -19,14 +19,7 @@ import com.paulograbin.insight.R;
 
 public class AdminPanelActivity extends ActionBarActivity {
 
-    private Button btnShowBeaconList;
-    private Button btnVibrate;
-    private Button btnShowPlaceList;
-    private Button btnShowPlaceBeaconList;
-    private Button btnPaths;
-    private Button btnDropTables;
-
-    Vibrate vibrate;
+    private Vibrate vibrate;
 
 
     @Override
@@ -37,7 +30,7 @@ public class AdminPanelActivity extends ActionBarActivity {
 
         vibrate = new Vibrate(this);
 
-        btnShowBeaconList = (Button) findViewById(R.id.btnShowBeacons);
+        Button btnShowBeaconList = (Button) findViewById(R.id.btnShowBeacons);
         btnShowBeaconList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -46,7 +39,7 @@ public class AdminPanelActivity extends ActionBarActivity {
             }
         });
 
-        btnShowPlaceList = (Button) findViewById(R.id.btnPlaces);
+        Button btnShowPlaceList = (Button) findViewById(R.id.btnPlaces);
         btnShowPlaceList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -55,7 +48,7 @@ public class AdminPanelActivity extends ActionBarActivity {
             }
         });
 
-        btnShowPlaceBeaconList = (Button) findViewById(R.id.btnShowPlaceBeacons);
+        Button btnShowPlaceBeaconList = (Button) findViewById(R.id.btnShowPlaceBeacons);
         btnShowPlaceBeaconList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -64,7 +57,7 @@ public class AdminPanelActivity extends ActionBarActivity {
             }
         });
 
-        btnVibrate = (Button) findViewById(R.id.btnVibrate);
+        Button btnVibrate = (Button) findViewById(R.id.btnVibrate);
         btnVibrate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -78,7 +71,7 @@ public class AdminPanelActivity extends ActionBarActivity {
             }
         });
 
-        btnPaths = (Button) findViewById(R.id.btnPaths);
+        Button btnPaths = (Button) findViewById(R.id.btnPaths);
         btnPaths.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -87,7 +80,7 @@ public class AdminPanelActivity extends ActionBarActivity {
             }
         });
 
-        btnDropTables = (Button) findViewById(R.id.btnDropTables);
+        Button btnDropTables = (Button) findViewById(R.id.btnDropTables);
         btnDropTables.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

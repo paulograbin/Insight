@@ -13,9 +13,9 @@ import java.util.List;
 
 public class ListPaths extends ListActivity {
 
-    ListView mListView;
-    List<Path> paths;
-    PathListAdapter mAdapter;
+    private ListView mListView;
+    private List<Path> paths;
+    private PathListAdapter mAdapter;
 
 
     @Override

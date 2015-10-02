@@ -5,7 +5,7 @@ package com.paulograbin.insight.Exceptions;
  */
 public class NoWayException extends RuntimeException {
 
-    public NoWayException(String message) {
-        super(message);
+    public NoWayException() {
+        super("Não há um caminho até o local selecionado");
     }
 }

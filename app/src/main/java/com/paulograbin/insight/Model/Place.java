@@ -13,13 +13,13 @@ public class Place implements ModelInterface<Place>, Parcelable {
     public static final int FINAL_DESTINATION = 1;  // Place can be choosed as destination by the user
     public static final int NOT_FAVORITE = 0;
     public static final int FAVORITE = 1;
-    long id;
-    String name;
-    String description;
-    String message;
-    int favorite;
-    int destination;
-    Location location;
+    private long id;
+    private String name;
+    private String description;
+    private String message;
+    private int favorite;
+    private int destination;
+    private Location location;
     public static final Parcelable.Creator<Place> CREATOR = new Creator<Place>() {
         @Override
         public Place createFromParcel(Parcel source) {
@@ -57,7 +57,7 @@ public class Place implements ModelInterface<Place>, Parcelable {
         location.setLongitude(longitude);
     }
 
-    public Place(Parcel p) {
+    private Place(Parcel p) {
         this.id = p.readLong();
         this.name = p.readString();
         this.description = p.readString();
@@ -148,7 +148,7 @@ public class Place implements ModelInterface<Place>, Parcelable {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(id + " - " + name);
+        StringBuilder sb = new StringBuilder(name);
 
         double latitude = location.getLatitude();
         double longitude = location.getLongitude();

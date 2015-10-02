@@ -32,7 +32,7 @@ public class DetailsPlace extends AppCompatActivity {
 
         Intent intent = this.getIntent();
         if (intent != null && intent.hasExtra("place")) {
-            mPlace = (Place) intent.getParcelableExtra("place");
+            mPlace = intent.getParcelableExtra("place");
 
             txtPlaceName.setText(mPlace.getName());
             txtPlaceDescription.setText(mPlace.getDescription());

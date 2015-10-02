@@ -71,10 +71,7 @@ public class Navigation {
     }
 
     public boolean isLastPlace() {
-        if (currentPlaceNumber == (path.size() - 1))
-            return true;
-        else
-            return false;
+        return currentPlaceNumber == (path.size() - 1);
     }
 
     public int getPathSize() {

@@ -7,9 +7,6 @@ import android.provider.BaseColumns;
  */
 public abstract class TablePlaceBeacon implements BaseColumns, DBUtils {
 
-
-    //TODO: Create constraint to make combination of idPlace and idBeacon unique
-
     public static String TABLE_NAME = "placeBeacon";
 
     public static String COLUMN_ID = BaseColumns._ID;
@@ -30,5 +27,4 @@ public abstract class TablePlaceBeacon implements BaseColumns, DBUtils {
                     " FOREIGN KEY(" + COLUMN_IDPLACE + ") REFERENCES " + TablePlace.TABLE_NAME + "(" + TablePlace.COLUMN_ID + ")" +
                     " FOREIGN KEY(" + COLUMN_IDBEACON + ") REFERENCES " + TableBeacon.TABLE_NAME + "(" + TableBeacon.COLUMN_ID + ")" +
                     ")";
-
 }

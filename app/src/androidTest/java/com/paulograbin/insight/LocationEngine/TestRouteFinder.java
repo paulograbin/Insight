@@ -58,7 +58,7 @@ public class TestRouteFinder extends ApplicationTestCase<Application> {
         try {
             mRouteFinder.getPath();
             Assert.fail();
-        } catch(NoWayException e) {
+        } catch(NoWayException ignored) {
 
         }
     }

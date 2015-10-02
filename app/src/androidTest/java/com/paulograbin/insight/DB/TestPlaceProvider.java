@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class TestPlaceProvider extends ApplicationTestCase<Application> {
 
-    PlaceProvider mPlaceProvider;
+    private PlaceProvider mPlaceProvider;
 
     public TestPlaceProvider() {
         super(Application.class);
@@ -73,7 +73,7 @@ public class TestPlaceProvider extends ApplicationTestCase<Application> {
         try {
             Place b = mPlaceProvider.getByName(p.getName());
             assertEquals(b.getName(), p.getName());
-        } catch (RecordNotFoundException e) {
+        } catch (RecordNotFoundException ignored) {
 
         }
     }
@@ -82,7 +82,7 @@ public class TestPlaceProvider extends ApplicationTestCase<Application> {
         try {
             Place p = mPlaceProvider.getByName("Any name");
             Assert.fail("Should have thrown an SQLiteException");
-        } catch (RecordNotFoundException e) {
+        } catch (RecordNotFoundException ignored) {
 
         }
     }
@@ -288,8 +288,8 @@ public class TestPlaceProvider extends ApplicationTestCase<Application> {
 
         assertEquals(cv.get(TablePlace.COLUMN_NAME), b.getName());
         assertEquals(cv.get(TablePlace.COLUMN_DESTINATION), b.getDestination());
-        assertEquals(cv.get(TablePlace.COLUMN_LATITUDE), b.getLatitude());
-        assertEquals(cv.get(TablePlace.COLUMN_LONGITUDE), b.getLongitude());
+        assertEquals(cv.get(TablePlace.COLUMN_LATITUDE), b.getLocation().getLatitude());
+        assertEquals(cv.get(TablePlace.COLUMN_LONGITUDE), b.getLocation().getLongitude());
     }
 
     public void testDeleteAllWithNoRecords() {
