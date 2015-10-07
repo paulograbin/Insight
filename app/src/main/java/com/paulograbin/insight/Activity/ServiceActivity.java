@@ -26,7 +26,7 @@ public abstract class ServiceActivity extends AppCompatActivity {
 
     private static final String TAG = "ServiceActivity";
     private BluetoothAdapter mBluetoothAdapter;
-    private BluetoothService mBluetoothService;
+    protected BluetoothService mBluetoothService;
     private Speaker mSpeaker;
     private int BLUETOOTH_REQUEST = 1;
     private ServiceConnection mConnection = new ServiceConnection() {

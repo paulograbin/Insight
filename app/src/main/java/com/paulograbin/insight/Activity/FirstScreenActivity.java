@@ -39,6 +39,7 @@ public class FirstScreenActivity extends ServiceActivity {
 
     private ListView mPathPlacesList;
     private TextView txtCurrentPlace;
+    private TextView txtPath;
     private Button btnChooseDestiny;
     private Button btnCallHelp;
     private Button btnFavorites;
@@ -56,13 +57,17 @@ public class FirstScreenActivity extends ServiceActivity {
         mPathPlacesList.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
 
         txtCurrentPlace = (TextView) findViewById(R.id.txtCurrentPlace);
-        txtCurrentPlace.setText("Nenhum beacon foi detectado ainda... :(");
+        txtCurrentPlace.setText("Ainda não foi possível determinar sua localização");
+
+        txtPath = (TextView) findViewById(R.id.txtPath);
+        txtPath.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
 
         btnCallHelp = (Button) findViewById(R.id.btnCallHelp);
         btnCallHelp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 say("Ajuda solicitada, um segurança está a caminho.");
+                DatabaseHelper.getInstance(getApplicationContext()).insertStandardRecords();
             }
         });
 
@@ -90,6 +95,8 @@ public class FirstScreenActivity extends ServiceActivity {
         btnChooseDestiny.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                DatabaseHelper.getInstance(getApplicationContext()).checkDatabase();
+
                 if (mCurrentPlace == null) {
                     sayImmediately(getString(R.string.initial_place_not_identified));
                     return;
@@ -105,7 +112,7 @@ public class FirstScreenActivity extends ServiceActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -148,10 +155,8 @@ public class FirstScreenActivity extends ServiceActivity {
         mPlaceProvider = new PlaceProvider(this);
         mPlaceBeaconProvider = new PlaceBeaconProvider(this);
 
-        if(mCurrentPlace != null && !userHasStartedNavigating())
+//        if(mCurrentPlace != null && !isNavigationStarted())
 //            sayPlaceName(txtCurrentPlace.getText().toString());
-
-        DatabaseHelper.getInstance(this).checkDatabase();
     }
 
     protected void onBeaconReceived(Beacon lastSeenBeacon) {
@@ -173,10 +178,10 @@ public class FirstScreenActivity extends ServiceActivity {
     }
 
     private void onUserHasArrivedInNewPlace() {
-        printToLog("onUserHasArrivedInNewPlace " + userHasStartedNavigating());
+        printToLog("onUserHasArrivedInNewPlace " + isNavigationStarted());
 
         updateScreenWithPlaceName();
-        if(userHasStartedNavigating()) {
+        if(isNavigationStarted()) {
             // Destination selected
 
             if(!mCurrentPlace.isEqualTo(mNavigation.getTargetPlace())) {
@@ -216,7 +221,7 @@ public class FirstScreenActivity extends ServiceActivity {
         txtCurrentPlace.setText("Você está em " + mCurrentPlace.getName());
     }
 
-    private boolean userHasStartedNavigating() {
+    private boolean isNavigationStarted() {
         boolean navigating = false;
 
         if(mNavigation != null)
@@ -249,6 +254,9 @@ public class FirstScreenActivity extends ServiceActivity {
         try {
             getRouteToTargetPlace(destinationPlaceSelectedByUser);
 
+            txtPath.setText("Caminho a ser percorrido:");
+            txtPath.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+
             if(mPlaceSelectionAdapter.getCount() == 2) {
                 say("Passaremos por " + (mPlaceSelectionAdapter.getCount() - 1) + " local até o destino");
             } else {
@@ -275,7 +283,7 @@ public class FirstScreenActivity extends ServiceActivity {
 
         mPlaceSelectionAdapter = new PlaceSelectionAdapter(this, routeFinder.getPath(), mCurrentPlace.getLocation());
         mPathPlacesList.setAdapter(mPlaceSelectionAdapter);
-        mPathPlacesList.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+        mPathPlacesList.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
     }
 
     private void printToLog(String message) {

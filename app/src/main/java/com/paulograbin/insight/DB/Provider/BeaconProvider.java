@@ -10,7 +10,6 @@ import com.paulograbin.insight.Exceptions.RecordNotFoundException;
 import com.paulograbin.insight.Model.Beacon;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 
 /**
  * Created by paulograbin on 24/07/15.
@@ -32,19 +31,12 @@ public class BeaconProvider extends AbstractProvider<Beacon> {
         int i = (int) (Math.random() * 100);
 
         b.setUUID(i + "-5D8DE2E5-2C6D-4F3D-8651-DD66B7E4BD3E");
-        b.setNetworktype(12);
-        b.setMajor(12);
-        b.setMajor(1);
-        b.setChannel(13);
         b.setLatitude(39.99);
         b.setLongitude(30.00);
         b.setLocation("Teste de location");
 
         SimpleDateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat formatTime = new SimpleDateFormat("HH:mm:ss");
-
-        b.setCreatedDate(formatDate.format(Calendar.getInstance().getTime()));
-        b.setCreatedTime(formatTime.format(Calendar.getInstance().getTime()));
 
         return b;
     }
@@ -61,16 +53,9 @@ public class BeaconProvider extends AbstractProvider<Beacon> {
 
         b.setId(c.getLong(i++));
         b.setUUID(c.getString(i++));
-        b.setName(c.getString(i++));
-        b.setNetworktype(c.getInt(i++));
-        b.setMajor(c.getInt(i++));
-        b.setMinor(c.getInt(i++));
-        b.setChannel(c.getInt(i++));
         b.setLocation(c.getString(i++));
         b.setLatitude(c.getDouble(i++));
         b.setLongitude(c.getDouble(i++));
-        b.setCreatedDate(c.getString(i++));
-        b.setCreatedTime(c.getString(i++));
 
         printToLog("Beacon retornado do cursor: " + b.getUUID());
 
@@ -86,15 +71,6 @@ public class BeaconProvider extends AbstractProvider<Beacon> {
         cv.put(TableBeacon.COLUMN_LOCATION, beacon.getLocation());
         cv.put(TableBeacon.COLUMN_LATITUDE, beacon.getLatitude());
         cv.put(TableBeacon.COLUMN_LONGITUDE, beacon.getLongitude());
-        cv.put(TableBeacon.COLUMN_CREATED_DATE, beacon.getCreatedDate());
-        cv.put(TableBeacon.COLUMN_CREATED_TIME, beacon.getCreatedTime());
-        cv.put(TableBeacon.COLUMN_NAME, beacon.getName());
-        cv.put(TableBeacon.COLUMN_NETWORKTYPE, beacon.getNetworktype());
-        cv.put(TableBeacon.COLUMN_MAJOR, beacon.getMajor());
-        cv.put(TableBeacon.COLUMN_MINOR, beacon.getMinor());
-        cv.put(TableBeacon.COLUMN_CHANNEL, beacon.getChannel());
-        cv.put(TableBeacon.COLUMN_CREATED_DATE, beacon.getCreatedDate());
-        cv.put(TableBeacon.COLUMN_CREATED_TIME, beacon.getCreatedTime());
 
         return cv;
     }

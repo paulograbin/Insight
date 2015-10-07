@@ -20,14 +20,13 @@ import com.paulograbin.insight.Model.Place;
 import com.paulograbin.insight.Model.PlaceBeacon;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 
 /**
  * Created by paulograbin on 30/06/15.
  */
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 26;
+    private static final int DATABASE_VERSION = 29;
     private static final String DATABASE_NAME = "insight.db";
     private static DatabaseHelper mDatabaseHelper;
     private static Context context;
@@ -46,6 +45,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public void checkDatabase() {
+        printToLog("Checking database...");
 
         BeaconProvider bp = new BeaconProvider(context);
         PlaceProvider pp = new PlaceProvider(context);
@@ -56,20 +56,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    private static void insertStandardRecords() {
+    public void insertStandardRecords() {
+        Log.i("Database", "Inserting records...");
         /*
          * Places
          */
-        Log.i("Database", "Inserindo registros padrão");
-        Place pInitial = new Place("Ponto Inicial", "Um ponto no inicio mapa", "Mensagem de teste!", Place.NOT_FAVORITE, Place.FINAL_DESTINATION, -29.784246, -51.143911);
-        Place pMid = new Place("Caminho entre pontos", "Um caminho no meio do mapa", "Segunda Mensagem de teste!", Place.NOT_FAVORITE, Place.FINAL_DESTINATION, -29.783780, -51.144770);
-        Place pNowhere = new Place("Nowhere", "Algum lugar perdido", "Não faz parte do caminho", Place.NOT_FAVORITE, Place.NO_DESTINATION, -29.898537, -51.152074);
-        Place pEnd = new Place("Ponto Final", "Um ponto no fim do mapa", "Ultima mensagem de teste", Place.FAVORITE, Place.FINAL_DESTINATION, -29.796614, -51.148895);
-
-//        Place pInitial = new Place("Setor 2E", "Custom Developtment", "Siga pela direita até a porta de correr e então continue andando reto", Place.NOT_FAVORITE, Place.FINAL_DESTINATION, -29.78440, -51.14400);
-//        Place pMid = new Place("Setor 2C", "Centro do prédio", "Dobre a direita e siga até o elevador", Place.NOT_FAVORITE, Place.NO_DESTINATION, -29.91305, -51.18932);
-//        Place pNowhere = new Place("Setor 2D", "Algum lugar perdido", "Bla bla bla", Place.NOT_FAVORITE, Place.FINAL_DESTINATION, -29.99447, -50.78694);
-//        Place pEnd = new Place("Cafeteria", "Restaurante da SAP", "Continue enfrente até a sala de recreação", Place.FAVORITE, Place.FINAL_DESTINATION, -30.03201, -51.21678);
+        Place pInitial = new Place("Ponto Inicial", "Um ponto no inicio mapa", "Mensagem de teste!", Place.NOT_FAVORITE, Place.FINAL_DESTINATION, -29.784300, -51.143985);
+        Place pMid = new Place("Caminho entre pontos", "Um caminho no meio do mapa", "Segunda Mensagem de teste!", Place.NOT_FAVORITE, Place.FINAL_DESTINATION, -29.789235, -51.146388);
+        Place pNowhere = new Place("Nowhere", "Algum lugar perdido", "Não faz parte do caminho", Place.NOT_FAVORITE, Place.NO_DESTINATION, -29.801343, -51.150283);
+        Place pEnd = new Place("Ponto Final", "Um ponto no fim do mapa", "Ultima mensagem de teste", Place.FAVORITE, Place.FINAL_DESTINATION, -29.796623, -51.148921);
 
         PlaceProvider pp = new PlaceProvider(context);
         pInitial.setId(pp.insert(pInitial));
@@ -83,10 +78,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
          */
         Beacon b1 = new Beacon();
         b1.setUUID(BeaconProvider.FAROL_BEACON);
-        b1.setNetworktype(12);
-        b1.setMajor(12);
-        b1.setMajor(1);
-        b1.setChannel(13);
         b1.setLatitude(39.99);
         b1.setLongitude(30.00);
         b1.setLocation("Teste de location");
@@ -94,32 +85,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SimpleDateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat formatTime = new SimpleDateFormat("HH:mm:ss");
 
-        b1.setCreatedDate(formatDate.format(Calendar.getInstance().getTime()));
-        b1.setCreatedTime(formatTime.format(Calendar.getInstance().getTime()));
-
         BeaconProvider bp = new BeaconProvider(context);
         b1.setId(bp.insert(b1));
 
 
         Beacon b2 = new Beacon();
         b2.setUUID(BeaconProvider.MY_BEACON_UUID);
-        b2.setNetworktype(12);
-        b2.setMajor(12);
-        b2.setMajor(1);
-        b2.setChannel(13);
         b2.setLatitude(39.99);
         b2.setLongitude(30.00);
         b2.setLocation("Teste de location");
-
-        b2.setCreatedDate(formatDate.format(Calendar.getInstance().getTime()));
-        b2.setCreatedTime(formatTime.format(Calendar.getInstance().getTime()));
 
         b2.setId(bp.insert(b2));
 
         Beacon b3 = new Beacon();
         b3.setUUID(BeaconProvider.OTHER_BEACON_UUID);
-        b3.setMajor(1);
-        b3.setMajor(50);
 
         b3.setId(bp.insert(b3));
 
@@ -130,7 +109,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         PlaceBeacon pb1 = new PlaceBeacon(pInitial.getId(), b1.getId(), b1.getUUID());
         PlaceBeaconProvider pbp = new PlaceBeaconProvider(context);
         pb1.setId(pbp.insert(pb1));
-
 
         PlaceBeacon pb2 = new PlaceBeacon(pEnd.getId(), b3.getId(), b3.getUUID());
         pb2.setId(pbp.insert(pb2));
@@ -146,7 +124,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Path ph3 = new Path(pInitial.getId(), pNowhere.getId(), 1); // 10   30
         Path ph2 = new Path(pMid.getId(), pEnd.getId(), 1);         // 20   40
         Path ph4 = new Path(pMid.getId(), pNowhere.getId(), 1);
-
 
         PathProvider ph = new PathProvider(context);
         ph1.setId(ph.insert(ph1));
@@ -178,8 +155,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         printToLog(TablePath.TABLE_CREATE_COMMAND);
         db.execSQL(TablePath.TABLE_CREATE_COMMAND);
-
-//        insertStandardRecords();
     }
 
     public void dropTables() {
@@ -190,8 +165,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.delete(TableBeacon.TABLE_NAME, String.valueOf(1), null);
         db.delete(TablePlaceBeacon.TABLE_NAME, String.valueOf(1), null);
         db.delete(TablePath.TABLE_NAME, String.valueOf(1), null);
-
-        insertStandardRecords();
     }
 
     @Override

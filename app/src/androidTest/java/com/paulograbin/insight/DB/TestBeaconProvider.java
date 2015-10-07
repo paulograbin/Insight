@@ -12,7 +12,6 @@ import com.paulograbin.insight.Model.Beacon;
 import junit.framework.Assert;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -227,15 +226,9 @@ public class TestBeaconProvider extends ApplicationTestCase<Application> {
         Beacon b = new Beacon();
 
         b.setUUID("5D8DE2E5-2C6D-4F3D-8651-DD66B7E4BD3E");
-        b.setNetworktype(12);
-        b.setMajor(12);
-        b.setMajor(1);
-        b.setChannel(13);
         b.setLatitude(39.99);
         b.setLongitude(30.00);
         b.setLocation("Teste de location");
-        b.setCreatedDate(formatDate.format(Calendar.getInstance().getTime()));
-        b.setCreatedTime(formatTime.format(Calendar.getInstance().getTime()));
 
         ContentValues cv = mBeaconProvider.getContentValues(b);
 
@@ -243,15 +236,6 @@ public class TestBeaconProvider extends ApplicationTestCase<Application> {
         assertEquals(cv.get(TableBeacon.COLUMN_LOCATION), b.getLocation());
         assertEquals(cv.get(TableBeacon.COLUMN_LATITUDE), b.getLatitude());
         assertEquals(cv.get(TableBeacon.COLUMN_LONGITUDE), b.getLongitude());
-        assertEquals(cv.get(TableBeacon.COLUMN_CREATED_DATE), b.getCreatedDate());
-        assertEquals(cv.get(TableBeacon.COLUMN_CREATED_TIME), b.getCreatedTime());
-        assertEquals(cv.get(TableBeacon.COLUMN_NAME), b.getName());
-        assertEquals(cv.get(TableBeacon.COLUMN_NETWORKTYPE), b.getNetworktype());
-        assertEquals(cv.get(TableBeacon.COLUMN_MAJOR), b.getMajor());
-        assertEquals(cv.get(TableBeacon.COLUMN_MINOR), b.getMinor());
-        assertEquals(cv.get(TableBeacon.COLUMN_CHANNEL), b.getChannel());
-        assertEquals(cv.get(TableBeacon.COLUMN_CREATED_DATE), b.getCreatedDate());
-        assertEquals(cv.get(TableBeacon.COLUMN_CREATED_TIME), b.getCreatedTime());
     }
 
     public void testDeleteAllWithNoRecords() {
