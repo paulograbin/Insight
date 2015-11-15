@@ -8,9 +8,6 @@ public class Beacon implements ModelInterface<Beacon> {
 
     private long id;
     private String uuid;
-    private String location;
-    private double latitude;
-    private double longitude;
 
     public Beacon() { }
 
@@ -40,30 +37,6 @@ public class Beacon implements ModelInterface<Beacon> {
 
     public void setUUID(String uuid) {
         this.uuid = uuid;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
-
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
     }
 
     @Override

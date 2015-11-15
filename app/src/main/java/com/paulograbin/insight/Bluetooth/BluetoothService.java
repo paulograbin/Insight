@@ -17,6 +17,7 @@ import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 
 /**
@@ -34,6 +35,12 @@ public class BluetoothService extends IntentService implements BeaconConsumer {
     private int mBindCount;
 
 
+    private long lastTime;
+    private long timeBetweenAnalysis = 2000;
+
+    Collection<Beacon> beaconTimeStorage;
+
+
     public BluetoothService() {
         super("myBluetoothService");
     }
@@ -46,6 +53,8 @@ public class BluetoothService extends IntentService implements BeaconConsumer {
     public void onCreate() {
         super.onCreate();
         mBindCount = 0;
+        beaconTimeStorage = new HashSet<>();
+
         printToLog("Serviço criado...");
     }
 
@@ -78,9 +87,15 @@ public class BluetoothService extends IntentService implements BeaconConsumer {
                 if (beacons.size() == 0)
                     return;
 
-                Beacon closerBeacon = getCloserBeacon(beacons);
+                if (passedEnoughTime()) {
+                    printToLog("Passou o tempo necessário...");
+                    Beacon closerBeacon = getCloserBeacon(beaconTimeStorage);
 
-                onCloserBeaconFound(closerBeacon);
+                    onCloserBeaconFound(closerBeacon);
+                } else {
+                    addToBeaconTimeStorage(beacons);
+                    printToLog("Adicionando beacons ao storage temporario, que agora contem " + beaconTimeStorage.size() + " beacons");
+                }
             }
         });
 
@@ -91,10 +106,29 @@ public class BluetoothService extends IntentService implements BeaconConsumer {
         }
     }
 
+    private synchronized void addToBeaconTimeStorage(Collection<Beacon> beacons) {
+        beaconTimeStorage.addAll(beacons);
+    }
+
+    private boolean passedEnoughTime() {
+        if(lastTime == 0) {
+            lastTime = System.currentTimeMillis();
+            return false;
+        }
+
+
+        long now = System.currentTimeMillis();
+
+        if((now - lastTime) > timeBetweenAnalysis) {
+            lastTime = System.currentTimeMillis();
+            return true;
+        }
+
+        return false;
+    }
+
     @Nullable
     private Beacon getCloserBeacon(Collection<Beacon> beacons) {
-//        printToLog("getCloserBeacon foi chamado com " + beacons.size() + " beacons.");
-
         if (beacons.size() == 1) {
             return beacons.iterator().next();
         }
@@ -102,18 +136,18 @@ public class BluetoothService extends IntentService implements BeaconConsumer {
         Iterator<Beacon> i = beacons.iterator();
 
         Beacon closerBeacon = i.next();
-        printToLog("Assumindo beacon mais proximo: " + closerBeacon.getId1().toString());
+//        printToLog("Assumindo beacon mais proximo: " + closerBeacon.getId1().toString());
 
         while (i.hasNext()) {
-            printToLog("Verificando se existe beacon ainda mais proximo...");
             Beacon auxBeacon = i.next();
 
             if (closerBeacon.getDistance() > auxBeacon.getDistance()) {
                 closerBeacon = auxBeacon;
-                printToLog("Assumindo novo beacon mais proximo: " + closerBeacon.getId1().toString());
+//                printToLog("Assumindo novo beacon mais proximo: " + closerBeacon.getId1().toString());
             }
         }
 
+        beaconTimeStorage.clear();
         return closerBeacon;
     }
 

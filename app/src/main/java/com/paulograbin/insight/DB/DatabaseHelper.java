@@ -19,8 +19,6 @@ import com.paulograbin.insight.Model.Path;
 import com.paulograbin.insight.Model.Place;
 import com.paulograbin.insight.Model.PlaceBeacon;
 
-import java.text.SimpleDateFormat;
-
 /**
  * Created by paulograbin on 30/06/15.
  */
@@ -56,80 +54,252 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    private void insertBeaconTestRecords() {
+        PlaceProvider pp = new PlaceProvider(context);
+        BeaconProvider bp = new BeaconProvider(context);
+        PlaceBeaconProvider pbp = new PlaceBeaconProvider(context);
+
+        /**
+         *  PLACES
+         */
+        Place pAmarelo    = new Place("Amarelo", "Novo Hamburgo",    "", 0, 1, -29.685204, -51.140426);
+        Place pAzul       = new Place("Azul", "São Leopoldo",        "", 0, 1, -29.772558, -51.151413);
+        Place pPreto      = new Place("Preto", "Esteio",             "", 0, 1, -29.848991, -51.175000);
+        Place pBrancoUm   = new Place("Branco Um", "Canoas",         "", 0, 1, -29.913290, -51.179120);
+        Place pBrancoDois = new Place("Branco Dois", "Porto Alegre", "", 0, 1, -30.037008, -51.227528);
+
+        pAmarelo.setId(pp.insert(pAmarelo));
+        pAzul.setId(pp.insert(pAzul));
+        pPreto.setId(pp.insert(pPreto));
+        pBrancoUm.setId(pp.insert(pBrancoUm));
+        pBrancoDois.setId(pp.insert(pBrancoDois));
+
+
+        /**
+         *  BEACONS
+         */
+        Beacon bAzul = new Beacon();
+        bAzul.setUUID(BeaconProvider.BEACON_AZUL);
+
+        Beacon bAmarelo = new Beacon();
+        bAmarelo.setUUID(BeaconProvider.BEACON_AMARELO);
+
+        Beacon bPreto = new Beacon();
+        bPreto.setUUID(BeaconProvider.BEACON_PRETO);
+
+        Beacon bBrancoUm = new Beacon();
+        bBrancoUm.setUUID(BeaconProvider.BEACON_BRANCO_1);
+
+        Beacon bBrancoDois =  new Beacon();
+        bBrancoDois.setUUID(BeaconProvider.BEACON_BRANCO_2);
+
+        bAzul.setId(bp.insert(bAzul));
+        bAmarelo.setId(bp.insert(bAmarelo));
+        bPreto.setId(bp.insert(bPreto));
+        bBrancoUm.setId(bp.insert(bBrancoUm));
+        bBrancoDois.setId(bp.insert(bBrancoDois));
+
+
+        /**
+         *  PLACEBEACONS
+         */
+        PlaceBeacon pbPreto = new PlaceBeacon(pPreto.getId(), bPreto.getId(), bPreto.getUUID());
+        pbPreto.setId(pbp.insert(pbPreto));
+
+        PlaceBeacon pbAmarelo = new PlaceBeacon(pAmarelo.getId(), bAmarelo.getId(), bAmarelo.getUUID());
+        pbAmarelo.setId(pbp.insert(pbAmarelo));
+
+        PlaceBeacon pbAzul = new PlaceBeacon(pAzul.getId(), bAzul.getId(), bAzul.getUUID());
+        pbAzul.setId(pbp.insert(pbAzul));
+
+        PlaceBeacon pbBrancoUm = new PlaceBeacon(pBrancoUm.getId(), bBrancoUm.getId(), bBrancoUm.getUUID());
+        pbBrancoUm.setId(pbp.insert(pbBrancoUm));
+
+        PlaceBeacon pbBrancoDois = new PlaceBeacon(pBrancoDois.getId(), bBrancoDois.getId(), bBrancoDois.getUUID());
+        pbBrancoDois.setId(pbp.insert(pbBrancoDois));
+    }
+
+
+    private void firstScenarioRecords() {
+        PlaceProvider placeProvider = new PlaceProvider(context);
+        BeaconProvider beaconProvider = new BeaconProvider(context);
+        PlaceBeaconProvider placeBeaconProvider = new PlaceBeaconProvider(context);
+        PathProvider pathProvider = new PathProvider(context);
+
+        /*
+         *  Places
+         */
+        Place pEntrada = new Place("Entrada", "Porta de entrada", "Ande a frente até passar pela porta automática", Place.NOT_FAVORITE, Place.NO_DESTINATION, -29.796493, -51.148570);
+        Place pRecepcao = new Place("Recepção", "Saguão de recepção", "Dê dois passos a frente e vire a direita, siga até passar pelas catracas", Place.FAVORITE, Place.FINAL_DESTINATION, -29.796493, -51.148570);
+        Place pPrimeiroAndar = new Place("Primeiro Andar", "Acesso aos outros andares", "Vire a esquerda e ande até chegar a escada, e então suba. São dois lances com 10 degraus", Place.NOT_FAVORITE, Place.NO_DESTINATION, -29.796577, -51.148575);
+        Place pSegundoAndar = new Place("Segundo Andar", "Acesso aos outros andares", "Mensagem...", Place.NOT_FAVORITE, Place.NO_DESTINATION, -29.796577, -51.148575);
+        Place pEntradaSetor1B = new Place("Entrada do Setor 1B", "", "Mensagem de teste!", Place.NOT_FAVORITE, Place.NO_DESTINATION, -29.796493, -51.148570);
+        Place pCorretor1B = new Place("Corredor Setor 1B", "", "Mensagem de teste!", Place.NOT_FAVORITE, Place.NO_DESTINATION, -29.796648, -51.148182);
+        Place pMesaEduardo = new Place("Posto de trabalho", "", "Mensagem de teste!", Place.FAVORITE, Place.FINAL_DESTINATION, -29.796634, -51.147999);
+
+        pEntrada.setId(placeProvider.insert(pEntrada));
+        pRecepcao.setId(placeProvider.insert(pRecepcao));
+        pPrimeiroAndar.setId(placeProvider.insert(pPrimeiroAndar));
+        pSegundoAndar.setId(placeProvider.insert(pSegundoAndar));
+        pEntradaSetor1B.setId(placeProvider.insert(pEntradaSetor1B));
+        pCorretor1B.setId(placeProvider.insert(pCorretor1B));
+        pMesaEduardo.setId(placeProvider.insert(pMesaEduardo));
+
+        /*
+         *  Beacon
+         */
+        Beacon bBranco1 = new Beacon();
+        Beacon bAmarelo = new Beacon();
+        Beacon bAzul = new Beacon();
+        Beacon bPreto = new Beacon();
+        Beacon bBranco2 = new Beacon();
+        Beacon b6 = new Beacon();
+
+        b6.setUUID(BeaconProvider.MY_BEACON_UUID1);
+        bBranco1.setUUID(BeaconProvider.MY_BEACON_UUID2);
+        bAmarelo.setUUID(BeaconProvider.MY_BEACON_UUID3);
+        bAzul.setUUID(BeaconProvider.MY_BEACON_UUID4);
+        bPreto.setUUID(BeaconProvider.MY_BEACON_UUID5);
+        bBranco2.setUUID(BeaconProvider.MY_BEACON_UUID6);
+
+
+        bBranco1.setId(beaconProvider.insert(bBranco1));
+        bAmarelo.setId(beaconProvider.insert(bAmarelo));
+        bAzul.setId(beaconProvider.insert(bAzul));
+        bPreto.setId(beaconProvider.insert(bPreto));
+        bBranco2.setId(beaconProvider.insert(bBranco2));
+        b6.setId(beaconProvider.insert(b6));
+
+
+        /*
+         *  PlaceBeacon
+         */
+        PlaceBeacon pb1 = new PlaceBeacon(pRecepcao.getId(), bBranco1.getId(), bBranco1.getUUID());
+        PlaceBeacon pb2 = new PlaceBeacon(pPrimeiroAndar.getId(), bAmarelo.getId(), bAmarelo.getUUID());
+        PlaceBeacon pb3 = new PlaceBeacon(pSegundoAndar.getId(), bAzul.getId(), bAzul.getUUID());
+        PlaceBeacon pb4 = new PlaceBeacon(pEntradaSetor1B.getId(), bPreto.getId(), bPreto.getUUID());
+        PlaceBeacon pb5 = new PlaceBeacon(pCorretor1B.getId(), bBranco2.getId(), bBranco2.getUUID());
+        PlaceBeacon pb6 = new PlaceBeacon(pEntrada.getId(), b6.getId(), b6.getUUID());
+
+        pb1.setId(placeBeaconProvider.insert(pb1));
+        pb2.setId(placeBeaconProvider.insert(pb2));
+        pb3.setId(placeBeaconProvider.insert(pb3));
+        pb4.setId(placeBeaconProvider.insert(pb4));
+        pb5.setId(placeBeaconProvider.insert(pb5));
+        pb6.setId(placeBeaconProvider.insert(pb6));
+
+
+        /*
+         *  Path
+         */
+        Path ph0 = new Path(pEntrada.getId(), pRecepcao.getId(), 1);     // 10   20
+        Path ph1 = new Path(pRecepcao.getId(), pPrimeiroAndar.getId(), 1);     // 10   20
+        Path ph3 = new Path(pPrimeiroAndar.getId(), pSegundoAndar.getId(), 1); // 10   30
+        Path ph2 = new Path(pSegundoAndar.getId(), pCorretor1B.getId(), 1);         // 20   40
+        Path ph4 = new Path(pCorretor1B.getId(), pMesaEduardo.getId(), 1);
+        Path ph5 = new Path(pPrimeiroAndar.getId(), pSegundoAndar.getId(), 1);
+
+
+        ph0.setId(pathProvider.insert(ph0));
+        ph1.setId(pathProvider.insert(ph1));
+        ph2.setId(pathProvider.insert(ph2));
+        ph3.setId(pathProvider.insert(ph3));
+        ph4.setId(pathProvider.insert(ph4));
+        ph5.setId(pathProvider.insert(ph5));
+    }
+
     public void insertStandardRecords() {
         Log.i("Database", "Inserting records...");
-        /*
-         * Places
-         */
-        Place pInitial = new Place("Ponto Inicial", "Um ponto no inicio mapa", "Mensagem de teste!", Place.NOT_FAVORITE, Place.FINAL_DESTINATION, -29.784300, -51.143985);
-        Place pMid = new Place("Caminho entre pontos", "Um caminho no meio do mapa", "Segunda Mensagem de teste!", Place.NOT_FAVORITE, Place.FINAL_DESTINATION, -29.789235, -51.146388);
-        Place pNowhere = new Place("Nowhere", "Algum lugar perdido", "Não faz parte do caminho", Place.NOT_FAVORITE, Place.NO_DESTINATION, -29.801343, -51.150283);
-        Place pEnd = new Place("Ponto Final", "Um ponto no fim do mapa", "Ultima mensagem de teste", Place.FAVORITE, Place.FINAL_DESTINATION, -29.796623, -51.148921);
 
-        PlaceProvider pp = new PlaceProvider(context);
-        pInitial.setId(pp.insert(pInitial));
-        pMid.setId(pp.insert(pMid));
-        pEnd.setId(pp.insert(pEnd));
-        pNowhere.setId(pp.insert(pNowhere));
+        firstScenarioRecords();
+//        secondScenarioRecords();
+        printToLog("Inserindo registros de teste...");
+    }
 
+    private void secondScenarioRecords() {
+        PlaceProvider placeProvider = new PlaceProvider(context);
+        BeaconProvider beaconProvider = new BeaconProvider(context);
+        PlaceBeaconProvider placeBeaconProvider = new PlaceBeaconProvider(context);
+        PathProvider pathProvider = new PathProvider(context);
 
         /*
-         * Beacon
+         *  Places
          */
-        Beacon b1 = new Beacon();
-        b1.setUUID(BeaconProvider.FAROL_BEACON);
-        b1.setLatitude(39.99);
-        b1.setLongitude(30.00);
-        b1.setLocation("Teste de location");
-
-        SimpleDateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd");
-        SimpleDateFormat formatTime = new SimpleDateFormat("HH:mm:ss");
-
-        BeaconProvider bp = new BeaconProvider(context);
-        b1.setId(bp.insert(b1));
+        Place pMesaEduardo = new Place("Posto de trabalho", "", "Vire a esquerda e siga até o corredor do setor", Place.FAVORITE, Place.FINAL_DESTINATION, -29.796634, -51.147999);
+        Place pCorretor1B = new Place("Corredor Setor 1B", "", "Vire a direita e siga reto até a porta de entrada do setor", Place.NOT_FAVORITE, Place.NO_DESTINATION, -29.796648, -51.148182);
+        Place pPortaSetor1B = new Place("Porta Setor 1B", "", "Ande a frente até passar pela porta automática", Place.NOT_FAVORITE, Place.NO_DESTINATION, -29.796493, -51.148570);
+        Place pBanheiro = new Place("Banheiro", "", "Saia do banheiro e siga reto até o corredor", Place.NOT_FAVORITE, Place.FINAL_DESTINATION, -29.796493, -51.148570);
+        Place pCorredorSalasReuniao = new Place("Corredor salas de reunião", "", "Siga a frente até chegar a sala", Place.NOT_FAVORITE, Place.NO_DESTINATION, -29.796577, -51.148575);
+        Place pSalaReuniao = new Place("Sala de reunião", "", "", Place.FAVORITE, Place.FINAL_DESTINATION, -29.796493, -51.148570);
 
 
-        Beacon b2 = new Beacon();
-        b2.setUUID(BeaconProvider.MY_BEACON_UUID);
-        b2.setLatitude(39.99);
-        b2.setLongitude(30.00);
-        b2.setLocation("Teste de location");
-
-        b2.setId(bp.insert(b2));
-
-        Beacon b3 = new Beacon();
-        b3.setUUID(BeaconProvider.OTHER_BEACON_UUID);
-
-        b3.setId(bp.insert(b3));
+        pMesaEduardo.setId(placeProvider.insert(pMesaEduardo));
+        pCorretor1B.setId(placeProvider.insert(pCorretor1B));
+        pPortaSetor1B.setId(placeProvider.insert(pPortaSetor1B));
+        pBanheiro.setId(placeProvider.insert(pBanheiro));
+        pCorredorSalasReuniao.setId(placeProvider.insert(pCorredorSalasReuniao));
+        pSalaReuniao.setId(placeProvider.insert(pSalaReuniao));
 
 
         /*
-         * PlaceBeacon
+         *  Beacon
          */
-        PlaceBeacon pb1 = new PlaceBeacon(pInitial.getId(), b1.getId(), b1.getUUID());
-        PlaceBeaconProvider pbp = new PlaceBeaconProvider(context);
-        pb1.setId(pbp.insert(pb1));
+        Beacon bBranco1 = new Beacon();
+        Beacon bAmarelo = new Beacon();
+        Beacon bAzul = new Beacon();
+        Beacon bPreto = new Beacon();
+        Beacon bBranco2 = new Beacon();
+        Beacon b6 = new Beacon();
 
-        PlaceBeacon pb2 = new PlaceBeacon(pEnd.getId(), b3.getId(), b3.getUUID());
-        pb2.setId(pbp.insert(pb2));
 
-        PlaceBeacon pb3 = new PlaceBeacon(pMid.getId(), b2.getId(), b2.getUUID());
-        pb3.setId(pbp.insert(pb3));
+        bBranco1.setUUID(BeaconProvider.MY_BEACON_UUID1);
+        bAmarelo.setUUID(BeaconProvider.MY_BEACON_UUID2);
+        bAzul.setUUID(BeaconProvider.MY_BEACON_UUID3);
+        bPreto.setUUID(BeaconProvider.MY_BEACON_UUID4);
+        bBranco2.setUUID(BeaconProvider.MY_BEACON_UUID5);
+        b6.setUUID(BeaconProvider.MY_BEACON_UUID6);
+
+
+        bBranco1.setId(beaconProvider.insert(bBranco1));
+        bAmarelo.setId(beaconProvider.insert(bAmarelo));
+        bAzul.setId(beaconProvider.insert(bAzul));
+        bPreto.setId(beaconProvider.insert(bPreto));
+        bBranco2.setId(beaconProvider.insert(bBranco2));
+        b6.setId(beaconProvider.insert(b6));
 
 
         /*
-         * Path
+         *  PlaceBeacon
          */
-        Path ph1 = new Path(pInitial.getId(), pMid.getId(), 1);     // 10   20
-        Path ph3 = new Path(pInitial.getId(), pNowhere.getId(), 1); // 10   30
-        Path ph2 = new Path(pMid.getId(), pEnd.getId(), 1);         // 20   40
-        Path ph4 = new Path(pMid.getId(), pNowhere.getId(), 1);
+        PlaceBeacon pb1 = new PlaceBeacon(pMesaEduardo.getId(), bBranco1.getId(), bBranco1.getUUID());
+        PlaceBeacon pb2 = new PlaceBeacon(pCorretor1B.getId(), bAmarelo.getId(), bAmarelo.getUUID());
+        PlaceBeacon pb3 = new PlaceBeacon(pPortaSetor1B.getId(), bAzul.getId(), bAzul.getUUID());
+        PlaceBeacon pb4 = new PlaceBeacon(pBanheiro.getId(), bPreto.getId(), bPreto.getUUID());
+        PlaceBeacon pb5 = new PlaceBeacon(pCorredorSalasReuniao.getId(), bBranco2.getId(), bBranco2.getUUID());
+        PlaceBeacon pb6 = new PlaceBeacon(pSalaReuniao.getId(), b6.getId(), b6.getUUID());
 
-        PathProvider ph = new PathProvider(context);
-        ph1.setId(ph.insert(ph1));
-        ph2.setId(ph.insert(ph2));
-        ph3.setId(ph.insert(ph3));
-        ph4.setId(ph.insert(ph4));
+        pb1.setId(placeBeaconProvider.insert(pb1));
+        pb2.setId(placeBeaconProvider.insert(pb2));
+        pb3.setId(placeBeaconProvider.insert(pb3));
+        pb4.setId(placeBeaconProvider.insert(pb4));
+        pb5.setId(placeBeaconProvider.insert(pb5));
+        pb6.setId(placeBeaconProvider.insert(pb6));
+
+
+        /*
+         *  Path
+         */
+        Path ph0 = new Path(pMesaEduardo.getId(), pCorretor1B.getId(), 1);     // 10   20
+        Path ph1 = new Path(pCorretor1B.getId(), pPortaSetor1B.getId(), 1);     // 10   20
+        Path ph3 = new Path(pPortaSetor1B.getId(), pBanheiro.getId(), 1); // 10   30
+        Path ph2 = new Path(pBanheiro.getId(), pCorredorSalasReuniao.getId(), 1);         // 20   40
+        Path ph4 = new Path(pCorredorSalasReuniao.getId(), pSalaReuniao.getId(), 1);
+
+        ph0.setId(pathProvider.insert(ph0));
+        ph1.setId(pathProvider.insert(ph1));
+        ph2.setId(pathProvider.insert(ph2));
+        ph3.setId(pathProvider.insert(ph3));
+        ph4.setId(pathProvider.insert(ph4));
     }
 
     @Override

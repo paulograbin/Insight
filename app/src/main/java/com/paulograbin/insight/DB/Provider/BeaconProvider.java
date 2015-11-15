@@ -16,9 +16,20 @@ import java.text.SimpleDateFormat;
  */
 public class BeaconProvider extends AbstractProvider<Beacon> {
 
-    public final static String MY_BEACON_UUID = "5D8DE2E5-2C6D-4F3D-8651-DD66B7E4BD3E";
-    public final static String OTHER_BEACON_UUID = "2F234454-CF6D-4A0F-ADF2-F4911BA9FFA6";
+    public final static String MY_BEACON_UUID1 = "5D8DE2E5-2C6D-4F3D-8651-DD66B7E4BD31";
+    public final static String MY_BEACON_UUID2 = "5D8DE2E5-2C6D-4F3D-8651-DD66B7E4BD32";
+    public final static String MY_BEACON_UUID3 = "5D8DE2E5-2C6D-4F3D-8651-DD66B7E4BD33";
+    public final static String MY_BEACON_UUID4 = "5D8DE2E5-2C6D-4F3D-8651-DD66B7E4BD34";
+    public final static String MY_BEACON_UUID5 = "5D8DE2E5-2C6D-4F3D-8651-DD66B7E4BD35";
+    public final static String MY_BEACON_UUID6 = "5D8DE2E5-2C6D-4F3D-8651-DD66B7E4BD36";
+
     public final static String FAROL_BEACON = "64657665-6c6f-7064-6279-6d656e766961";
+
+    public final static String BEACON_AMARELO  = "ebefd083-70a2-47c8-9837-e7b5634df524";
+    public final static String BEACON_AZUL     = "ebefd083-70a2-47c8-9837-e7b5634df525";
+    public final static String BEACON_PRETO    = "ebefd083-70a2-47c8-9837-e7b5634df526";
+    public final static String BEACON_BRANCO_1 = "ebefd083-70a2-47c8-9837-e7b5634df527";
+    public final static String BEACON_BRANCO_2 = "ebefd083-70a2-47c8-9837-e7b5634df528";
 
 
     public BeaconProvider(Context context) {
@@ -31,9 +42,6 @@ public class BeaconProvider extends AbstractProvider<Beacon> {
         int i = (int) (Math.random() * 100);
 
         b.setUUID(i + "-5D8DE2E5-2C6D-4F3D-8651-DD66B7E4BD3E");
-        b.setLatitude(39.99);
-        b.setLongitude(30.00);
-        b.setLocation("Teste de location");
 
         SimpleDateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat formatTime = new SimpleDateFormat("HH:mm:ss");
@@ -53,9 +61,6 @@ public class BeaconProvider extends AbstractProvider<Beacon> {
 
         b.setId(c.getLong(i++));
         b.setUUID(c.getString(i++));
-        b.setLocation(c.getString(i++));
-        b.setLatitude(c.getDouble(i++));
-        b.setLongitude(c.getDouble(i++));
 
         printToLog("Beacon retornado do cursor: " + b.getUUID());
 
@@ -68,9 +73,6 @@ public class BeaconProvider extends AbstractProvider<Beacon> {
         ContentValues cv = new ContentValues();
 
         cv.put(TableBeacon.COLUMN_UUID, beacon.getUUID());
-        cv.put(TableBeacon.COLUMN_LOCATION, beacon.getLocation());
-        cv.put(TableBeacon.COLUMN_LATITUDE, beacon.getLatitude());
-        cv.put(TableBeacon.COLUMN_LONGITUDE, beacon.getLongitude());
 
         return cv;
     }

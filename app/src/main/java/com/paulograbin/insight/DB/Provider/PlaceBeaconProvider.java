@@ -20,7 +20,7 @@ public class PlaceBeaconProvider extends AbstractProvider<PlaceBeacon> {
 
 
     public PlaceBeacon getDummy() {
-        return new PlaceBeacon(5, 5, BeaconProvider.MY_BEACON_UUID);
+        return new PlaceBeacon(5, 5, BeaconProvider.MY_BEACON_UUID1);
     }
 
     @Override
@@ -57,7 +57,7 @@ public class PlaceBeaconProvider extends AbstractProvider<PlaceBeacon> {
     }
 
     public PlaceBeacon getByUUID(String UUID) {
-        printToLog("Buscando PlaceBeacon a partir do UUID " + UUID);
+//        printToLog("Buscando PlaceBeacon a partir do UUID " + UUID);
         PlaceBeacon pb;
 
         SQLiteDatabase db = mDatabaseHelper.getReadableDatabase();

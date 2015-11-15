@@ -67,7 +67,9 @@ public class FirstScreenActivity extends ServiceActivity {
             @Override
             public void onClick(View v) {
                 say("Ajuda solicitada, um segurança está a caminho.");
-                DatabaseHelper.getInstance(getApplicationContext()).insertStandardRecords();
+
+                if(mPlaceProvider.getCount() == 0)
+                    DatabaseHelper.getInstance(getApplicationContext()).insertStandardRecords();
             }
         });
 
@@ -154,6 +156,8 @@ public class FirstScreenActivity extends ServiceActivity {
 
         mPlaceProvider = new PlaceProvider(this);
         mPlaceBeaconProvider = new PlaceBeaconProvider(this);
+
+        printToLog(mPlaceProvider.getCount() +  " registros de place existentes.");
 
 //        if(mCurrentPlace != null && !isNavigationStarted())
 //            sayPlaceName(txtCurrentPlace.getText().toString());
