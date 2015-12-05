@@ -35,8 +35,8 @@ public class BluetoothService extends IntentService implements BeaconConsumer {
     private int mBindCount;
 
 
-    private long lastTime;
-    private long timeBetweenAnalysis = 2000;
+//    private long lastTime;
+//    private long timeBetweenAnalysis = 500;
 
     Collection<Beacon> beaconTimeStorage;
 
@@ -87,15 +87,15 @@ public class BluetoothService extends IntentService implements BeaconConsumer {
                 if (beacons.size() == 0)
                     return;
 
-                if (passedEnoughTime()) {
-                    printToLog("Passou o tempo necessário...");
-                    Beacon closerBeacon = getCloserBeacon(beaconTimeStorage);
+//                if (passedEnoughTime()) {
+                    printToLog(" o tempo necessário...");
+                    Beacon closerBeacon = getCloserBeacon(beacons);
 
                     onCloserBeaconFound(closerBeacon);
-                } else {
-                    addToBeaconTimeStorage(beacons);
-                    printToLog("Adicionando beacons ao storage temporario, que agora contem " + beaconTimeStorage.size() + " beacons");
-                }
+//                } else {
+//                    addToBeaconTimeStorage(beacons);
+//                    printToLog("Adicionando beacons ao storage temporario, que agora contem " + beaconTimeStorage.size() + " beacons");
+//                }
             }
         });
 
@@ -110,22 +110,22 @@ public class BluetoothService extends IntentService implements BeaconConsumer {
         beaconTimeStorage.addAll(beacons);
     }
 
-    private boolean passedEnoughTime() {
-        if(lastTime == 0) {
-            lastTime = System.currentTimeMillis();
-            return false;
-        }
-
-
-        long now = System.currentTimeMillis();
-
-        if((now - lastTime) > timeBetweenAnalysis) {
-            lastTime = System.currentTimeMillis();
-            return true;
-        }
-
-        return false;
-    }
+//    private boolean passedEnoughTime() {
+//        if(lastTime == 0) {
+//            lastTime = System.currentTimeMillis();
+//            return false;
+//        }
+//
+//
+//        long now = System.currentTimeMillis();
+//
+//        if((now - lastTime) > timeBetweenAnalysis) {
+//            lastTime = System.currentTimeMillis();
+//            return true;
+//        }
+//
+//        return false;
+//    }
 
     @Nullable
     private Beacon getCloserBeacon(Collection<Beacon> beacons) {
@@ -183,7 +183,7 @@ public class BluetoothService extends IntentService implements BeaconConsumer {
     }
 
     private void printToLog(String msg) {
-        boolean debugServiceExecution = true;
+        boolean debugServiceExecution = false;
 
         if (debugServiceExecution)
             Log.i(LOG_TAG, msg);

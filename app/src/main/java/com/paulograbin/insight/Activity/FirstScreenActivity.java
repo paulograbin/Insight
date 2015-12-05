@@ -11,7 +11,6 @@ import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.paulograbin.insight.Adapter.PlaceSelectionAdapter;
 import com.paulograbin.insight.DB.DatabaseHelper;
@@ -69,7 +68,7 @@ public class FirstScreenActivity extends ServiceActivity {
                 say("Ajuda solicitada, um segurança está a caminho.");
 
                 if(mPlaceProvider.getCount() == 0)
-                    DatabaseHelper.getInstance(getApplicationContext()).insertStandardRecords();
+                    DatabaseHelper.getInstance(getApplicationContext()).insertRecords();
             }
         });
 
@@ -176,8 +175,8 @@ public class FirstScreenActivity extends ServiceActivity {
         } catch (Exception e) {
             printToLog("Beacon não cadastrado " + lastSeenBeacon.getId1().toString());
 
-            Toast t = Toast.makeText(this, "Beacon não cadastrado", Toast.LENGTH_SHORT);
-            t.show();
+//            Toast t = Toast.makeText(this, "Beacon não cadastrado", Toast.LENGTH_SHORT);
+//            t.show();
         }
     }
 
@@ -196,16 +195,18 @@ public class FirstScreenActivity extends ServiceActivity {
 
 //                    removePlaceFromScreeList();
                     mNavigation.getNextPlace();
-                    say(mCurrentPlace.getMessage());
+                    sayWithAlert(mCurrentPlace.getMessage());
 
                     getRouteToTargetPlace(mNavigation.getTargetPlace());
 
-                    float bearing = mCurrentPlace.getLocation().bearingTo(mNavigation.checkNextPlace().getLocation());
-                    printToLog(bearing + " is the bearing from " + mCurrentPlace.getName() + " to " + mNavigation.checkNextPlace().getName());
+//                    float bearing = mCurrentPlace.getLocation().bearingTo(mNavigation.checkNextPlace().getLocation());
+//                    printToLog(bearing + " is the bearing from " + mCurrentPlace.getName() + " to " + mNavigation.checkNextPlace().getName());
                 }
             } else {
                 // Chegou ao destino
                 removePlaceFromScreeList();
+                mPlaceSelectionAdapter.clear();
+                txtPath.setText("");
                 sayWithAlert("Você chegou em " + mCurrentPlace.getName());
             }
         } else { // Destination not selected yet
@@ -258,20 +259,32 @@ public class FirstScreenActivity extends ServiceActivity {
         try {
             getRouteToTargetPlace(destinationPlaceSelectedByUser);
 
-            txtPath.setText("Caminho a ser percorrido:");
+            String texto = "Caminho a ser percorrido:";
             txtPath.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+            txtPath.setText(texto);
 
             if(mPlaceSelectionAdapter.getCount() == 2) {
-                say("Passaremos por " + (mPlaceSelectionAdapter.getCount() - 1) + " local até o destino");
+                texto = "Passaremos por " + (mPlaceSelectionAdapter.getCount() - 1) + " local até o destino";
+                sayImmediately(texto);
             } else {
-                say("Passaremos por " + (mPlaceSelectionAdapter.getCount() - 1) + " locais até o destino");
+                texto = "Passaremos por " + (mPlaceSelectionAdapter.getCount() - 1) + " locais até o destino";
+                sayImmediately(texto);
+            }
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+
             }
 
-            float bearing = mCurrentPlace.getLocation().bearingTo(mNavigation.checkNextPlace().getLocation());
-            printToLog(bearing + " is the bearing from current place to " + mNavigation.checkNextPlace().getName());
+//            float bearing = mCurrentPlace.getLocation().bearingTo(mNavigation.checkNextPlace().getLocation());
+//            printToLog(bearing + " is the bearing from current place to " + mNavigation.checkNextPlace().getName());
 
+            sayWithAlert(mNavigation.getCurrentPlace().getMessage());
+            try {
+                Thread.sleep(5000L);
+            } catch(Exception e) {
 
-            say(mNavigation.getCurrentPlace().getMessage());
+            }
         } catch (NoWayException e) {
             say("Não há um caminho cadastrado para o local selecionado");
             if (mPlaceSelectionAdapter != null) {

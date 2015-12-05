@@ -59,6 +59,10 @@ public abstract class ServiceActivity extends AppCompatActivity {
         registerAsReceiver();
     }
 
+    protected Beacon getLastSeenBeacon() {
+        return mBluetoothService.getLastSeenBeacon();
+    }
+
     protected abstract void onBeaconReceived(Beacon lastSeenBeacon);
 
     private void registerAsReceiver() {

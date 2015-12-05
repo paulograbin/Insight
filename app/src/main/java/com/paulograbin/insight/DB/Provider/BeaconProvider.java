@@ -22,8 +22,9 @@ public class BeaconProvider extends AbstractProvider<Beacon> {
     public final static String MY_BEACON_UUID4 = "5D8DE2E5-2C6D-4F3D-8651-DD66B7E4BD34";
     public final static String MY_BEACON_UUID5 = "5D8DE2E5-2C6D-4F3D-8651-DD66B7E4BD35";
     public final static String MY_BEACON_UUID6 = "5D8DE2E5-2C6D-4F3D-8651-DD66B7E4BD36";
+    public final static String MY_BEACON_UUID7 = "5D8DE2E5-2C6D-4F3D-8651-DD66B7E4BD37";
 
-    public final static String FAROL_BEACON = "64657665-6c6f-7064-6279-6d656e766961";
+    public final static String FAROL_BEACON = "64657665-6c6f-7064-6279-6D656E766961";
 
     public final static String BEACON_AMARELO  = "ebefd083-70a2-47c8-9837-e7b5634df524";
     public final static String BEACON_AZUL     = "ebefd083-70a2-47c8-9837-e7b5634df525";
@@ -60,7 +61,7 @@ public class BeaconProvider extends AbstractProvider<Beacon> {
         int i = 0;
 
         b.setId(c.getLong(i++));
-        b.setUUID(c.getString(i++));
+        b.setUUID(c.getString(i));
 
         printToLog("Beacon retornado do cursor: " + b.getUUID());
 
