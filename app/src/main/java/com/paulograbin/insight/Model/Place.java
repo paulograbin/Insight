@@ -13,6 +13,7 @@ public class Place implements ModelInterface<Place>, Parcelable {
     public static final int FINAL_DESTINATION = 1;  // Place can be choosed as destination by the user
     public static final int NOT_FAVORITE = 0;
     public static final int FAVORITE = 1;
+
     private long id;
     private String name;
     private String description;
@@ -34,17 +35,6 @@ public class Place implements ModelInterface<Place>, Parcelable {
 
     public Place() {
         location = new Location("");
-    }
-
-    public Place(String name, String description, String message, int favorite, int destination, double latitude, double longitude) {
-        this.name = name;
-        this.description = description;
-        this.message = message;
-        this.favorite = favorite;
-        this.destination = destination;
-        location = new Location(name);
-        location.setLatitude(latitude);
-        location.setLongitude(longitude);
     }
 
     public Place(long id, String name, String description, int destination, double latitude, double longitude) {

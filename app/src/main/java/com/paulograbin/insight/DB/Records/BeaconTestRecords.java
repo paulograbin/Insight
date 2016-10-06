@@ -2,6 +2,7 @@ package com.paulograbin.insight.DB.Records;
 
 import android.content.Context;
 
+import com.paulograbin.insight.Builders.PlaceBuilder;
 import com.paulograbin.insight.DB.Provider.BeaconProvider;
 import com.paulograbin.insight.DB.Provider.PathProvider;
 import com.paulograbin.insight.DB.Provider.PlaceBeaconProvider;
@@ -25,11 +26,44 @@ public class BeaconTestRecords extends AbstractRecords {
         /**
          *  PLACES
          */
-        Place pAmarelo    = new Place("Amarelo", "Novo Hamburgo",    "", 0, 1, -29.685204, -51.140426);
-        Place pAzul       = new Place("Azul", "São Leopoldo",        "", 0, 1, -29.772558, -51.151413);
-        Place pPreto      = new Place("Preto", "Esteio",             "", 0, 1, -29.848991, -51.175000);
-        Place pBrancoUm   = new Place("Branco Um", "Canoas",         "", 0, 1, -29.913290, -51.179120);
-        Place pBrancoDois = new Place("Branco Dois", "Porto Alegre", "", 0, 1, -30.037008, -51.227528);
+        Place pAmarelo = new PlaceBuilder()
+                .withName("Amarelo")
+                .withDescription("Novo Hamburgo")
+                .setDestination()
+                .withLatitude(-29.685204)
+                .withLongitude(-51.151413)
+                .build();
+
+        Place pAzul = new PlaceBuilder()
+                .withName("Azul")
+                .withDescription("São Leopoldo")
+                .setDestination()
+                .withLatitude(-29.772558)
+                .withLongitude(-51.175000)
+                .build();
+
+        Place pPreto = new PlaceBuilder()
+                .withName("Preto")
+                .withDescription("Esteio")
+                .setDestination()
+                .withLatitude(-29.848991)
+                .withLongitude(-51.140426)
+                .build();
+
+        Place pBrancoUm = new PlaceBuilder()
+                .withName("Branco Um")
+                .withDescription("Canoas")
+                .setDestination()
+                .withLatitude(-29.913290)
+                .withLongitude(-51.179120)
+                .build();
+
+        Place pBrancoDois = new PlaceBuilder()
+                .withName("Branco Dois")
+                .withDescription("Porto Alegre")
+                .setDestination()
+                .withLatitude(-30.037008)
+                .withLongitude(-51.227528).build();
 
         pAmarelo.setId(mPlaceProvider.insert(pAmarelo));
         pAzul.setId(mPlaceProvider.insert(pAzul));

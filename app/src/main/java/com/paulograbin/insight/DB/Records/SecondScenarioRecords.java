@@ -2,6 +2,7 @@ package com.paulograbin.insight.DB.Records;
 
 import android.content.Context;
 
+import com.paulograbin.insight.Builders.PlaceBuilder;
 import com.paulograbin.insight.DB.Provider.BeaconProvider;
 import com.paulograbin.insight.DB.Provider.PathProvider;
 import com.paulograbin.insight.DB.Provider.PlaceBeaconProvider;
@@ -26,12 +27,44 @@ public class SecondScenarioRecords extends AbstractRecords {
         /*
          *  Places
          */
-        Place pMesaEduardo = new Place("Posto de trabalho", "", "Vire a esquerda e siga até o corredor do setor", Place.FAVORITE, Place.FINAL_DESTINATION, -29.796634, -51.147999);
-        Place pCorretor1B = new Place("Corredor Setor 1B", "", "Vire a direita e siga reto até a porta de entrada do setor", Place.NOT_FAVORITE, Place.NO_DESTINATION, -29.796648, -51.148182);
-        Place pPortaSetor1B = new Place("Porta Setor 1B", "", "Ande a frente até passar pela porta automática", Place.NOT_FAVORITE, Place.NO_DESTINATION, -29.796493, -51.148570);
-        Place pBanheiro = new Place("Banheiro", "", "Saia do banheiro e siga reto até o corredor", Place.NOT_FAVORITE, Place.FINAL_DESTINATION, -29.796493, -51.148570);
-        Place pCorredorSalasReuniao = new Place("Corredor salas de reunião", "", "Siga a frente até chegar a sala", Place.NOT_FAVORITE, Place.NO_DESTINATION, -29.796577, -51.148575);
-        Place pSalaReuniao = new Place("Sala de reunião", "", "", Place.FAVORITE, Place.FINAL_DESTINATION, -29.796493, -51.148570);
+        Place pMesaEduardo = new PlaceBuilder().withName("Posto de trabalho")
+                .withMessage("Vire a esquerda e siga até o corredor do setor")
+                .setFavorite()
+                .setDestination()
+                .withLatitude(-29.796634)
+                .withLongitude(-51.147999).build();
+
+        Place pCorretor1B = new PlaceBuilder()
+                .withName("Corredor Setor 1B")
+                .withMessage("Vire a direita e siga reto até a porta de entrada do setor")
+                .withLatitude(-29.796648)
+                .withLongitude(-51.148182).build();
+
+        Place pPortaSetor1B = new PlaceBuilder()
+                .withName("Porta Setor 1B")
+                .withMessage("Ande a frente até passar pela porta automática")
+                .withLatitude(-29.796493)
+                .withLongitude(-51.148570).build();
+
+        Place pBanheiro = new PlaceBuilder()
+                .withName("Banheiro")
+                .withMessage("Saia do banheiro e siga reto até o corredor")
+                .setDestination()
+                .withLatitude(-29.796493)
+                .withLongitude(-51.148570).build();
+
+        Place pCorredorSalasReuniao = new PlaceBuilder()
+                .withName("Corredor salas de reunião")
+                .withMessage("Siga a frente até chegar a sala")
+                .withLatitude(-29.796577)
+                .withLongitude(-51.148575).build();
+
+        Place pSalaReuniao = new PlaceBuilder()
+                .withName("Sala de reunião")
+                .setFavorite()
+                .setDestination()
+                .withLatitude(-29.796493)
+                .withLongitude(-51.148570).build();
 
 
         pMesaEduardo.setId(mPlaceProvider.insert(pMesaEduardo));

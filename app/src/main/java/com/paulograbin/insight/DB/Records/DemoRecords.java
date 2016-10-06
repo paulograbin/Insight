@@ -2,6 +2,7 @@ package com.paulograbin.insight.DB.Records;
 
 import android.content.Context;
 
+import com.paulograbin.insight.Builders.PlaceBuilder;
 import com.paulograbin.insight.DB.Provider.BeaconProvider;
 import com.paulograbin.insight.DB.Provider.PathProvider;
 import com.paulograbin.insight.DB.Provider.PlaceBeaconProvider;
@@ -26,9 +27,32 @@ public class DemoRecords extends AbstractRecords {
         /*
          *  Places
          */
-        Place pRecepcao = new Place("Recepção", "Saguão de recepção", "Vire a direita e siga reto até o corredor", Place.FAVORITE, Place.FINAL_DESTINATION, -29.796493, -51.148570);
-        Place pCorredor = new Place("Corredor", "", "Continue seguindo reto até a sala de reunião", Place.NOT_FAVORITE, Place.NO_DESTINATION, -29.796648, -51.148182);
-        Place pSalaDeReunião = new Place("Sala de reunião", "", "Mensagem de teste!", Place.FAVORITE, Place.FINAL_DESTINATION, -29.796634, -51.147999);
+        Place pRecepcao = new PlaceBuilder()
+                .withName("Recepção")
+                .withMessage("Vire a direita e siga reto até o corredor")
+                .withDescription("Saguão de recepção")
+                .setDestination()
+                .setFavorite()
+                .withLatitude(-29.796493)
+                .withLongitude(-51.148570)
+                .build();
+
+        Place pCorredor = new PlaceBuilder()
+                .withName("Corredor")
+                .withMessage("Continue seguindo reto até a sala de reunião")
+                .setDestination()
+                .withLatitude(-29.796648)
+                .withLongitude(-51.148182)
+                .build();
+
+        Place pSalaDeReunião = new PlaceBuilder()
+                .withName("Sala de reunião")
+                .withMessage("Mensagem de teste!")
+                .setDestination()
+                .setFavorite()
+                .withLatitude(-29.796634)
+                .withLongitude(-51.147999)
+                .build();
 
         pRecepcao.setId(mPlaceProvider.insert(pRecepcao));
         pCorredor.setId(mPlaceProvider.insert(pCorredor));

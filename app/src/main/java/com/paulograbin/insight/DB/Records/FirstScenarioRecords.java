@@ -2,6 +2,7 @@ package com.paulograbin.insight.DB.Records;
 
 import android.content.Context;
 
+import com.paulograbin.insight.Builders.PlaceBuilder;
 import com.paulograbin.insight.DB.Provider.BeaconProvider;
 import com.paulograbin.insight.DB.Provider.PathProvider;
 import com.paulograbin.insight.DB.Provider.PlaceBeaconProvider;
@@ -25,13 +26,61 @@ public class FirstScenarioRecords extends AbstractRecords {
 /*
          *  Places
          */
-        Place pEntrada = new Place("Entrada", "Porta de entrada", "Ande a frente até passar pela porta automática", Place.NOT_FAVORITE, Place.NO_DESTINATION, -29.796493, -51.148570);
-        Place pRecepcao = new Place("Recepção", "Saguão de recepção", "Dê dois passos a frente e vire a direita, siga até passar pelas catracas", Place.FAVORITE, Place.FINAL_DESTINATION, -29.796493, -51.148570);
-        Place pPrimeiroAndar = new Place("Primeiro Andar", "Acesso aos outros andares", "Vire a esquerda e ande até chegar a escada, e então suba. São dois lances com 10 degraus", Place.NOT_FAVORITE, Place.NO_DESTINATION, -29.796577, -51.148575);
-        Place pSegundoAndar = new Place("Segundo Andar", "Acesso aos outros andares", "Mensagem...", Place.NOT_FAVORITE, Place.NO_DESTINATION, -29.796577, -51.148575);
-        Place pEntradaSetor1B = new Place("Entrada do Setor 1B", "", "Mensagem de teste!", Place.NOT_FAVORITE, Place.NO_DESTINATION, -29.796493, -51.148570);
-        Place pCorretor1B = new Place("Corredor Setor 1B", "", "Mensagem de teste!", Place.NOT_FAVORITE, Place.NO_DESTINATION, -29.796648, -51.148182);
-        Place pMesaEduardo = new Place("Posto de trabalho", "", "Mensagem de teste!", Place.FAVORITE, Place.FINAL_DESTINATION, -29.796634, -51.147999);
+        Place pEntrada = new PlaceBuilder()
+                .withName("Entrada")
+                .withDescription("Porta de entrada")
+                .withMessage("Ande a frente até passar pela porta automática")
+                .withLatitude(-29.796493)
+                .withLongitude(-51.148570).build();
+
+        Place pRecepcao = new PlaceBuilder()
+                .withName("Recepção")
+                .withDescription("Saguão de recepção")
+                .withMessage("Dê dois passos a frente e vire a direita, siga até passar pelas catracas")
+                .setFavorite()
+                .setDestination()
+                .withLatitude(-29.796493)
+                .withLongitude(-51.148570)
+                .build();
+
+        Place pPrimeiroAndar = new PlaceBuilder()
+                .withName("Primeiro Andar")
+                .withDescription("Acesso aos outros andares")
+                .withMessage("Vire a esquerda e ande até chegar a escada, e então suba. São dois lances com 10 degraus")
+                .withLatitude(-29.796577)
+                .withLongitude(-51.148575)
+                .build();
+
+        Place pSegundoAndar = new PlaceBuilder()
+                .withName("Segundo Andar")
+                .withDescription("Acesso aos outros andares")
+                .withMessage("Mensagem...")
+                .withLatitude(-29.796577)
+                .withLongitude(-51.148575)
+                .build();
+
+        Place pEntradaSetor1B = new PlaceBuilder()
+                .withName("Entrada do Setor 1B")
+                .withMessage("Mensagem de teste!")
+                .withLatitude(-29.796493)
+                .withLongitude(-51.148570)
+                .build();
+
+        Place pCorretor1B = new PlaceBuilder()
+                .withName("Corredor Setor 1B")
+                .withMessage("Mensagem de teste!")
+                .withLatitude(-29.796648)
+                .withLongitude(-51.148182)
+                .build();
+
+        Place pMesaEduardo = new PlaceBuilder()
+                .withName("Posto de trabalho")
+                .withMessage("Mensagem de teste!")
+                .setFavorite()
+                .setDestination()
+                .withLatitude(-29.796634)
+                .withLongitude(-51.147999)
+                .build();
 
         pEntrada.setId(mPlaceProvider.insert(pEntrada));
         pRecepcao.setId(mPlaceProvider.insert(pRecepcao));
