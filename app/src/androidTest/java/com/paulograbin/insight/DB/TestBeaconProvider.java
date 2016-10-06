@@ -226,16 +226,16 @@ public class TestBeaconProvider extends ApplicationTestCase<Application> {
         Beacon b = new Beacon();
 
         b.setUUID("5D8DE2E5-2C6D-4F3D-8651-DD66B7E4BD3E");
-        b.setLatitude(39.99);
-        b.setLongitude(30.00);
-        b.setLocation("Teste de location");
+//        b.setLatitude(39.99);
+//        b.setLongitude(30.00);
+//        b.setLocation("Teste de location");
 
         ContentValues cv = mBeaconProvider.getContentValues(b);
 
         assertEquals(cv.get(TableBeacon.COLUMN_UUID), b.getUUID());
-        assertEquals(cv.get(TableBeacon.COLUMN_LOCATION), b.getLocation());
-        assertEquals(cv.get(TableBeacon.COLUMN_LATITUDE), b.getLatitude());
-        assertEquals(cv.get(TableBeacon.COLUMN_LONGITUDE), b.getLongitude());
+//        assertEquals(cv.get(TableBeacon.COLUMN_LOCATION), b.getLocation());
+//        assertEquals(cv.get(TableBeacon.COLUMN_LATITUDE), b.getLatitude());
+//        assertEquals(cv.get(TableBeacon.COLUMN_LONGITUDE), b.getLongitude());
     }
 
     public void testDeleteAllWithNoRecords() {

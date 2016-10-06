@@ -3,6 +3,7 @@ package com.paulograbin.insight.LocationEngine;
 import android.app.Application;
 import android.test.ApplicationTestCase;
 
+import com.paulograbin.insight.Builders.PlaceBuilder;
 import com.paulograbin.insight.DB.Provider.PathProvider;
 import com.paulograbin.insight.DB.Provider.PlaceProvider;
 import com.paulograbin.insight.Exceptions.NoWayException;
@@ -114,10 +115,10 @@ public class TestDijkstra extends ApplicationTestCase<Application> {
         /*
          * Places
          */
-        Place pInitial = new Place("Ponto Inicial", "Um ponto no inicio mapa", "Mensagem de teste!", Place.NOT_FAVORITE, Place.FINAL_DESTINATION, -29.78440, -51.14400);
-        Place pMid = new Place("Caminho entre pontos", "Um caminho no meio do mapa", "", Place.NOT_FAVORITE, Place.NO_DESTINATION, -29.91305, -51.18932);
-        Place pNowhere = new Place("Nowhere", "Algum lugar perdido", "", Place.NOT_FAVORITE, Place.NO_DESTINATION, -29.99447, -50.78694);
-        Place pEnd = new Place("Ponto Final", "Um ponto no fim do mapa", "", Place.FAVORITE, Place.FINAL_DESTINATION, -30.03201, -51.21678);
+        Place pInitial = new PlaceBuilder().withName("Ponto Inicial").withDescription("Um ponto no inicio mapa").withMessage("Mensagem de teste!").setDestination().withLatitude(-29.78440).withLongitude(-51.14400).build();
+        Place pMid = new PlaceBuilder().withName("Caminho entre pontos").withDescription("Um caminho no meio do mapa").withLatitude(-29.91305).withLongitude(-51.18932).build();
+        Place pNowhere = new PlaceBuilder().withName("Nowhere").withDescription("Algum lugar perdido").withLatitude(-29.99447).withLongitude(-50.78694).build();
+        Place pEnd = new PlaceBuilder().withName("Ponto Final").withDescription("Um ponto no fim do mapa").setFavorite().setDestination().withLatitude(-30.03201).withLongitude( -51.216784).build();
 
         PlaceProvider pp = new PlaceProvider(getContext());
         pInitial.setId(pp.insert(pInitial));
